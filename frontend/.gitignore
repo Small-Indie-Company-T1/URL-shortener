@@ -24,4 +24,4 @@ MockServiceWorker.js
 *.njsproj
 *.sln
 *.sw?
-.vite
+.vite/

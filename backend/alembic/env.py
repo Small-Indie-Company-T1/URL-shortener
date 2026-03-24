@@ -15,7 +15,7 @@ db = os.getenv("POSTGRES_DB")
 host = "localhost"
 port = "5432"
 
-database_url = f"postgresql://{user}:{password}@{host}:{port}/{db}"
+database_url = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}"
 
 config = context.config
 config.set_main_option("sqlalchemy.url", database_url)

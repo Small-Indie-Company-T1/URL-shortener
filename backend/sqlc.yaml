@@ -12,5 +12,5 @@ sql:
       - plugin: py
         out: "src/db"
         options:
-          package: "db"
+          package: "src.db"
           emit_async_querier: true

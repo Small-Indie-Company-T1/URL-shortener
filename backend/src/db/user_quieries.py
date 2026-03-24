@@ -7,7 +7,7 @@ from typing import Optional
 import sqlalchemy
 import sqlalchemy.ext.asyncio
 
-from db import models
+from src.db import models
 
 
 CREATE_USER = """-- name: create_user \\:one

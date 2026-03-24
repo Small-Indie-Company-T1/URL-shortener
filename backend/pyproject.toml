@@ -1,26 +1,19 @@
 [project]
-name = "backend"
+name = "url-shortener"
 version = "0.1.0"
-description = "Add your description here"
-authors = [
-    { name = "Yaloha" }
-]
+description = "root workspace"
+readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "alembic>=1.18.4",
     "argon2-cffi>=25.1.0",
     "asyncpg>=0.31.0",
-    "email-validator>=2.3.0",
+    "backend",
+    "dotenv>=0.9.9",
     "fastapi>=0.135.2",
     "psycopg2-binary>=2.9.11",
-    "pydantic-settings>=2.13.1",
-    "python-dotenv>=1.2.2",
+    "pydantic[email]>=2.12.5",
+    "sqlalchemy>=2.0.48",
+    "sqlc>=1.30.0.post18",
     "uvicorn>=0.42.0",
 ]
-
-[tool.hatch.build.targets.wheel]
-packages = ["src"]
-
-[build-system]
-requires = ["uv_build>=0.9.7,<0.10.0", "hatchling"]
-build-backend = "hatchling.build"

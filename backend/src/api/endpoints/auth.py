@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
 import asyncpg
 from src.db.queries import UserQueriesQueries
 from src.db.database import get_db
@@ -7,7 +7,7 @@ from src.auth.hashing import hash_password
 
 router = APIRouter()
 
-@router.post("/register", response_model=UserReturn)
+@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserReturn)
 async def register(user_data: UserRegister, db: asyncpg.Connection = Depends(get_db)) -> UserReturn:
     querier = UserQueriesQueries(db)
     if await querier.GetUserByEmail(email = user_data.email):

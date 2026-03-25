@@ -17,3 +17,11 @@ dependencies = [
     "sqlc>=1.30.0.post18",
     "uvicorn>=0.42.0",
 ]
+
+[dependency-groups]
+dev = [
+    "fastapi[standard]>=0.135.2",
+    "mypy>=1.19.1",
+    "pytest>=9.0.2",
+    "ruff>=0.15.7",
+]

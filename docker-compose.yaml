@@ -13,5 +13,21 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8100:8100"
+    env_file:
+      - "./env/postgres.env"
+    environment:
+      - POSTGRES_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/.venv
+
 volumes:
   pg_data:

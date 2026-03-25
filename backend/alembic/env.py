@@ -5,17 +5,9 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-from dotenv import load_dotenv, find_dotenv
+from src.core.config import settings
 
-load_dotenv(find_dotenv("env/postgres.env"))
-
-user = os.getenv("POSTGRES_USER")
-password = os.getenv("POSTGRES_PASSWORD")
-db = os.getenv("POSTGRES_DB")
-host = "localhost"
-port = "5432"
-
-database_url = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}"
+database_url = settings.DATABASE_URL_SYNC
 
 config = context.config
 config.set_main_option("sqlalchemy.url", database_url)

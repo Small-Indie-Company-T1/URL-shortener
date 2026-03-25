@@ -1,16 +1,35 @@
 version: "2"
 plugins:
-  - name: py
+  - name: sqlc-python-asyncpg
     wasm:
-      url: https://downloads.sqlc.dev/plugin/sqlc-gen-python_1.3.0.wasm
-      sha256: fbedae96b5ecae2380a70fb5b925fd4bff58a6cfb1f3140375d098fbab7b3a3c
+      url: https://github.com/tvallotton/sqlc-python-asyncpg/releases/download/v0.1.1/sqlc-python-asyncpg.wasm
+      sha256: fbf5851de61000a438300685d3ea09a04cc1ace3d2a1924ef085dd7f91eb3272
+
 sql:
   - schema: "sql/schema.sql"
     queries: "sql/queries"
     engine: "postgresql"
     codegen:
-      - plugin: py
+      - plugin: sqlc-python-asyncpg
         out: "src/db"
         options:
-          package: "db"
-          emit_async_querier: true
+          package: "src.db"
+          types:
+            "pg_catalog.int8":
+              python_type: "int"
+
+            "pg_catalog.varchar":
+              python_type: "str"
+
+            "pg_catalog.text":
+              python_type: "str"
+
+            "pg_catalog.bool":
+              python_type: "bool"
+
+            "pg_catalog.timestamptz":
+              python_type: "datetime.datetime"
+              import: "import datetime"
+
+            "pg_catalog.bytea":
+              python_type: "bytes"

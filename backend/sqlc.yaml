@@ -14,7 +14,6 @@ sql:
         out: "src/db"
         options:
           package: "src.db"
-          emit_async_querier: true
           types:
             "pg_catalog.int8":
               python_type: "int"

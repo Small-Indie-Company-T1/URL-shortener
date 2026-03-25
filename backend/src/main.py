@@ -12,6 +12,7 @@ app.include_router(links_router, prefix="/api/v1")
 @app.get("/healthcheck", tags=["Health"])
 async def health_check():
     return {"status": "ok"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],

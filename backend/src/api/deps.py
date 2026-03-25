@@ -1,7 +1,8 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from src.db.database import get_db
 from src.services.links import LinkService
-from src.db.link_queries import AsyncQuerier
+from src.db.queries import LinkQueriesQueries
 from dotenv import load_dotenv, find_dotenv
 import os
 
@@ -14,10 +15,10 @@ if not DATABASE_URL:
 
 engine = create_async_engine(DATABASE_URL)
 
-async def get_db_conn():
-    async with engine.connect() as conn:
-        yield AsyncQuerier(conn)
+# async def get_db_conn():
+#     async with engine.connect() as conn:
+#         yield LinkQueriesQueries(conn)
 
-async def get_link_service(conn=Depends(get_db_conn)):
-    queries = AsyncQuerier(conn)
+async def get_link_service(conn=Depends(get_db)):
+    queries = LinkQueriesQueries(conn)
     return LinkService(queries)

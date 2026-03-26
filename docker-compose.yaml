@@ -20,6 +20,7 @@ services:
       - "8100:8100"
     env_file:
       - "./env/postgres.env"
+      - "./env/app.env"
     environment:
       - POSTGRES_HOST=db
     depends_on:
@@ -27,7 +28,6 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
-      - /app/.venv
 
 volumes:
   pg_data:

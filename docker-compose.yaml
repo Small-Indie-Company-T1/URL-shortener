@@ -29,5 +29,23 @@ services:
     volumes:
       - ./backend:/app
 
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    ports:
+      - "5173:5173"
+    env_file:
+      - "./frontend/.env"
+    environment:
+      - VITE_API_MOCKING=disabled
+      - VITE_API_BASE_URL=http://localhost:8100
+    depends_on:
+      backend:
+        condition: service_started
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
 volumes:
   pg_data:

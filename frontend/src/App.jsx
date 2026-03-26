@@ -5,12 +5,14 @@ import RegisterPage from './pages/RegisterPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import CreateTab from './components/home/CreateTab.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import MainPage from './pages/MainPage.jsx';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="/main" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route

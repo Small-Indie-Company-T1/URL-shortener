@@ -10,7 +10,7 @@ import {
 export default function useAuth() {
   const [token, setToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -61,6 +61,7 @@ export default function useAuth() {
     const initAuth = async () => {
       try {
         await refreshToken();
+        setIsAuthenticated(true); //TODO: maybe update less explicit
       } catch {
         await logoutUser();
       } finally {

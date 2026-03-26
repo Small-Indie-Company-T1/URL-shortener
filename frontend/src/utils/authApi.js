@@ -59,7 +59,7 @@ export async function loginUser(email, password) {
   try {
     const response = await api.post('/login', { email, password });
 
-    const newToken = response.data.accessToken;
+    const newToken = response.data.access_token;
     setToken(newToken);
     onTokenUpdate?.(newToken);
   } catch (error) {
@@ -94,7 +94,7 @@ export async function refreshToken() {
     refreshPromise = api
       .post('/refresh')
       .then((response) => {
-        const newToken = response.data.accessToken;
+        const newToken = response.data.access_token;
         setToken(newToken);
         onTokenUpdate?.(newToken);
         return newToken;

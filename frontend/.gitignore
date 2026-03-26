@@ -25,3 +25,5 @@ MockServiceWorker.js
 *.sln
 *.sw?
 .vite/
+
+.env

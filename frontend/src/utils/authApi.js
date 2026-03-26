@@ -1,17 +1,23 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/', // адрес бэка
+  baseURL: (import.meta.env.VITE_API_BASE_URL || '') + '/auth', // адрес бэка
   withCredentials: true,
 });
 
 let accessToken = null;
+let onTokenUpdate = null;
+let refreshPromise = null;
 
-export const setToken = (token) => {
+const setToken = (token) => {
   accessToken = token;
 };
 
-export function setupInterceptors(logout) {
+export const setTokenUpdateHandler = (func) => {
+  onTokenUpdate = func;
+};
+
+export function setupInterceptors() {
   api.interceptors.request.use((config) => {
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -25,24 +31,22 @@ export function setupInterceptors(logout) {
       const originalRequest = error.config;
 
       if (originalRequest.url === '/refresh') {
-        logout();
-        api.post('/logout');
+        setToken(null);
+        onTokenUpdate?.(null);
+        await logoutUser();
         return Promise.reject(error);
       }
 
       if (error.response?.status === 401 && !originalRequest._retry) {
         error.config._retry = true;
         try {
-          const refresh = await api.post('/refresh');
+          const newToken = await refreshToken();
 
-          const newToken = refresh.data.accessToken;
-          setToken(newToken);
-
+          originalRequest.headers = originalRequest.headers || {};
           originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
           return api.request(originalRequest);
         } catch (err) {
-          logout();
-          api.post('/logout');
+          await logoutUser();
           return Promise.reject(err);
         }
       }
@@ -54,19 +58,22 @@ export function setupInterceptors(logout) {
 export async function loginUser(email, password) {
   try {
     const response = await api.post('/login', { email, password });
-    return response.data;
+
+    const newToken = response.data.accessToken;
+    setToken(newToken);
+    onTokenUpdate?.(newToken);
   } catch (error) {
-    console.error('Ошибка при входе:', error.message);
+    console.error('Ошибка при входе:', error.status);
     throw error;
   }
 }
 
-export async function registerUser(email, name, password) {
+export async function registerUser(email, nickname, password) {
   try {
-    const response = await api.post('/register', { email, name, password });
+    const response = await api.post('/register', { email, nickname, password });
     return response.data;
   } catch (error) {
-    console.error('Ошибка при регистрации:', error.message);
+    console.error('Ошибка при регистрации:', error.status);
     throw error;
   }
 }
@@ -75,19 +82,26 @@ export async function logoutUser() {
   try {
     await api.post('/logout');
     setToken(null);
+    onTokenUpdate?.(null);
   } catch (error) {
-    console.error('Ошибка при выходе:', error.message);
+    console.error('Ошибка при выходе:', error.status);
     throw error;
   }
 }
 
 export async function refreshToken() {
-  try {
-    const response = await api.post('/refresh');
-    setToken(response.data.accessToken);
-    return response.data.accessToken;
-  } catch (error) {
-    setToken(null);
-    throw error;
+  if (!refreshPromise) {
+    refreshPromise = api
+      .post('/refresh')
+      .then((response) => {
+        const newToken = response.data.accessToken;
+        setToken(newToken);
+        onTokenUpdate?.(newToken);
+        return newToken;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
   }
+  return refreshPromise;
 }

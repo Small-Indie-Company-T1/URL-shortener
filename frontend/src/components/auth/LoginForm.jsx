@@ -27,28 +27,30 @@ export default function LoginForm() {
     <div>
       <h1>Вход</h1>
       <form onSubmit={handleSubmit}>
-        <input
-          required
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            clearError();
-          }}
-        />
-        <input
-          required
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            clearError();
-          }}
-        />
-        <button type="submit">Войти</button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <fieldset disabled={isLoading}>
+          <input
+            required
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              clearError();
+            }}
+          />
+          <input
+            required
+            type="password"
+            placeholder="Пароль"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              clearError();
+            }}
+          />
+          <button type="submit">Войти</button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+        </fieldset>
         <p>
           Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
         </p>

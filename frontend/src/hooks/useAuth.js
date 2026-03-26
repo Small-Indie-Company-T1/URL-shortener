@@ -4,26 +4,32 @@ import {
   loginUser,
   logoutUser,
   refreshToken,
+  setTokenUpdateHandler,
 } from '../utils/authApi';
-import { setToken } from '../utils/authApi';
+
 export default function useAuth() {
-  const [token, setTokenState] = useState(null);
+  const [token, setToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setIsAuthenticated(!!token);
+  }, [token]);
 
   const login = async (email, password) => {
     setError(null);
     setIsLoading(true);
     try {
-      const data = await loginUser(email, password);
-      setTokenState(data.token);
-      setToken(data.token);
-
-      setIsAuthenticated(true);
+      await loginUser(email, password);
     } catch (error) {
-      console.log(error.message);
-      setError(error.message);
+      switch (error.response?.status) {
+        case 401:
+          setError('Неверная почта или пароль');
+          break;
+        default:
+          setError('Неизвестная ошибка');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -36,31 +42,34 @@ export default function useAuth() {
       await registerUser(email, name, password);
       await login(email, password); // Автоматический вход после регистрации
     } catch (error) {
-      console.log(error.message);
-      setError(error.message);
+      switch (error.response?.status) {
+        case 409:
+          setError('Пользователь с такой почтой уже существует');
+          break;
+        default:
+          setError('Неизвестная ошибка');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    setTokenState(null);
-    setIsAuthenticated(false);
-    logoutUser();
-  };
-
   useEffect(() => {
+    setIsLoading(true);
+
+    setTokenUpdateHandler(setToken);
     const initAuth = async () => {
       try {
-        setTokenState(refreshToken());
-        setIsAuthenticated(true);
+        await refreshToken();
       } catch {
-        setTokenState(null);
-        setIsAuthenticated(false);
+        await logoutUser();
+      } finally {
+        setIsLoading(false);
       }
     };
     initAuth();
   }, []);
+
   return {
     token,
     isAuthenticated,
@@ -68,7 +77,7 @@ export default function useAuth() {
     error,
     login,
     register,
-    logout,
+    logoutUser,
     clearError: () => setError(null),
   };
 }

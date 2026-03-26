@@ -7,7 +7,7 @@ from src.auth.security import decode_refresh_token
 from src.db.models import Users
 from src.db.queries import UserQueriesQueries, JwtQueriesQueries
 from src.db.database import get_db
-from src.auth.schemas import UserCreate, UserOut, Token, UserBase, UserLogin, RefreshResponse
+from src.auth.schemas import UserCreate, UserOut, Token, UserLogin, RefreshResponse
 from src.auth.security import hash_password, authenticate_user, create_tokens
 
 

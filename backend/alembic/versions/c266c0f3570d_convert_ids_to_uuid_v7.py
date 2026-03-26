@@ -28,8 +28,6 @@ def upgrade() -> None:
         ALTER COLUMN id TYPE UUID USING (uuidv7()), 
         ALTER COLUMN id SET DEFAULT uuidv7();
     """)
-    # Примечание: gen_random_uuid() используем для существующих строк,
-    # чтобы заполнить их валидным UUID v4/v7 перед установкой default v7.
 
     op.execute("""
         ALTER TABLE links 

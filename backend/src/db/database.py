@@ -1,4 +1,5 @@
 import asyncpg
+asyncpg.Connection.exec = asyncpg.Connection.execute
 from src.core.config import settings
 from typing import AsyncGenerator
 

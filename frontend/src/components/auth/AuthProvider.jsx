@@ -8,7 +8,7 @@ export default function AuthProvider({ children }) {
   const auth = useAuth();
 
   useEffect(() => {
-    setupInterceptors(auth.logout);
+    setupInterceptors();
   }, []);
 
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;

@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from src.api.v1.links import router as links_router
 from fastapi.middleware.cors import CORSMiddleware
-from src.api.endpoints import auth
+from src.api.v1 import auth
 from src.db.database import create_db_pool, close_db_pool
-from src.core.config import settings
 
 app = FastAPI(title="url shortener")
 
@@ -29,7 +28,7 @@ async def startup():
 async def shutdown():
     await close_db_pool()
 
-app.include_router(auth.router, prefix="/auth", tags=["register", "login", "logout"])
+app.include_router(auth.router, prefix="/auth")
 
 @app.get("/")
 async def root():

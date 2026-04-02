@@ -1,13 +1,16 @@
 from dataclasses import dataclass
 from pathlib import Path
+from unittest.mock import AsyncMock
 import uuid
 
 from alembic import command
 from alembic.config import Config
+from argon2 import PasswordHasher
 import asyncpg
 from httpx import ASGITransport, AsyncClient
 import pytest
 
+from src.db.queries import LinkQueriesQueries
 from src.main import app
 from src.core.config import settings
 from src.db.database import get_db
@@ -55,11 +58,18 @@ class MockUser:
 
 @pytest.fixture
 async def test_user(clear_db, test_pool):
+    ph = PasswordHasher()
+    hashed_password_bytes = ph.hash('Hash456').encode('utf-8')
     user_uuid = uuid.UUID('5b3f78bb-752b-48aa-8094-da6296f6bf2d')
     async with test_pool.acquire() as conn:
         await conn.execute(
             "INSERT INTO users (id, nickname, email, password) "
-            "VALUES ($1, 'tester', 'test@example.com', 'Hash456') "
-            "ON CONFLICT (id) DO NOTHING", user_uuid
+            "VALUES ($1, 'tester', 'test_email@example.com', $2) "
+            "ON CONFLICT (id) DO NOTHING", user_uuid, hashed_password_bytes
         )
     return MockUser(id=user_uuid)
+
+@pytest.fixture
+def mock_queries():
+    mock = AsyncMock(spec=LinkQueriesQueries)
+    return mock

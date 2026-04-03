@@ -127,8 +127,6 @@ async def refresh_token(request: Request, response: Response,db: asyncpg.Connect
 async def logout(request: Request, response: Response, db: asyncpg.Connection = Depends(get_db)):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
-        return {"detail": "already logged out"}
-    if not refresh_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="refresh token missing"

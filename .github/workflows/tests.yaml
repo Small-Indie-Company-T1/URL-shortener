@@ -2,7 +2,7 @@ name: Python tests and coverage
 
 on:
   push:
-    branches: ["main", "develop", "feature/sf-40"]
+    branches: ["main", "develop"]
   pull_request:
     branches: ["main", "develop"]
 

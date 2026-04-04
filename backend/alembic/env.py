@@ -8,10 +8,12 @@ from alembic import context
 from src.core.config import settings
 
 line_url = context.config.get_main_option('sqlalchemy.url')
-database_url = line_url or settings.DATABASE_URL_SYNC
+database_url = line_url or os.getenv('TEST_DB_URL') or settings.DATABASE_URL_SYNC
+print(f'[DEBUG] Database URL: {database_url}\n{line_url}\n{os.getenv('TEST_DB_URL')}\n{settings.DATABASE_URL_SYNC}')
 
 config = context.config
 config.set_main_option("sqlalchemy.url", database_url)
+print(f'[DEBUG] Database URL: {config.get_main_option('sqlalchemy.url')}')
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

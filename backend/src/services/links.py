@@ -1,3 +1,4 @@
+from src.schemas.links import LinkRead
 from src.services.shortener import ShortenerGenerator
 from src.db.queries import LinkQueriesQueries
 import uuid
@@ -7,7 +8,7 @@ class LinkService:
         self.queries = queries
         self._max_retries = 3
 
-    async def create_short_link(self, original_url: str, user_id: uuid.UUID) -> Link:
+    async def create_short_link(self, original_url: str, user_id: uuid.UUID) -> LinkRead:
         for i in range(self._max_retries):
             code = ShortenerGenerator.generate()
             try:

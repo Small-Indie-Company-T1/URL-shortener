@@ -7,7 +7,8 @@ from sqlalchemy import pool
 from alembic import context
 from src.core.config import settings
 
-database_url = settings.DATABASE_URL_SYNC
+line_url = context.config.get_main_option('sqlalchemy.url')
+database_url = line_url or os.getenv('TEST_DB_URL') or settings.DATABASE_URL_SYNC
 
 config = context.config
 config.set_main_option("sqlalchemy.url", database_url)

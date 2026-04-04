@@ -3,6 +3,14 @@ services:
     image: postgres:18-alpine
     env_file:
       - "./env/postgres.env"
+    environment:
+      - DATABASE_URL
+      - ACCESS_TOKEN_EXPIRE_MINUTES
+      - REFRESH_TOKEN_EXPIRE_DAYS
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - TEST_DB_URL
     ports:
       - "5432:5432"
     volumes:
@@ -24,6 +32,13 @@ services:
       - "./env/app.env"
     environment:
       - POSTGRES_HOST=db
+      - DATABASE_URL
+      - ACCESS_TOKEN_EXPIRE_MINUTES
+      - REFRESH_TOKEN_EXPIRE_DAYS
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - TEST_DB_URL
     depends_on:
       db:
         condition: service_healthy
@@ -46,7 +61,10 @@ services:
         condition: service_started
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - node_modules_data:/app/node_modules
 
 volumes:
   pg_data:
+    name: "url-shortener_pg_data"
+  node_modules_data:
+    name: "url-shortener_node_modules"

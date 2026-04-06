@@ -6,22 +6,24 @@ let currentAccessToken = 'valid-token';
 let currentRefreshToken = 'refresh-123';
 
 export const handlers = [
-  http.post('/register', async ({ request }) => {
-    const { email, name, password } = await request.json();
-    if (!email || !name || !password) {
-      return new HttpResponse(null, { status: 400 });
+  http.post('/auth/register', async ({ request }) => {
+    const { email, nickname, password } = await request.json();
+    if (!email || !nickname || !password) {
+      return new HttpResponse(
+        JSON.stringify({ email: email, name: nickname, password: password }),
+        { status: 400 }
+      );
     }
-    if (users.every((user) => user.email !== name)) {
-      users.push({ email, name, password });
+    if (users.every((user) => user.email !== nickname)) {
+      users.push({ email, nickname, password });
       return new HttpResponse(null, { status: 201 });
     } else {
       return new HttpResponse(null, { status: 409 });
     }
   }),
 
-  http.post('/login', async ({ request }) => {
+  http.post('/auth/login', async ({ request }) => {
     const { email, password } = await request.json();
-    console.log(email, password);
     if (
       users.some((user) => user.email === email && user.password === password)
     ) {
@@ -29,7 +31,7 @@ export const handlers = [
 
       return new HttpResponse(
         JSON.stringify({
-          accessToken: currentAccessToken,
+          access_token: currentAccessToken,
         }),
         {
           status: 200,
@@ -44,7 +46,7 @@ export const handlers = [
     return new HttpResponse(null, { status: 401 });
   }),
 
-  http.post('/logout', () => {
+  http.post('/auth/logout', () => {
     currentAccessToken = null;
     currentRefreshToken = null;
     return new HttpResponse(null, {
@@ -53,7 +55,7 @@ export const handlers = [
     });
   }),
 
-  http.post('/refresh', ({ cookies }) => {
+  http.post('/auth/refresh', ({ cookies }) => {
     const refreshToken = cookies.refreshToken;
 
     if (refreshToken === currentRefreshToken) {
@@ -63,5 +65,32 @@ export const handlers = [
     }
 
     return new HttpResponse(null, { status: 401 });
+  }),
+
+  http.post('/links/create', async ({ request }) => {
+    try {
+      const { original_url } = await request.json();
+      if (!original_url) {
+        return new HttpResponse(null, { status: 400 });
+      }
+
+      if (original_url.length > 100) {
+        return new HttpResponse(null, { status: 422 });
+      }
+      return new HttpResponse(
+        JSON.stringify({
+          short_code: '42zxc67',
+        }),
+        {
+          status: 201,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error.message);
+      return new HttpResponse(null, { status: 500 });
+    }
   }),
 ];

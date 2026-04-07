@@ -1,13 +1,10 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: (import.meta.env.VITE_API_BASE_URL || '') + '/auth', // адрес бэка
-  withCredentials: true,
-});
+import { api, createApi } from './apiClient.js';
 
 let accessToken = null;
 let onTokenUpdate = null;
 let refreshPromise = null;
+
+const authApi = createApi('/auth');
 
 const setToken = (token) => {
   accessToken = token;
@@ -30,10 +27,9 @@ export function setupInterceptors() {
     async (error) => {
       const originalRequest = error.config;
 
-      if (originalRequest.url === '/refresh') {
+      if (originalRequest.url?.includes('/refresh')) {
         setToken(null);
         onTokenUpdate?.(null);
-        await logoutUser();
         return Promise.reject(error);
       }
 
@@ -46,7 +42,9 @@ export function setupInterceptors() {
           originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
           return api.request(originalRequest);
         } catch (err) {
-          await logoutUser();
+          // await logoutUser();
+          setToken(null);
+          onTokenUpdate?.(null);
           return Promise.reject(err);
         }
       }
@@ -57,10 +55,11 @@ export function setupInterceptors() {
 
 export async function loginUser(email, password) {
   try {
-    const response = await api.post('/login', { email, password });
+    const response = await authApi.post('/login', { email, password });
 
     const newToken = response.data.access_token;
     setToken(newToken);
+    console.log(accessToken, newToken);
     onTokenUpdate?.(newToken);
   } catch (error) {
     console.error('Ошибка при входе:', error.status);
@@ -70,7 +69,11 @@ export async function loginUser(email, password) {
 
 export async function registerUser(email, nickname, password) {
   try {
-    const response = await api.post('/register', { email, nickname, password });
+    const response = await authApi.post('/register', {
+      email,
+      nickname,
+      password,
+    });
     return response.data;
   } catch (error) {
     console.error('Ошибка при регистрации:', error.status);
@@ -80,7 +83,7 @@ export async function registerUser(email, nickname, password) {
 
 export async function logoutUser() {
   try {
-    await api.post('/logout');
+    await authApi.post('/logout');
     setToken(null);
     onTokenUpdate?.(null);
   } catch (error) {
@@ -91,13 +94,18 @@ export async function logoutUser() {
 
 export async function refreshToken() {
   if (!refreshPromise) {
-    refreshPromise = api
+    refreshPromise = authApi
       .post('/refresh')
       .then((response) => {
         const newToken = response.data.access_token;
         setToken(newToken);
         onTokenUpdate?.(newToken);
         return newToken;
+      })
+      .catch((error) => {
+        setToken(null);
+        onTokenUpdate?.(null);
+        throw error;
       })
       .finally(() => {
         refreshPromise = null;

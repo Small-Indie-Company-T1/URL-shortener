@@ -8,13 +8,12 @@ from datetime import datetime, timedelta
 from src.core.config import settings
 
 
-PAYLOAD = {
-    'email': 'test_email@example.com',
-    'password': 'Hash456'
-}
-
 @pytest.mark.asyncio
 async def test_refresh_token_success(client, test_user):
+    PAYLOAD = {
+        'email': test_user.email,
+        'password': 'Hash456'
+    }
     login_res = await client.post('/auth/login', json=PAYLOAD)
     old_refresh = client.cookies.get('refresh_token')
     await asyncio.sleep(1.1)
@@ -67,6 +66,10 @@ async def test_refresh_token_session_not_found(client, test_user):
 
 @pytest.mark.asyncio
 async def test_refresh_token_reuse(client, test_user):
+    PAYLOAD = {
+        'email': test_user.email,
+        'password': 'Hash456'
+    }
     await client.post('/auth/login', json=PAYLOAD)
     token_1 = client.cookies.get('refresh_token')
     await asyncio.sleep(1.1)
@@ -81,6 +84,10 @@ async def test_refresh_token_reuse(client, test_user):
 
 @pytest.mark.asyncio
 async def test_refresh_revoked_session(client, test_user, test_pool):
+    PAYLOAD = {
+        'email': test_user.email,
+        'password': 'Hash456'
+    }
     await client.post('/auth/login', json=PAYLOAD)
     refresh_token = client.cookies.get('refresh_token')
     new_payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
@@ -93,9 +100,16 @@ async def test_refresh_revoked_session(client, test_user, test_pool):
 
 @pytest.mark.asyncio
 async def test_refresh_token_invalid_signature(client, test_user):
+    PAYLOAD = {
+        'email': test_user.email,
+        'password': 'Hash456'
+    }
     await client.post('/auth/login', json=PAYLOAD)
     valid_token = client.cookies.get('refresh_token')
-    corrupted = valid_token[:-1] + ('a' if valid_token[-1] != 'a' else 'b')
+    parts = valid_token.split('.')
+    sig = parts[2]
+    corrupted_sig = ('z' if sig[5] != 'z' else 'y') + sig[6:]
+    corrupted = f'{parts[0]}.{parts[1]}.{corrupted_sig}'
     client.cookies.set('refresh_token', corrupted)
     response = await client.post('/auth/refresh')
     assert response.status_code == 401

@@ -7,7 +7,7 @@ from src.core.config import settings
 @pytest.mark.asyncio
 async def test_logout(client, test_user):
     payload = {
-        'email': 'test_email@example.com',
+        'email': test_user.email,
         'password': 'Hash456'
     }
     await client.post(

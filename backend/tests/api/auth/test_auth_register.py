@@ -20,7 +20,7 @@ async def test_register_success(client, clear_db):
 async def test_register_duplicate_email(client, test_user):
     payload = {
         'nickname': 'tester',
-        'email': 'test_email@example.com',
+        'email': test_user.email,
         'password': 'qwerty67'
     }
     response = await client.post(

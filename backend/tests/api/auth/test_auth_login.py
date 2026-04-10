@@ -4,7 +4,7 @@ import pytest
 @pytest.mark.asyncio
 async def test_login_success(client, test_user):
     payload = {
-        'email': 'test_email@example.com',
+        'email': test_user.email,
         'password': 'Hash456'
     }
     response = await client.post(
@@ -20,7 +20,7 @@ async def test_login_success(client, test_user):
 @pytest.mark.asyncio
 async def test_login_wrong_password(client, test_user):
     payload = {
-        'email': 'test_email@example.com',
+        'email': test_user.email,
         'password': 'Bullshit'
     }
     response = await client.post(
@@ -33,7 +33,7 @@ async def test_login_wrong_password(client, test_user):
 @pytest.mark.asyncio
 async def test_login_swagger_success(client, test_user):
     payload = {
-        'username': 'test_email@example.com',
+        'username': test_user.email,
         'password': 'Hash456'
     }
     response = await client.post(

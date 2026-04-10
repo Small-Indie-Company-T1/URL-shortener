@@ -55,19 +55,21 @@ async def clear_db(test_pool):
 @dataclass
 class MockUser:
     id: uuid.UUID
+    email: str
 
 @pytest.fixture
 async def test_user(clear_db, test_pool):
     ph = PasswordHasher()
     hashed_password_bytes = ph.hash('Hash456').encode('utf-8')
-    user_uuid = uuid.UUID('5b3f78bb-752b-48aa-8094-da6296f6bf2d')
+    user_uuid = uuid.uuid4()
+    user_email = f'temp_{uuid.uuid4().hex[:8]}@example.com'
     async with test_pool.acquire() as conn:
         await conn.execute(
             "INSERT INTO users (id, nickname, email, password) "
-            "VALUES ($1, 'tester', 'test_email@example.com', $2) "
-            "ON CONFLICT (id) DO NOTHING", user_uuid, hashed_password_bytes
+            "VALUES ($1, 'tester', $2, $3) "
+            "ON CONFLICT (id) DO NOTHING", user_uuid, user_email, hashed_password_bytes
         )
-    return MockUser(id=user_uuid)
+    return MockUser(id=user_uuid, email=user_email)
 
 @pytest.fixture
 def mock_queries():

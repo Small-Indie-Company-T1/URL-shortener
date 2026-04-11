@@ -78,9 +78,7 @@ export const handlers = [
         return new HttpResponse(null, { status: 422 });
       }
       return new HttpResponse(
-        JSON.stringify({
-          short_code: '42zxc67',
-        }),
+        JSON.stringify({ id: '42', short_code: '42zxc67' }),
         {
           status: 201,
           headers: {
@@ -92,5 +90,16 @@ export const handlers = [
       console.log(error.message);
       return new HttpResponse(null, { status: 500 });
     }
+  }),
+  http.post('/links/42/qr', async () => {
+    const response = await fetch('/QR_code.svg');
+    const blob = await response.blob();
+
+    return new HttpResponse(blob, {
+      status: 200,
+      headers: {
+        'Content-Type': 'image/svg+xml',
+      },
+    });
   }),
 ];

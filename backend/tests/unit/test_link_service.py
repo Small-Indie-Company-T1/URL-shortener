@@ -16,3 +16,4 @@ async def test_create_link_collision(mock_queries):
         )
     assert "Не удалось сгенерировать уникальный код" in str(e.value)
     assert mock_queries.CreateLink.call_count == 3
+

@@ -101,6 +101,11 @@ class LinkQueriesQueries:
         VALUES ($1, $2, $3)
         RETURNING id, creator_id, original_url, short_code, created_at, is_active, is_deleted
     """
+    GETLINKSBYUSERID = """
+        SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
+        WHERE creator_id = $1 AND is_deleted = false
+        ORDER BY created_at DESC
+    """
     GETLINKBYCODE = """
         SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
         WHERE short_code = $1 AND is_deleted = false
@@ -125,6 +130,22 @@ class LinkQueriesQueries:
             original_url=row["original_url"],
             short_code=row["short_code"],
         )
+    async def GetLinksByUserId(self, creator_id: uuid.UUID) -> list[models.public.Links]:
+        rows = await self.connection.fetch(
+            self.GETLINKSBYUSERID, creator_id
+        )
+        return [
+            models.public.Links(
+                created_at=row["created_at"],
+                creator_id=row["creator_id"],
+                id=row["id"],
+                is_active=row["is_active"],
+                is_deleted=row["is_deleted"],
+                original_url=row["original_url"],
+                short_code=row["short_code"],
+            )
+            for row in rows
+        ]
     async def GetLinkByCode(self, short_code: str) -> models.public.Links | None:
         row = await self.connection.fetchrow(
             self.GETLINKBYCODE, short_code

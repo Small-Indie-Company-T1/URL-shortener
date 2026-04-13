@@ -1,3 +1,5 @@
+from typing import List
+
 from src.schemas.links import LinkRead
 from src.services.shortener import ShortenerGenerator
 from src.db.queries import LinkQueriesQueries
@@ -21,3 +23,7 @@ class LinkService:
             except ValueError: # FIXME
                 continue
         raise Exception("Не удалось сгенерировать уникальный код")
+    
+    async def get_user_links(self, user_id: uuid.UUID) -> List[LinkRead]:
+        links = await self.queries.GetLinksByUserId(creator_id=user_id)
+        return [LinkRead.model_validate(link) for link in links]

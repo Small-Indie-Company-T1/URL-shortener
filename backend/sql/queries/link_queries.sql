@@ -12,3 +12,9 @@ LIMIT 1;
 SELECT * FROM links
 WHERE creator_id = $1 AND is_deleted = false
 ORDER BY created_at DESC;
+
+-- name: DeleteLink :one
+UPDATE links
+SET is_deleted = true
+WHERE short_code = $1 AND creator_id = $2
+RETURNING id;

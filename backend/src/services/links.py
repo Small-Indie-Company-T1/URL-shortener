@@ -1,6 +1,6 @@
 from typing import List
 
-from src.schemas.links import LinkList, LinkRead
+from src.schemas.links import LinkRead
 from src.services.shortener import ShortenerGenerator
 from src.db.queries import LinkQueriesQueries
 import uuid

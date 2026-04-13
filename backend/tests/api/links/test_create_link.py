@@ -38,6 +38,7 @@ async def test_create_link_invalid_url(client, test_user):
         json={'original_url': 'some bullshit'}
     )
     assert response.status_code == 422
+    app.dependency_overrides.clear()
 
 @pytest.mark.asyncio
 async def test_create_link_internal_error(client, test_user):

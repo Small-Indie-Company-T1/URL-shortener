@@ -111,6 +111,12 @@ class LinkQueriesQueries:
         WHERE short_code = $1 AND is_deleted = false
         LIMIT 1
     """
+    DELETELINK = """
+        UPDATE links
+        SET is_deleted = true
+        WHERE short_code = $1 AND creator_id = $2
+        RETURNING id
+    """
     def __init__(self, connection: asyncpg.Connection):
         self.connection = connection
 
@@ -160,6 +166,15 @@ class LinkQueriesQueries:
             is_deleted=row["is_deleted"],
             original_url=row["original_url"],
             short_code=row["short_code"],
+        )
+    async def DeleteLink(self, short_code: str, creator_id: uuid.UUID) -> models.link_queries_queries.DeletelinkRow | None:
+        row = await self.connection.fetchrow(
+            self.DELETELINK, short_code, creator_id
+        )
+        if row is None:
+            return None
+        return models.link_queries_queries.DeletelinkRow(
+            id=row["id"],
         )
 
 

@@ -18,3 +18,9 @@ UPDATE links
 SET is_deleted = true
 WHERE short_code = $1 AND creator_id = $2
 RETURNING id;
+
+-- name: CheckLinkExists :one
+SELECT EXISTS(
+    SELECT 1 FROM links
+    WHERE short_code = $1 AND is_deleted = false
+);

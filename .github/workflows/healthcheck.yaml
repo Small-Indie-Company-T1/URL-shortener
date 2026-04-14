@@ -2,7 +2,7 @@ name: Health check
 
 on:
   push:
-    branches: [ main, develop, feature/sf-26 ]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
 
@@ -40,7 +40,7 @@ jobs:
               echo "db is up!"
               break
             fi
-            echo "Waiting for db... ($i)"
+            echo "Waiting for db... ($i/15)"
             sleep 2
           done
 

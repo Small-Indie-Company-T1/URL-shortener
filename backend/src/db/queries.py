@@ -101,6 +101,12 @@ class LinkQueriesQueries:
         VALUES ($1, $2, $3)
         RETURNING id, creator_id, original_url, short_code, created_at, is_active, is_deleted
     """
+    CHECKLINKEXISTS = """
+        SELECT EXISTS(
+            SELECT 1 FROM links
+            WHERE short_code = $1 AND is_deleted = false
+        )
+    """
     GETLINKSBYUSERID = """
         SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
         WHERE creator_id = $1 AND is_deleted = false
@@ -135,6 +141,15 @@ class LinkQueriesQueries:
             is_deleted=row["is_deleted"],
             original_url=row["original_url"],
             short_code=row["short_code"],
+        )
+    async def CheckLinkExists(self, short_code: str) -> models.link_queries_queries.ChecklinkexistsRow | None:
+        row = await self.connection.fetchrow(
+            self.CHECKLINKEXISTS, short_code
+        )
+        if row is None:
+            return None
+        return models.link_queries_queries.ChecklinkexistsRow(
+            exists=row["exists"],
         )
     async def GetLinksByUserId(self, creator_id: uuid.UUID) -> list[models.public.Links]:
         rows = await self.connection.fetch(

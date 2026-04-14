@@ -33,12 +33,18 @@ async def create_link(
 
 @router.get("/", response_model=LinkList)
 async def list_my_links(
+    limit: int = 10,
+    offset: int = 0,
     db: asyncpg.Connection = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     service = LinkService(LinkQueriesQueries(db))
     try:
-        links = await service.get_user_links(user_id=current_user.id)
+        links = await service.get_user_links(
+            user_id=current_user.id,
+            limit=limit,
+            offset=offset
+        )
         return {
             "links": links,
             "total": len(links)

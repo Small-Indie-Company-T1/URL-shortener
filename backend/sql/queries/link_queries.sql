@@ -11,7 +11,8 @@ LIMIT 1;
 -- name: GetLinksByUserId :many
 SELECT * FROM links
 WHERE creator_id = $1 AND is_deleted = false
-ORDER BY created_at DESC;
+ORDER BY created_at DESC
+LIMIT $2 OFFSET $3;
 
 -- name: DeleteLink :one
 UPDATE links

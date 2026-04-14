@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
 import { useNavigate } from 'react-router-dom';
+import PasswordInput from './PasswordInput.jsx';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -38,16 +39,16 @@ export default function LoginForm() {
               clearError();
             }}
           />
-          <input
-            required
-            type="password"
+
+          <PasswordInput
             placeholder="Пароль"
-            value={password}
+            password={password}
             onChange={(e) => {
               setPassword(e.target.value);
               clearError();
             }}
           />
+
           <button type="submit">Войти</button>
           {error && <p style={{ color: 'red' }}>{error}</p>}
         </fieldset>

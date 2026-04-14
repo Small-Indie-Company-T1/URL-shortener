@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 // "база данных"
-let users = [];
+let users = [{ email: 'kirka1408kirka@gmail.com', password: 'ad' }];
 let currentAccessToken = 'valid-token';
 let currentRefreshToken = 'refresh-123';
 
@@ -91,14 +91,15 @@ export const handlers = [
       return new HttpResponse(null, { status: 500 });
     }
   }),
-  http.post('/links/42/qr', async () => {
-    const response = await fetch('/QR_code.svg');
+  http.post('/links/42/qr', async ({ request }) => {
+    const { format } = await request.json();
+    const response = await fetch(`/QR_code.${format}`);
     const blob = await response.blob();
 
     return new HttpResponse(blob, {
       status: 200,
       headers: {
-        'Content-Type': 'image/svg+xml',
+        'Content-Type': `image/${format === 'svg' ? 'svg+xml' : 'png'}`,
       },
     });
   }),

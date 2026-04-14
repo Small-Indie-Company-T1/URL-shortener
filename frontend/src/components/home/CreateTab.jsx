@@ -18,12 +18,9 @@ export default function CreateTab() {
         link: (import.meta.env.VITE_API_BASE_URL || '/') + short_code,
         id: id,
       });
-      const blob = await createQr(id);
+      const blob = await createQr(id, 'svg');
       if (!error) {
-        console.log(blob.type);
-        console.log(blob.size);
         const url = URL.createObjectURL(blob);
-        console.log(url);
         setQrUrl(url);
       }
     } else setShortLink({});
@@ -35,9 +32,9 @@ export default function CreateTab() {
     }
   }, [error]);
 
-  // useEffect(() => {
-  //   URL.revokeObjectURL(qrUrl);
-  // }, []); // called when component unmounts
+  useEffect(() => {
+    URL.revokeObjectURL(qrUrl);
+  }, []); // called when component unmounts
 
   return (
     <div>
@@ -57,7 +54,11 @@ export default function CreateTab() {
         </fieldset>
       </form>
       {shortLink.link && (
-        <GeneratedLinkPanel shortLink={shortLink.link} qrUrl={qrUrl} />
+        <GeneratedLinkPanel
+          shortLink={shortLink.link}
+          qrUrl={qrUrl}
+          downloadQr={async () => await createQr(shortLink.id, 'png')}
+        />
       )}
     </div>
   );

@@ -25,17 +25,18 @@ export default function useLinks() {
     }
   };
 
-  const createQr = async (url) => {
+  const createQr = async (url, format) => {
     setIsLoading(true);
     try {
-      return await createQrCode(url);
+      return await createQrCode(url, format);
     } catch (error) {
       switch (error.response?.status) {
         default:
           setError('QR error occurred.');
       }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return {

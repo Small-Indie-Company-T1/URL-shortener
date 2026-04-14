@@ -12,11 +12,11 @@ export async function createLink(original_url) {
   }
 }
 
-export async function createQrCode(url_id) {
+export async function createQrCode(url_id, format) {
   try {
     const response = await linksApi.post(
       `/${url_id}/qr`,
-      { format: 'svg' },
+      { format: format },
       {
         responseType: 'blob',
       }

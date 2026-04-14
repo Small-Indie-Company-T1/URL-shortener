@@ -1,32 +1,40 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 import useLinks from '../../hooks/useLinks.js';
+import GeneratedLinkPanel from './GeneratedLinkPanel.jsx';
 
 export default function CreateTab() {
-  const { isLoading, error, create, clearError } = useLinks();
+  const { isLoading, error, create, createQr, clearError } = useLinks();
   const [link, setLink] = useState('');
-  const [shortLink, setShortLink] = useState('');
+  const [shortLink, setShortLink] = useState({});
+  const [qrUrl, setQrUrl] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const new_link = await create(link);
-    if (new_link) setShortLink(`localhost:5173/${new_link}`);
-    else setShortLink('');
+    const { short_code, id } = await create(link);
+    if (short_code) {
+      setShortLink({
+        link: (import.meta.env.VITE_API_BASE_URL || '/') + short_code,
+        id: id,
+      });
+      const blob = await createQr(id, 'svg');
+      if (!error) {
+        const url = URL.createObjectURL(blob);
+        setQrUrl(url);
+      }
+    } else setShortLink({});
   };
 
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(shortLink);
-      toastr.success('Ссылка скопирована в буфер обмена.');
-    } catch (error) {
-      console.error(error);
-      toastr.error(
-        'Не удалось скопировать ссылку. Попробуйте вручную.',
-        'Ошибка'
-      );
+  useEffect(() => {
+    if (error) {
+      toastr.error(error);
     }
-  };
+  }, [error]);
+
+  useEffect(() => {
+    URL.revokeObjectURL(qrUrl);
+  }, []); // called when component unmounts
 
   return (
     <div>
@@ -45,10 +53,13 @@ export default function CreateTab() {
           <button type="submit">Создать</button>
         </fieldset>
       </form>
-      <p>Your link:</p>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <textarea placeholder="Сокращённая ссылка" value={shortLink} readOnly />
-      <button onClick={handleCopyLink}>{'Copy'}</button>
+      {shortLink.link && (
+        <GeneratedLinkPanel
+          shortLink={shortLink.link}
+          qrUrl={qrUrl}
+          downloadQr={async () => await createQr(shortLink.id, 'png')}
+        />
+      )}
     </div>
   );
 }

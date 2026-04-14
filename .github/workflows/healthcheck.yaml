@@ -57,7 +57,7 @@ jobs:
               echo "FastAPI is healthy!"
               exit 0
             fi
-            echo "Waiting for FastAPI... ($i)"
+            echo "Waiting for FastAPI... ($i/3)"
             sleep 2
           done
 

@@ -111,6 +111,7 @@ class LinkQueriesQueries:
         SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
         WHERE creator_id = $1 AND is_deleted = false
         ORDER BY created_at DESC
+        LIMIT $2 OFFSET $3
     """
     GETLINKBYCODE = """
         SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
@@ -151,9 +152,9 @@ class LinkQueriesQueries:
         return models.link_queries_queries.ChecklinkexistsRow(
             exists=row["exists"],
         )
-    async def GetLinksByUserId(self, creator_id: uuid.UUID) -> list[models.public.Links]:
+    async def GetLinksByUserId(self, creator_id: uuid.UUID, limit: int, offset: int) -> list[models.public.Links]:
         rows = await self.connection.fetch(
-            self.GETLINKSBYUSERID, creator_id
+            self.GETLINKSBYUSERID, creator_id, limit, offset
         )
         return [
             models.public.Links(

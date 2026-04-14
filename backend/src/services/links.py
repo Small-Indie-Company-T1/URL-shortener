@@ -29,8 +29,12 @@ class LinkService:
                 continue
         raise Exception("Не удалось сгенерировать уникальный код")
     
-    async def get_user_links(self, user_id: uuid.UUID) -> List[LinkRead]:
-        links = await self.queries.GetLinksByUserId(creator_id=user_id)
+    async def get_user_links(self, user_id: uuid.UUID, limit: int = 10, offset: int = 0) -> List[LinkRead]:
+        links = await self.queries.GetLinksByUserId(
+            creator_id=user_id,
+            limit=limit,
+            offset=offset
+        )
         return [LinkRead.model_validate(link) for link in links]
 
     async def delete_link(self, short_code: str, user_id: uuid.UUID) -> bool:

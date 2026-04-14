@@ -11,10 +11,17 @@ LIMIT 1;
 -- name: GetLinksByUserId :many
 SELECT * FROM links
 WHERE creator_id = $1 AND is_deleted = false
-ORDER BY created_at DESC;
+ORDER BY created_at DESC
+LIMIT $2 OFFSET $3;
 
 -- name: DeleteLink :one
 UPDATE links
 SET is_deleted = true
 WHERE short_code = $1 AND creator_id = $2
 RETURNING id;
+
+-- name: CheckLinkExists :one
+SELECT EXISTS(
+    SELECT 1 FROM links
+    WHERE short_code = $1 AND is_deleted = false
+);

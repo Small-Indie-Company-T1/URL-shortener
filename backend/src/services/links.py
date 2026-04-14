@@ -1,9 +1,14 @@
+import io
 from typing import List
+import uuid
+
+import segno
 
 from src.schemas.links import LinkRead
 from src.services.shortener import ShortenerGenerator
 from src.db.queries import LinkQueriesQueries
-import uuid
+from src.core.config import settings
+
 
 class LinkService:
     def __init__(self, queries: LinkQueriesQueries):
@@ -24,8 +29,12 @@ class LinkService:
                 continue
         raise Exception("Не удалось сгенерировать уникальный код")
     
-    async def get_user_links(self, user_id: uuid.UUID) -> List[LinkRead]:
-        links = await self.queries.GetLinksByUserId(creator_id=user_id)
+    async def get_user_links(self, user_id: uuid.UUID, limit: int = 10, offset: int = 0) -> List[LinkRead]:
+        links = await self.queries.GetLinksByUserId(
+            creator_id=user_id,
+            limit=limit,
+            offset=offset
+        )
         return [LinkRead.model_validate(link) for link in links]
 
     async def delete_link(self, short_code: str, user_id: uuid.UUID) -> bool:
@@ -34,3 +43,15 @@ class LinkService:
             return deleted_id is not None
         except Exception as e:
             return False
+
+    async def exists(self, short_code: str) -> bool:
+        result = await self.queries.CheckLinkExists(short_code)
+        return result.exists
+
+    def generate_qr_code(self, short_code: str) -> io.BytesIO:
+        full_url = f'{settings.BASE_URL}/{short_code}'
+        qr = segno.make(full_url)
+        out = io.BytesIO()
+        qr.save(out, kind='png', scale=10)
+        out.seek(0)
+        return out

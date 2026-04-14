@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import uuid
 
 from argon2 import PasswordHasher
@@ -58,3 +59,11 @@ async def test_delete_link_no_rights(client, test_pool):
     async with test_pool.acquire() as conn:
         await conn.execute('TRUNCATE TABLE links, users RESTART IDENTITY CASCADE;')
 
+@pytest.mark.asyncio
+async def test_delete_link_internal_error(client, test_user):
+    app.dependency_overrides[get_current_user] = lambda: test_user
+    with patch("src.api.v1.links.LinkService.delete_link", side_effect=Exception("Failure")):
+        response = await client.delete('/links/Abc123')
+        assert response.status_code == 500
+        assert "Внутренняя ошибка" in response.json().get('detail')
+    app.dependency_overrides.clear()

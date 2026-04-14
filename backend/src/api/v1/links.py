@@ -2,6 +2,8 @@ import uuid
 
 import asyncpg
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.responses import StreamingResponse
+
 from src.db.queries import LinkQueriesQueries
 from src.db.database import get_db
 from src.schemas.links import LinkCreate, LinkRead, LinkList
@@ -33,12 +35,18 @@ async def create_link(
 
 @router.get("/", response_model=LinkList)
 async def list_my_links(
+    limit: int = 10,
+    offset: int = 0,
     db: asyncpg.Connection = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     service = LinkService(LinkQueriesQueries(db))
     try:
-        links = await service.get_user_links(user_id=current_user.id)
+        links = await service.get_user_links(
+            user_id=current_user.id,
+            limit=limit,
+            offset=offset
+        )
         return {
             "links": links,
             "total": len(links)
@@ -71,3 +79,19 @@ async def delete_user_link(
             detail='Ссылка не найдена или у вас нет прав на ее удаление'
         )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@router.get("/{short_code}/qr")
+async def get_link_qr(
+    short_code: str,
+    db: asyncpg.Connection = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    service = LinkService(LinkQueriesQueries(db))
+    link_exists = await service.exists(short_code)
+    if not link_exists:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Короткая ссылка не найдена'
+        )
+    qr_img = service.generate_qr_code(short_code)
+    return StreamingResponse(qr_img, media_type="image/png")

@@ -1,12 +1,6 @@
 import { useState } from 'react';
 
-const PasswordInput = ({
-  password,
-  placeholder,
-  onChange,
-  onFocus,
-  onBlur,
-}) => {
+const PasswordInput = ({ password, placeholder, onChange, onBlur }) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div>
@@ -16,7 +10,6 @@ const PasswordInput = ({
         placeholder={placeholder}
         value={password}
         onChange={onChange}
-        onFocus={onFocus}
         onBlur={onBlur}
       />
       <button

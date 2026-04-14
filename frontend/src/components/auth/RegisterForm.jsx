@@ -25,7 +25,7 @@ export default function RegisterForm() {
     await register(email, name, password);
   };
 
-  const validatePassword = () => {
+  useEffect(() => {
     if (password !== confirmPassword) {
       setPasswordError('Пароли не совпадают');
     } else if (password.length < 8) {
@@ -36,11 +36,12 @@ export default function RegisterForm() {
       setPasswordError(
         'Пароль не должен начинаться или заканчиваться пробелами'
       );
+    } else {
+      setPasswordError('');
     }
-  };
+  }, [password, confirmPassword]);
 
   const navigate = useNavigate();
-
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/home', { replace: true });
@@ -81,8 +82,6 @@ export default function RegisterForm() {
               setPassword(e.target.value);
               clearError();
             }}
-            onFocus={() => setPasswordError('')}
-            onBlur={() => validatePassword()}
           />
 
           <PasswordInput
@@ -92,17 +91,17 @@ export default function RegisterForm() {
               setConfirmPassword(e.target.value);
               clearError();
             }}
-            onFocus={() => setPasswordError('')}
             onBlur={() => {
               setConfirmTouched(true);
-              validatePassword();
             }}
           />
 
           {confirmTouched && passwordError && (
             <p style={{ color: 'red' }}>{passwordError}</p>
           )}
-          <button type="submit">Зарегистрироваться</button>
+          <button type="submit" disabled={passwordError !== ''}>
+            Зарегистрироваться
+          </button>
           {error && <p style={{ color: 'red' }}>{error}</p>}
         </fieldset>
         <p>

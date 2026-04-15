@@ -43,7 +43,7 @@ export default function useAuth() {
       await login(email, password); // Автоматический вход после регистрации
     } catch (error) {
       switch (error.response?.status) {
-        case 409:
+        case 400:
           setError('Пользователь с такой почтой уже существует');
           break;
         default:

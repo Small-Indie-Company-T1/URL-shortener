@@ -53,9 +53,10 @@ export default function GeneratedLinkPanel({ shortLink, qrUrl, downloadQr }) {
         src={qrUrl || null}
         alt="QR Code"
       />
-      <button onClick={() => setDropdownOpen(true)}>Скачать</button>
+      <button onMouseEnter={() => setDropdownOpen(true)}>Скачать</button>
       {dropdownOpen && (
         <DropDownCard
+          onMouseLeave={() => setDropdownOpen(false)}
           data={[
             <button onClick={() => handleDownloadQr('png')}>PNG</button>,
             <button onClick={() => handleDownloadQr('svg')}>SVG</button>,

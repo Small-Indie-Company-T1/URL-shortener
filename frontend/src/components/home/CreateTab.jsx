@@ -18,7 +18,7 @@ export default function CreateTab() {
         link: (import.meta.env.VITE_API_BASE_URL || '/') + short_code,
         id: id,
       });
-      const blob = await createQr(id, 'svg');
+      const blob = await createQr(short_code, 'svg');
       if (!error) {
         const url = URL.createObjectURL(blob);
         setQrUrl(url);
@@ -57,7 +57,7 @@ export default function CreateTab() {
         <GeneratedLinkPanel
           shortLink={shortLink.link}
           qrUrl={qrUrl}
-          downloadQr={async () => await createQr(shortLink.id, 'png')}
+          downloadQr={async () => await createQr(shortLink.link, 'png')}
         />
       )}
     </div>

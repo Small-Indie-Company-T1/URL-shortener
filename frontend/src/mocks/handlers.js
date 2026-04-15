@@ -91,7 +91,7 @@ export const handlers = [
       return new HttpResponse(null, { status: 500 });
     }
   }),
-  http.post('/links/42/qr', async ({ request }) => {
+  http.post('/links/42zxc67/qr', async ({ request }) => {
     const { format } = await request.json();
     const response = await fetch(`/QR_code.${format}`);
     const blob = await response.blob();

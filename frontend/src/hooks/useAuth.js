@@ -6,6 +6,7 @@ import {
   refreshToken,
   setTokenUpdateHandler,
 } from '../utils/authApi';
+import { checkServerHealth } from '../utils/apiClient.js';
 
 export default function useAuth() {
   const [token, setToken] = useState(null);
@@ -60,6 +61,7 @@ export default function useAuth() {
     setTokenUpdateHandler(setToken);
     const initAuth = async () => {
       try {
+        await checkServerHealth();
         await refreshToken();
         setIsAuthenticated(true); //TODO: maybe update less explicit
       } catch {

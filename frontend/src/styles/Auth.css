@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "../App.css";
 
 .auth-container {
     @apply min-h-screen bg-[#EEF8FF] flex items-center justify-center px-4;

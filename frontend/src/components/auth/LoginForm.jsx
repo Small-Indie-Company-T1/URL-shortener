@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
-import "../../pages/Auth.css"; // Наш файл со стилями
+import "../../styles/Auth.css"; // Наш файл со стилями
 
 export default function LoginForm() {
     const [email, setEmail] = useState('');

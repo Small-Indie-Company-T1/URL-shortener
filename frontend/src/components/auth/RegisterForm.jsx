@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
-import "../../pages/Auth.css";
+import "../../styles/Auth.css";
 
 export default function RegisterForm() {
     const [email, setEmail] = useState('');

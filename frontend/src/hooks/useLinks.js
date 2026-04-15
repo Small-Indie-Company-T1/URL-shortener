@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createLink, createQrCode } from '../utils/linksApi.js';
+import { createLink, createQrCode, getLinksList } from '../utils/linksApi.js';
 
 export default function useLinks() {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,14 +25,34 @@ export default function useLinks() {
     }
   };
 
-  const createQr = async (url, format) => {
+  const createQr = async (short_code, format) => {
     setIsLoading(true);
     try {
-      return await createQrCode(url, format);
+      return await createQrCode(short_code, format);
     } catch (error) {
       switch (error.response?.status) {
+        case 422:
+          setError('Validation error occurred.');
+          break;
         default:
           setError('QR error occurred.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getLinks = async (offset, limit = 10) => {
+    setIsLoading(true);
+    try {
+      return await getLinksList(offset, limit);
+    } catch (error) {
+      switch (error.response?.status) {
+        case 422:
+          setError('Validation error occurred.');
+          break;
+        default:
+          setError('Links error occurred.');
       }
     } finally {
       setIsLoading(false);
@@ -44,6 +64,7 @@ export default function useLinks() {
     error,
     create,
     createQr,
+    getLinks,
     clearError: () => setError(null),
   };
 }

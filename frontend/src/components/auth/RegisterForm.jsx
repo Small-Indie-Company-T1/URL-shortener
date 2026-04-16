@@ -1,112 +1,129 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
-import Input from '../common/Input'; // Возвращаем их компонент
-import "../../styles/Auth.css";
+import PasswordInput from './PasswordInput';
+import '../../styles/Auth.css';
 
 export default function RegisterForm() {
-    const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [confirmTouched, setConfirmTouched] = useState(false);
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-    const { register, isLoading, error, clearError, isAuthenticated } = useAuthContext();
-    const navigate = useNavigate();
+  const [confirmTouched, setConfirmTouched] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
 
-    const showPasswordMismatch = confirmTouched && password !== confirmPassword;
+  const { register, isLoading, error, clearError, isAuthenticated } =
+    useAuthContext();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (password !== confirmPassword) {
-            setConfirmTouched(true);
-            return;
-        }
-        await register(email, name, password);
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setConfirmTouched(true);
+      setPasswordError('Пароли не совпадают');
+      return;
+    }
+    await register(email, name, password);
+  };
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/home', { replace: true });
-        }
-    }, [isAuthenticated, navigate]);
+  useEffect(() => {
+    if (password !== confirmPassword) {
+      setPasswordError('Пароли не совпадают');
+    } else if (password.length < 8) {
+      setPasswordError('Пароль должен быть не менее 8 символов');
+    } else if (password.length > 128) {
+      setPasswordError('Пароль должен быть не более 128 символов');
+    } else if (password !== password.trim()) {
+      setPasswordError(
+        'Пароль не должен начинаться или заканчиваться пробелами'
+      );
+    } else {
+      setPasswordError('');
+    }
+  }, [password, confirmPassword]);
 
-    return (
-        <div className="auth-container">
-            <div className="auth-card">
-                <h1 className="auth-title">Регистрация</h1>
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/home', { replace: true });
+    }
+  }, [isAuthenticated]);
 
-                <form className="auth-form" onSubmit={handleSubmit}>
-                    <fieldset disabled={isLoading} className="contents">
-                        <Input
-                            required
-                            type="email"
-                            placeholder="Email"
-                            className="auth-input"
-                            value={email}
-                            onChange={(e) => {
-                                setEmail(e.target.value);
-                                clearError();
-                            }}
-                        />
-                        <Input
-                            required
-                            type="text"
-                            placeholder="Никнейм"
-                            className="auth-input"
-                            value={name}
-                            onChange={(e) => {
-                                setName(e.target.value);
-                                clearError();
-                            }}
-                        />
-                        <Input
-                            required
-                            type="password"
-                            placeholder="Пароль"
-                            className="auth-input"
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                                clearError();
-                            }}
-                        />
-                        <Input
-                            required
-                            type="password"
-                            placeholder="Повторите пароль"
-                            className="auth-input"
-                            value={confirmPassword}
-                            onChange={(e) => {
-                                setConfirmPassword(e.target.value);
-                                clearError();
-                            }}
-                            onBlur={() => setConfirmTouched(true)}
-                        />
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1 className="auth-title">Регистрация</h1>
 
-                        {showPasswordMismatch && (
-                            <p className="text-red-500 text-center text-sm -mt-3">Пароли не совпадают</p>
-                        )}
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <fieldset disabled={isLoading} className="contents">
+            <input
+              required
+              type="email"
+              className="auth-input"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                clearError();
+              }}
+            />
 
-                        <button type="submit" className="auth-button">
-                            {isLoading ? 'Загрузка...' : 'Зарегистрироваться'}
-                        </button>
+            <input
+              required
+              type="text"
+              className="auth-input"
+              placeholder="Никнейм"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                clearError();
+              }}
+            />
 
-                        {error && (
-                            <p className="text-red-500 text-center text-sm mt-2 font-medium">
-                                {error}
-                            </p>
-                        )}
-                    </fieldset>
-                </form>
+            <PasswordInput
+              password={password}
+              placeholder={'Пароль'}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                clearError();
+              }}
+            />
 
-                <div className="auth-footer">
-                    Уже есть аккаунт?{" "}
-                    <Link to="/login" className="auth-link">
-                        Войти
-                    </Link>
-                </div>
-            </div>
+            <PasswordInput
+              password={confirmPassword}
+              placeholder={'Подтвердите пароль'}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                clearError();
+              }}
+              onBlur={() => {
+                setConfirmTouched(true);
+              }}
+            />
+
+            {confirmTouched && passwordError && (
+              <p className="auth-error">{passwordError}</p>
+            )}
+
+            <button
+              type="submit"
+              className="auth-button"
+              disabled={passwordError !== ''}
+            >
+              {isLoading ? 'Загрузка...' : 'Зарегистрироваться'}
+            </button>
+
+            {error && <p className="auth-error">{error}</p>}
+          </fieldset>
+        </form>
+
+        <div className="auth-footer">
+          Уже есть аккаунт?{' '}
+          <Link to="/login" className="auth-link">
+            Войти
+          </Link>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

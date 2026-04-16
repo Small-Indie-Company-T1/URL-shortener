@@ -29,6 +29,10 @@
     @apply h-14 bg-[#385CA8] hover:bg-[#2d4a8a] text-white text-xl rounded-xl font-bold transition-colors cursor-pointer border-none;
 }
 
+.auth-error {
+    @apply text-red-500 text-center text-sm mt-2 font-medium;
+}
+
 .auth-footer {
     @apply text-center text-sm mt-2 text-[#0B1120];
 }

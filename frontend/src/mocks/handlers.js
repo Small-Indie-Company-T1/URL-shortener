@@ -7,15 +7,27 @@ let currentRefreshToken = 'refresh-123';
 
 export const handlers = [
   http.post('/auth/register', async ({ request }) => {
-    const { email, nickname, password } = await request.json();
+    const data = await request.json();
+    const email = data.email;
+    const password = data.password;
+    const nickname = data.nickname || data.name;
+
     if (!email || !nickname || !password) {
       return new HttpResponse(
-        JSON.stringify({ email: email, name: nickname, password: password }),
-        { status: 400 }
+          JSON.stringify({
+            error: "Missing fields",
+            received: { email, nickname, password }
+          }),
+          {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' }
+          }
       );
     }
+
     if (users.every((user) => user.email !== email)) {
       users.push({ email, nickname, password });
+      console.log('Пользователь успешно создан:', users);
       return new HttpResponse(null, { status: 201 });
     } else {
       return new HttpResponse(null, { status: 409 });

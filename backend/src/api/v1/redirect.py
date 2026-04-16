@@ -4,7 +4,6 @@ import asyncpg
 
 from src.db.database import get_db
 from src.db.queries import LinkQueriesQueries
-from src.services.links import LinkService
 from src.services.analytics import log_click_task, get_real_ip
 
 router = APIRouter()

@@ -78,12 +78,15 @@ async def login(
     }
 
 @router.post("/login-swagger", include_in_schema=False, tags=["login"])
-async def login_swagger(response: Response, request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: asyncpg.Connection = Depends(get_db)):
+async def login_swagger(response: Response, request: Request, 
+                        form_data: OAuth2PasswordRequestForm = Depends(), 
+                        db: asyncpg.Connection = Depends(get_db),
+                        redis_client: redis.Redis = Depends(get_redis)):
     json_compatible_data = UserLogin(
         email=form_data.username,
         password=form_data.password
     )
-    return await login(request, response, json_compatible_data, db=db)
+    return await login(request, response, json_compatible_data, db=db, redis_client=redis_client)
 
 @router.post("/refresh", tags=["token"], response_model=RefreshResponse)
 async def refresh_token(request: Request, response: Response, redis_client: redis.Redis = Depends(get_redis)):

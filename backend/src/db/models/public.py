@@ -14,16 +14,6 @@ class Users:
     password: bytes
 
 @dataclasses.dataclass
-class UserSessions:
-    created_at: datetime.datetime | None
-    expires_at: datetime.datetime
-    id: uuid.UUID
-    is_revoked: bool | None
-    refresh_token: str
-    user_agent: str | None
-    user_id: uuid.UUID
-
-@dataclasses.dataclass
 class Links:
     created_at: datetime.datetime
     creator_id: uuid.UUID

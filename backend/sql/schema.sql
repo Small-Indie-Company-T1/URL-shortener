@@ -36,16 +36,3 @@ CREATE TABLE clicks (
 );
 
 CREATE INDEX clicks_link_idx ON clicks (link_id);
-
-CREATE TABLE user_sessions (
-    id UUID PRIMARY KEY DEFAULT uuidv7(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    refresh_token TEXT NOT NULL UNIQUE ,
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    user_agent TEXT,
-    is_revoked BOOLEAN DEFAULT FALSE
-);
-
-CREATE INDEX sessions_token_idx ON user_sessions (refresh_token);
-CREATE INDEX sessions_user_idx ON user_sessions (user_id);

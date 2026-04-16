@@ -4,7 +4,6 @@ from . import public
 from . import link_queries_queries
 from src.db.models.public import (
     Users,
-    UserSessions,
     Links,
     Clicks,
 )

@@ -1,60 +1,76 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
-import { useNavigate } from 'react-router-dom';
+import "../../styles/Auth.css"; // Наш файл со стилями
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-  const { login, isLoading, error, clearError, isAuthenticated } =
-    useAuthContext();
+    const { login, isLoading, error, clearError, isAuthenticated } = useAuthContext();
+    const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await login(email, password);
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await login(email, password);
+    };
 
-  const navigate = useNavigate();
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/home', { replace: true });
+        }
+    }, [isAuthenticated, navigate]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/home', { replace: true });
-    }
-  }, [isAuthenticated]);
+    return (
+        <div className="auth-container">
+            <div className="auth-card">
+                <h1 className="auth-title">Вход</h1>
 
-  return (
-    <div>
-      <h1>Вход</h1>
-      <form onSubmit={handleSubmit}>
-        <fieldset disabled={isLoading}>
-          <input
-            required
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              clearError();
-            }}
-          />
-          <input
-            required
-            type="password"
-            placeholder="Пароль"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              clearError();
-            }}
-          />
-          <button type="submit">Войти</button>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-        </fieldset>
-        <p>
-          Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
-        </p>
-      </form>
-    </div>
-  );
+                <form className="auth-form" onSubmit={handleSubmit}>
+                     <fieldset disabled={isLoading} className="contents">
+                        <input
+                            required
+                            type="email"
+                            placeholder="Email"
+                            className="auth-input"
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                clearError();
+                            }}
+                        />
+                        <input
+                            required
+                            type="password"
+                            placeholder="Пароль"
+                            className="auth-input"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                clearError();
+                            }}
+                        />
+
+                        <button type="submit" className="auth-button">
+                            {isLoading ? 'Загрузка...' : 'Войти'}
+                        </button>
+
+                        {/* Вывод ошибки бэкенда, если она есть */}
+                        {error && (
+                            <p className="text-red-500 text-center text-sm mt-2 font-medium">
+                                {error}
+                            </p>
+                        )}
+                    </fieldset>
+                </form>
+
+                <div className="auth-footer">
+                    Нет аккаунта?{" "}
+                    <Link to="/register" className="auth-link">
+                        Зарегистрируйтесь
+                    </Link>
+                </div>
+            </div>
+        </div>
+    );
 }

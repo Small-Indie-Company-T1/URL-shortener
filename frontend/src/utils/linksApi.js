@@ -14,7 +14,6 @@ export async function createLink(original_url) {
 
 export async function createQrCode(url_id, format) {
   try {
-    console.log(format);
     const response = await linksApi.get(`/${url_id}/qr?fmt=${format}`, {
       responseType: 'blob',
     });

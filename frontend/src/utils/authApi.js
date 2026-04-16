@@ -59,7 +59,6 @@ export async function loginUser(email, password) {
 
     const newToken = response.data.access_token;
     setToken(newToken);
-    console.log(accessToken, newToken);
     onTokenUpdate?.(newToken);
   } catch (error) {
     console.error('Ошибка при входе:', error.status);

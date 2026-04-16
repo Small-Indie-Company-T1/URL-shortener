@@ -6,6 +6,7 @@ import {
   refreshToken,
   setTokenUpdateHandler,
 } from '../utils/authApi';
+import { checkServerHealth } from '../utils/apiClient.js';
 
 export default function useAuth() {
   const [token, setToken] = useState(null);
@@ -43,7 +44,7 @@ export default function useAuth() {
       await login(email, password); // Автоматический вход после регистрации
     } catch (error) {
       switch (error.response?.status) {
-        case 409:
+        case 400:
           setError('Пользователь с такой почтой уже существует');
           break;
         default:
@@ -60,6 +61,7 @@ export default function useAuth() {
     setTokenUpdateHandler(setToken);
     const initAuth = async () => {
       try {
+        await checkServerHealth();
         await refreshToken();
         setIsAuthenticated(true); //TODO: maybe update less explicit
       } catch {

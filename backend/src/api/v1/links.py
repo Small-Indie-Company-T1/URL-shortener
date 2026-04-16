@@ -1,8 +1,12 @@
+import uuid
+
 import asyncpg
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Query
+from fastapi.responses import StreamingResponse
+
 from src.db.queries import LinkQueriesQueries
 from src.db.database import get_db
-from src.schemas.links import LinkCreate, LinkRead
+from src.schemas.links import LinkCreate, LinkRead, LinkList
 from src.services.links import LinkService
 from src.api.deps import get_current_user
 
@@ -28,4 +32,73 @@ async def create_link(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Внутренняя ошибка"
         )
+
+@router.get("/", response_model=LinkList)
+async def list_my_links(
+    limit: int = 10,
+    offset: int = 0,
+    db: asyncpg.Connection = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    service = LinkService(LinkQueriesQueries(db))
+    try:
+        links = await service.get_user_links(
+            user_id=current_user.id,
+            limit=limit,
+            offset=offset
+        )
+        return {
+            "links": links,
+            "total": len(links)
+        }
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Внутренняя ошибка при получении списка"
+        )
     
+@router.delete("/{short_code}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user_link(
+    short_code: str,
+    db: asyncpg.Connection = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    service = LinkService(LinkQueriesQueries(db))
+    try:
+        is_deleted = await service.delete_link(short_code=short_code, user_id=current_user.id)
+    except Exception as e:
+        print(f'Ошибка удаления: {e}')
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Внутренняя ошибка при удалении ссылки'
+        )
+    if not is_deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Ссылка не найдена или у вас нет прав на ее удаление'
+        )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@router.get("/{short_code}/qr")
+async def get_link_qr(
+    short_code: str,
+    fmt: str = Query("png", pattern="^(png|svg)$"),
+    download: bool = Query(False),
+    scale: int = Query(10, ge=1, le=50, description="Масштаб QR-кода"),
+    db: asyncpg.Connection = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    service = LinkService(LinkQueriesQueries(db))
+    link_exists = await service.exists(short_code)
+    if not link_exists:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Короткая ссылка не найдена'
+        )
+    qr_buf, mime_type = service.generate_qr_code(short_code, scale, fmt)
+    headers = {}
+    if download:
+        filename = f'qr_{short_code}.{fmt}'
+        headers["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return StreamingResponse(qr_buf, media_type=mime_type, headers=headers)

@@ -1,94 +1,29 @@
+import ipaddress
 
 from src.db import models
 import asyncpg
 import dataclasses
 import datetime
+import typing
 import uuid
 
 
 
 @dataclasses.dataclass
-class JwtQueriesQueries:
+class ClickQueriesQueries:
     connection: asyncpg.Connection
 
-    CREATESESSION = """
-        INSERT INTO user_sessions (id, user_id, refresh_token, expires_at, user_agent)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING id, user_id, refresh_token, expires_at, created_at, user_agent, is_revoked
-    """
-    GETSESSION = """
-        SELECT id, user_id, refresh_token, expires_at, created_at, user_agent, is_revoked FROM user_sessions
-        WHERE id = $1 LIMIT 1
-    """
-    REVOKEUSERSESSIONBYID = """
-        UPDATE user_sessions
-        SET is_revoked = TRUE
-        WHERE id = $1
-    """
-    REVOKEUSERSESSIONS = """
-        UPDATE user_sessions
-        SET is_revoked = TRUE
-        WHERE user_id = $1
-    """
-    REVOKESESSIONSBYUA = """
-        UPDATE user_sessions
-        SET is_revoked = TRUE
-        WHERE user_id = $1 AND user_agent = $2 AND is_revoked = FALSE
-    """
-    UPDATEUSERSESSION = """
-        UPDATE user_sessions
-        SET refresh_token = $1, expires_at = $2, user_agent = $3
-        WHERE id = $4
+    CREATECLICK = """
+        INSERT INTO clicks (link_id, user_agent, referred_from, ip_address)
+        VALUES ($1, $2, $3, $4)
     """
     def __init__(self, connection: asyncpg.Connection):
         self.connection = connection
 
     
-    async def CreateSession(self, id: uuid.UUID, user_id: uuid.UUID, refresh_token: str, expires_at: datetime.datetime, user_agent: str | None) -> models.public.UserSessions | None:
-        row = await self.connection.fetchrow(
-            self.CREATESESSION, id, user_id, refresh_token, expires_at, user_agent
-        )
-        if row is None:
-            return None
-        return models.public.UserSessions(
-            created_at=row["created_at"],
-            expires_at=row["expires_at"],
-            id=row["id"],
-            is_revoked=row["is_revoked"],
-            refresh_token=row["refresh_token"],
-            user_agent=row["user_agent"],
-            user_id=row["user_id"],
-        )
-    async def GetSession(self, id: uuid.UUID) -> models.public.UserSessions | None:
-        row = await self.connection.fetchrow(
-            self.GETSESSION, id
-        )
-        if row is None:
-            return None
-        return models.public.UserSessions(
-            created_at=row["created_at"],
-            expires_at=row["expires_at"],
-            id=row["id"],
-            is_revoked=row["is_revoked"],
-            refresh_token=row["refresh_token"],
-            user_agent=row["user_agent"],
-            user_id=row["user_id"],
-        )
-    async def RevokeUserSessionByID(self, id: uuid.UUID) -> str:
+    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress._BaseAddress | None) -> str:
         return await self.connection.exec(
-            self.REVOKEUSERSESSIONBYID, id
-        )
-    async def RevokeUserSessions(self, user_id: uuid.UUID) -> str:
-        return await self.connection.exec(
-            self.REVOKEUSERSESSIONS, user_id
-        )
-    async def RevokeSessionsByUA(self, user_id: uuid.UUID, user_agent: str | None) -> str:
-        return await self.connection.exec(
-            self.REVOKESESSIONSBYUA, user_id, user_agent
-        )
-    async def UpdateUserSession(self, refresh_token: str, expires_at: datetime.datetime, user_agent: str | None, id: uuid.UUID) -> str:
-        return await self.connection.exec(
-            self.UPDATEUSERSESSION, refresh_token, expires_at, user_agent, id
+            self.CREATECLICK, link_id, user_agent, referred_from, ip_address
         )
 
 
@@ -101,10 +36,28 @@ class LinkQueriesQueries:
         VALUES ($1, $2, $3)
         RETURNING id, creator_id, original_url, short_code, created_at, is_active, is_deleted
     """
+    CHECKLINKEXISTS = """
+        SELECT EXISTS(
+            SELECT 1 FROM links
+            WHERE short_code = $1 AND is_deleted = false
+        )
+    """
+    GETLINKSBYUSERID = """
+        SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
+        WHERE creator_id = $1 AND is_deleted = false
+        ORDER BY created_at DESC
+        LIMIT $2 OFFSET $3
+    """
     GETLINKBYCODE = """
         SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
         WHERE short_code = $1 AND is_deleted = false
         LIMIT 1
+    """
+    DELETELINK = """
+        UPDATE links
+        SET is_deleted = true
+        WHERE short_code = $1 AND creator_id = $2
+        RETURNING id
     """
     def __init__(self, connection: asyncpg.Connection):
         self.connection = connection
@@ -125,6 +78,31 @@ class LinkQueriesQueries:
             original_url=row["original_url"],
             short_code=row["short_code"],
         )
+    async def CheckLinkExists(self, short_code: str) -> models.link_queries_queries.ChecklinkexistsRow | None:
+        row = await self.connection.fetchrow(
+            self.CHECKLINKEXISTS, short_code
+        )
+        if row is None:
+            return None
+        return models.link_queries_queries.ChecklinkexistsRow(
+            exists=row["exists"],
+        )
+    async def GetLinksByUserId(self, creator_id: uuid.UUID, limit: int, offset: int) -> list[models.public.Links]:
+        rows = await self.connection.fetch(
+            self.GETLINKSBYUSERID, creator_id, limit, offset
+        )
+        return [
+            models.public.Links(
+                created_at=row["created_at"],
+                creator_id=row["creator_id"],
+                id=row["id"],
+                is_active=row["is_active"],
+                is_deleted=row["is_deleted"],
+                original_url=row["original_url"],
+                short_code=row["short_code"],
+            )
+            for row in rows
+        ]
     async def GetLinkByCode(self, short_code: str) -> models.public.Links | None:
         row = await self.connection.fetchrow(
             self.GETLINKBYCODE, short_code
@@ -139,6 +117,15 @@ class LinkQueriesQueries:
             is_deleted=row["is_deleted"],
             original_url=row["original_url"],
             short_code=row["short_code"],
+        )
+    async def DeleteLink(self, short_code: str, creator_id: uuid.UUID) -> models.link_queries_queries.DeletelinkRow | None:
+        row = await self.connection.fetchrow(
+            self.DELETELINK, short_code, creator_id
+        )
+        if row is None:
+            return None
+        return models.link_queries_queries.DeletelinkRow(
+            id=row["id"],
         )
 
 
@@ -207,13 +194,13 @@ class UserQueriesQueries:
 @dataclasses.dataclass
 class Queries:
     connection: asyncpg.Connection
-    jwt_queries: JwtQueriesQueries
+    click_queries: ClickQueriesQueries
     link_queries: LinkQueriesQueries
     user_queries: UserQueriesQueries
 
     def __init__(self, connection: asyncpg.Connection):
         self.connection = connection
-        self.jwt_queries = JwtQueriesQueries(connection)
+        self.click_queries = ClickQueriesQueries(connection)
         self.link_queries = LinkQueriesQueries(connection)
         self.user_queries = UserQueriesQueries(connection)
 

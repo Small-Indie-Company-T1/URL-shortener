@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel, HttpUrl
 from datetime import datetime
 import uuid
@@ -16,3 +18,7 @@ class LinkRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+class LinkList(BaseModel):
+    links: List[LinkRead]
+    total: int

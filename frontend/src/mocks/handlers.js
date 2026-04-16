@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 // "база данных"
-let users = [];
+let users = [{ email: 'kirka1408kirka@gmail.com', password: 'ad' }];
 let currentAccessToken = 'valid-token';
 let currentRefreshToken = 'refresh-123';
 
@@ -78,9 +78,7 @@ export const handlers = [
         return new HttpResponse(null, { status: 422 });
       }
       return new HttpResponse(
-        JSON.stringify({
-          short_code: '42zxc67',
-        }),
+        JSON.stringify({ id: '42', short_code: '42zxc67' }),
         {
           status: 201,
           headers: {
@@ -92,5 +90,17 @@ export const handlers = [
       console.log(error.message);
       return new HttpResponse(null, { status: 500 });
     }
+  }),
+  http.get('/links/42zxc67/qr', async ({ request }) => {
+    const { fmt } = await request.json();
+    const response = await fetch(`/QR_code.${fmt}`);
+    const blob = await response.blob();
+
+    return new HttpResponse(blob, {
+      status: 200,
+      headers: {
+        'Content-Type': `image/${fmt === 'svg' ? 'svg+xml' : 'png'}`,
+      },
+    });
   }),
 ];

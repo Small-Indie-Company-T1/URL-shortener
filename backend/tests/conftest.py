@@ -11,6 +11,7 @@ from httpx import ASGITransport, AsyncClient
 import pytest
 from redis.asyncio import Redis
 
+from src.services.session_manager import RedisSessionManager
 from src.db.queries import LinkQueriesQueries
 from src.main import app
 from src.core.config import settings
@@ -18,7 +19,7 @@ from src.db.database import get_db
 from src.api.deps import get_redis
 
 TEST_DB_URL = f'postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/test_db'
-TEST_REDIS_URL = f'redis://localhost:6379/1'
+TEST_REDIS_URL = f'redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/1'
 
 @pytest.fixture(scope='session', autouse=True)
 def upgrade_test_database():
@@ -40,9 +41,7 @@ async def test_pool():
 async def redis_client():
     client = Redis.from_url(TEST_REDIS_URL, decode_responses=True)
     await client.flushdb()
-
     yield client
-
     try:
         await client.flushdb()
         await client.aclose()
@@ -51,6 +50,8 @@ async def redis_client():
 
 @pytest.fixture
 async def client(test_pool, redis_client):
+    app.state.pool = test_pool
+
     async def _get_test_db():
         async with test_pool.acquire() as conn:
             yield conn
@@ -65,6 +66,8 @@ async def client(test_pool, redis_client):
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
     app.dependency_overrides.clear()
+    if hasattr(app.state, 'pool'):
+        del app.state.pool
 
 @pytest.fixture()
 async def clear_db(test_pool):
@@ -96,3 +99,7 @@ async def test_user(clear_db, test_pool):
 def mock_queries():
     mock = AsyncMock(spec=LinkQueriesQueries)
     return mock
+
+@pytest.fixture
+def manager(redis_client):
+    return RedisSessionManager(redis_client)

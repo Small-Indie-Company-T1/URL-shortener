@@ -57,6 +57,7 @@ jobs:
           docker compose -f docker-compose.yaml up -d redis
           echo "Waiting for Redis..."
           for i in {1..10}; do
+            echo "PING"
             if docker compose exec -T redis redis-cli ping | grep PONG; then
               echo "Redis is up"
               break

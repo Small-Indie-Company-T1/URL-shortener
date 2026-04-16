@@ -3,8 +3,28 @@ from src.db import models
 import asyncpg
 import dataclasses
 import datetime
+import typing
+import ipaddress
 import uuid
 
+
+
+@dataclasses.dataclass
+class ClickQueriesQueries:
+    connection: asyncpg.Connection
+
+    CREATECLICK = """
+        INSERT INTO clicks (link_id, user_agent, referred_from, ip_address)
+        VALUES ($1, $2, $3, $4)
+    """
+    def __init__(self, connection: asyncpg.Connection):
+        self.connection = connection
+
+    
+    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress.IPv4Address | ipaddress.IPv6Address | None) -> str:
+        return await self.connection.exec(
+            self.CREATECLICK, link_id, user_agent, referred_from, ip_address
+        )
 
 
 @dataclasses.dataclass
@@ -259,12 +279,14 @@ class UserQueriesQueries:
 @dataclasses.dataclass
 class Queries:
     connection: asyncpg.Connection
+    click_queries: ClickQueriesQueries
     jwt_queries: JwtQueriesQueries
     link_queries: LinkQueriesQueries
     user_queries: UserQueriesQueries
 
     def __init__(self, connection: asyncpg.Connection):
         self.connection = connection
+        self.click_queries = ClickQueriesQueries(connection)
         self.jwt_queries = JwtQueriesQueries(connection)
         self.link_queries = LinkQueriesQueries(connection)
         self.user_queries = UserQueriesQueries(connection)

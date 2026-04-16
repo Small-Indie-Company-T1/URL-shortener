@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from src.core.config import settings
 from src.api.v1.links import router as links_router
 from fastapi.middleware.cors import CORSMiddleware
-from src.api.v1 import auth
+from src.api.v1 import auth, redirect
 
 
 @asynccontextmanager
@@ -43,6 +43,7 @@ async def health_check():
     return {"status": "ok"}
 
 app.include_router(auth.router, prefix="/auth")
+app.include_router(redirect.router, prefix="")
 
 @app.get("/")
 async def root():

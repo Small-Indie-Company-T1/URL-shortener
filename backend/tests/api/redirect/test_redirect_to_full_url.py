@@ -16,14 +16,14 @@ async def test_redirect_success(client, test_pool, test_user):
             "INSERT INTO links (short_code, original_url, creator_id) " \
             "VALUES ($1, $2, $3)", short_code, original_url, test_user.id
         )
-    response = await client.get(f'/{short_code}', follow_redirects=False)
+    response = await client.get(f'/redirect/{short_code}', follow_redirects=False)
     assert response.status_code == 302
     assert response.headers.get('location') == original_url
     app.dependency_overrides.clear()
 
 @pytest.mark.asyncio
 async def test_redirect_not_found(client):
-    response = await client.get("/nonsense")
+    response = await client.get("/redirect/nonsense")
     assert response.status_code == 404
     assert 'not found' in response.json().get('detail')
 
@@ -37,6 +37,6 @@ async def tests_redirect_logs_click(client, test_pool, test_user):
             "VALUES ($1, $2, $3)", short_code, 'https://tiktok.com', test_user.id
         )
     with patch("src.api.v1.redirect.log_click_task") as mock_task:
-        response = await client.get(f"/{short_code}", follow_redirects=False)
+        response = await client.get(f"/redirect/{short_code}", follow_redirects=False)
         assert response.status_code == 302
         mock_task.assert_called_once()

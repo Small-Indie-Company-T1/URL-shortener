@@ -91,15 +91,15 @@ export const handlers = [
       return new HttpResponse(null, { status: 500 });
     }
   }),
-  http.post('/links/42zxc67/qr', async ({ request }) => {
-    const { format } = await request.json();
-    const response = await fetch(`/QR_code.${format}`);
+  http.get('/links/42zxc67/qr', async ({ request }) => {
+    const { fmt } = await request.json();
+    const response = await fetch(`/QR_code.${fmt}`);
     const blob = await response.blob();
 
     return new HttpResponse(blob, {
       status: 200,
       headers: {
-        'Content-Type': `image/${format === 'svg' ? 'svg+xml' : 'png'}`,
+        'Content-Type': `image/${fmt === 'svg' ? 'svg+xml' : 'png'}`,
       },
     });
   }),

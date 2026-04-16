@@ -51,15 +51,15 @@ class LinkService:
     def generate_qr_code(self, short_code: str,
                          scale: int,
                          format: str = 'png') -> tuple[io.BytesIO, str]:
-        full_url = f'{settings.BASE_URL}/{short_code}'
+        full_url = f'{settings.BASE_URL}/redirect/{short_code}'
         qr = segno.make(full_url)
         out = io.BytesIO()
 
         if format.lower() == 'svg':
-            qr.save(out, kind='svg', scale=scale)
+            qr.save(out, kind='svg', scale=scale, light='white')
             mime_type = "image/svg+xml"
         else:
-            qr.save(out, kind='png', scale=scale)
+            qr.save(out, kind='png', scale=scale, light='white')
             mime_type = "image/png"
 
         out.seek(0)

@@ -48,10 +48,19 @@ class LinkService:
         result = await self.queries.CheckLinkExists(short_code)
         return result.exists
 
-    def generate_qr_code(self, short_code: str) -> io.BytesIO:
+    def generate_qr_code(self, short_code: str,
+                         scale: int,
+                         format: str = 'png') -> tuple[io.BytesIO, str]:
         full_url = f'{settings.BASE_URL}/{short_code}'
         qr = segno.make(full_url)
         out = io.BytesIO()
-        qr.save(out, kind='png', scale=10)
+
+        if format.lower() == 'svg':
+            qr.save(out, kind='svg', scale=scale)
+            mime_type = "image/svg+xml"
+        else:
+            qr.save(out, kind='png', scale=scale)
+            mime_type = "image/png"
+
         out.seek(0)
-        return out
+        return out, mime_type

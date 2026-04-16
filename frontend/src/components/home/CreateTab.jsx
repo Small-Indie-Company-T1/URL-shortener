@@ -34,7 +34,7 @@ export default function CreateTab() {
   }, [error]);
 
   useEffect(() => {
-    URL.revokeObjectURL(qrUrl);
+    return () => URL.revokeObjectURL(qrUrl);
   }, []); // called when component unmounts
 
   return (

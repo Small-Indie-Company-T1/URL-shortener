@@ -8,12 +8,26 @@ import {
 } from '../utils/authApi';
 import { checkServerHealth } from '../utils/apiClient.js';
 
+let authBootstrapPromise = null;
+
+async function bootstrapAuth() {
+  if (!authBootstrapPromise) {
+    authBootstrapPromise = (async () => {
+      await checkServerHealth();
+      await refreshToken();
+    })().finally(() => {
+      authBootstrapPromise = null;
+    });
+  }
+
+  return authBootstrapPromise;
+}
+
 export default function useAuth() {
   const [token, setToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     setIsAuthenticated(!!token);
   }, [token]);
@@ -56,21 +70,29 @@ export default function useAuth() {
   };
 
   useEffect(() => {
+    let alive = true;
     setIsLoading(true);
-
     setTokenUpdateHandler(setToken);
+
     const initAuth = async () => {
       try {
-        await checkServerHealth();
-        await refreshToken();
-        setIsAuthenticated(true); //TODO: maybe update less explicit
+        await bootstrapAuth();
+        if (alive) {
+          setIsAuthenticated(true);
+        }
       } catch {
-        await logoutUser();
+        if (alive) {
+          setIsAuthenticated(false);
+        }
       } finally {
-        setIsLoading(false);
+        if (alive) {
+          setIsLoading(false);
+        }
       }
     };
     initAuth();
+
+    return () => (alive = false);
   }, []);
 
   return {

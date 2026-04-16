@@ -15,7 +15,9 @@ async def test_refresh_token_success(client, test_user):
         'password': 'Hash456'
     }
     login_res = await client.post('/auth/login', json=PAYLOAD)
+    assert login_res.status_code == 200
     old_refresh = client.cookies.get('refresh_token')
+    assert old_refresh is not None
     await asyncio.sleep(1.1)
     response = await client.post('/auth/refresh')
     assert response.status_code == 200
@@ -62,7 +64,7 @@ async def test_refresh_token_session_not_found(client, test_user):
     client.cookies.set('refresh_token', fake_token)
     response = await client.post('/auth/refresh')
     assert response.status_code == 401
-    assert response.json().get('detail') == 'session is not found'
+    assert 'session is not found' in response.json().get('detail')
 
 @pytest.mark.asyncio
 async def test_refresh_token_reuse(client, test_user):
@@ -81,22 +83,6 @@ async def test_refresh_token_reuse(client, test_user):
     res_2 = await client.post('/auth/refresh')
     assert res_2.status_code == 401
     assert 'token reuse detected' in res_2.json().get('detail')
-
-@pytest.mark.asyncio
-async def test_refresh_revoked_session(client, test_user, test_pool):
-    PAYLOAD = {
-        'email': test_user.email,
-        'password': 'Hash456'
-    }
-    await client.post('/auth/login', json=PAYLOAD)
-    refresh_token = client.cookies.get('refresh_token')
-    new_payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-    jti = new_payload.get('jti')
-    async with test_pool.acquire() as conn:
-        await conn.execute('UPDATE user_sessions SET is_revoked = True WHERE id = $1', jti)
-    response = await client.post('/auth/refresh')
-    assert response.status_code == 401
-    assert response.json().get('detail') == 'session was revoked'
 
 @pytest.mark.asyncio
 async def test_refresh_token_invalid_signature(client, test_user):

@@ -1,3 +1,5 @@
+import uuid
+
 from src.db.queries import ClickQueriesQueries
 import asyncpg
 from fastapi import Request
@@ -5,7 +7,7 @@ from fastapi import Request
 
 async def log_click_task(
     pool: asyncpg.Pool,
-    link_id: uuid,
+    link_id: uuid.UUID,
     user_agent: str | None,
     referer: str | None,
     ip_address: str | None

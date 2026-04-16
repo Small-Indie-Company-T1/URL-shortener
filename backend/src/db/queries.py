@@ -1,4 +1,3 @@
-import ipaddress
 
 from src.db import models
 import asyncpg
@@ -21,7 +20,7 @@ class ClickQueriesQueries:
         self.connection = connection
 
     
-    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress._BaseAddress | None) -> str:
+    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: typing.Any | None) -> str:
         return await self.connection.exec(
             self.CREATECLICK, link_id, user_agent, referred_from, ip_address
         )

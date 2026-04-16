@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
-import "../../styles/Auth.css"; // Наш файл со стилями
+import "../../styles/Auth.css";
+import Input from '../common/Input';
 
 export default function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
     const { login, isLoading, error, clearError, isAuthenticated } = useAuthContext();
     const navigate = useNavigate();
 
@@ -25,10 +25,9 @@ export default function LoginForm() {
         <div className="auth-container">
             <div className="auth-card">
                 <h1 className="auth-title">Вход</h1>
-
                 <form className="auth-form" onSubmit={handleSubmit}>
-                     <fieldset disabled={isLoading} className="contents">
-                        <input
+                    <fieldset disabled={isLoading} className="contents">
+                        <Input
                             required
                             type="email"
                             placeholder="Email"
@@ -39,7 +38,7 @@ export default function LoginForm() {
                                 clearError();
                             }}
                         />
-                        <input
+                        <Input
                             required
                             type="password"
                             placeholder="Пароль"
@@ -50,25 +49,14 @@ export default function LoginForm() {
                                 clearError();
                             }}
                         />
-
                         <button type="submit" className="auth-button">
                             {isLoading ? 'Загрузка...' : 'Войти'}
                         </button>
-
-                        {/* Вывод ошибки бэкенда, если она есть */}
-                        {error && (
-                            <p className="text-red-500 text-center text-sm mt-2 font-medium">
-                                {error}
-                            </p>
-                        )}
+                        {error && <p className="text-red-500 text-center text-sm mt-2 font-medium">{error}</p>}
                     </fieldset>
                 </form>
-
                 <div className="auth-footer">
-                    Нет аккаунта?{" "}
-                    <Link to="/register" className="auth-link">
-                        Зарегистрируйтесь
-                    </Link>
+                    Нет аккаунта? <Link to="/register" className="auth-link">Зарегистрируйтесь</Link>
                 </div>
             </div>
         </div>

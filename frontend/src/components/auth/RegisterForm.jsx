@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
+import Input from '../common/Input'; // Возвращаем их компонент
 import "../../styles/Auth.css";
 
 export default function RegisterForm() {
@@ -37,7 +38,7 @@ export default function RegisterForm() {
 
                 <form className="auth-form" onSubmit={handleSubmit}>
                     <fieldset disabled={isLoading} className="contents">
-                        <input
+                        <Input
                             required
                             type="email"
                             placeholder="Email"
@@ -48,11 +49,10 @@ export default function RegisterForm() {
                                 clearError();
                             }}
                         />
-
-                        <input
+                        <Input
                             required
                             type="text"
-                            placeholder="Имя"
+                            placeholder="Никнейм"
                             className="auth-input"
                             value={name}
                             onChange={(e) => {
@@ -60,8 +60,7 @@ export default function RegisterForm() {
                                 clearError();
                             }}
                         />
-
-                        <input
+                        <Input
                             required
                             type="password"
                             placeholder="Пароль"
@@ -72,8 +71,7 @@ export default function RegisterForm() {
                                 clearError();
                             }}
                         />
-
-                        <input
+                        <Input
                             required
                             type="password"
                             placeholder="Повторите пароль"
@@ -86,7 +84,7 @@ export default function RegisterForm() {
                             onBlur={() => setConfirmTouched(true)}
                         />
 
-                         {showPasswordMismatch && (
+                        {showPasswordMismatch && (
                             <p className="text-red-500 text-center text-sm -mt-3">Пароли не совпадают</p>
                         )}
 
@@ -94,7 +92,7 @@ export default function RegisterForm() {
                             {isLoading ? 'Загрузка...' : 'Зарегистрироваться'}
                         </button>
 
-                         {error && (
+                        {error && (
                             <p className="text-red-500 text-center text-sm mt-2 font-medium">
                                 {error}
                             </p>

@@ -14,10 +14,12 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
+  redis: #remember to set password in production
     image: redis:8.6.2-alpine
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
@@ -43,6 +45,7 @@ services:
       - "./env/app.env"
     environment:
       - POSTGRES_HOST=db
+      - REDIS_HOST=redis
     depends_on:
       db:
         condition: service_healthy
@@ -67,3 +70,4 @@ services:
 
 volumes:
   pg_data:
+  redis_data:

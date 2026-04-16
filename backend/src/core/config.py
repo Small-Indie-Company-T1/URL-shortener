@@ -15,7 +15,16 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
     REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS"))
     BASE_URL = os.getenv("BASE_URL", "http://localhost:8000") # TODO
-    REDIS_URL = os.getenv("REDIS_URL")
+    REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+    REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+    REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "")
+
+    @property
+    def REDIS_URL(self):
+        if self.REDIS_PASSWORD:
+            return f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/0"
+        else:
+            return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
 
     @property
     def DATABASE_URL_ASYNC(self):

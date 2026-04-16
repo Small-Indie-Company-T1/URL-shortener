@@ -14,7 +14,7 @@ export const handlers = [
         { status: 400 }
       );
     }
-    if (users.every((user) => user.email !== nickname)) {
+    if (users.every((user) => user.email !== email)) {
       users.push({ email, nickname, password });
       return new HttpResponse(null, { status: 201 });
     } else {

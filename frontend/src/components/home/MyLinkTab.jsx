@@ -23,7 +23,7 @@ export default function MyLinkTab() {
 
   return (
     <div>
-      <p>{'https://localhost:5173/' + link.short_code}</p>
+      <p>{'http://localhost:5173/' + link.short_code}</p>
       <p>{link.original_url}</p>
       <div>
         <p>Your QR-code:</p>

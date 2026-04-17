@@ -43,12 +43,13 @@ export default function CreateTab() {
     <div className="flex-1 w-full min-h-[calc(100vh-63px)] flex flex-col items-center justify-center pb-20">
       <div className="create-tab w-full max-w-[1100px] px-8">
         <h1>Создать ссылку</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="create-tab__form">
           <fieldset disabled={isLoading}>
             <input
               type="text"
               placeholder="Введите URL"
               value={link}
+              className="create-tab__input"
               onChange={(e) => {
                 setLink(e.target.value);
                 clearError();

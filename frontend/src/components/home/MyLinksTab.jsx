@@ -26,7 +26,7 @@ export default function MyLinksTab() {
           {linksList.map((link, index) => (
             <li key={link.id}>
               <p>{index + 1}</p>
-              <p>{'https://localhost:5173/' + link.short_code}</p>
+              <p>{'http://localhost:5173/' + link.short_code}</p>
               <p>{link.original_url}</p>
               <p>{link.created_at.substring(0, 10)}</p>
               <Link

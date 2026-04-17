@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { redirectUrl } from '../utils/redirectApi.js';
-import { createLink, createQrCode, getLinksList } from '../utils/linksApi.js';
+import {
+  createLink,
+  createQrCode,
+  deleteLinkByShortCode,
+  getLinksList,
+} from '../utils/linksApi.js';
 
 export default function useLinks() {
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +57,7 @@ export default function useLinks() {
     }
   };
 
-  const getLinks = async (offset, limit = 10) => {
+  const getLinks = useCallback(async (offset, limit = 10) => {
     setIsLoading(true);
     try {
       return await getLinksList(offset, limit);
@@ -67,7 +72,24 @@ export default function useLinks() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  const deleteLink = useCallback(async (short_code) => {
+    setIsLoading(true);
+    try {
+      await deleteLinkByShortCode(short_code);
+      return true;
+    } catch (error) {
+      switch (error.response?.status) {
+        case 422:
+          setError('Validation error occurred.');
+          break;
+        default:
+          setError('Unknown error occurred.');
+      }
+      return false;
+    }
+  }, []);
 
   return {
     isLoading,
@@ -75,6 +97,7 @@ export default function useLinks() {
     create,
     createQr,
     getLinks,
+    deleteLink,
     checkRedirect,
     clearError: () => setError(null),
   };

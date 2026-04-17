@@ -33,3 +33,13 @@ export async function getLinksList(offset, limit = 10) {
     throw error;
   }
 }
+
+export async function deleteLinkByShortCode(short_code) {
+  try {
+    const response = await linksApi.delete(`/${short_code}`);
+    return response.data;
+  } catch (error) {
+    console.error(error.data.detail.msg);
+    throw error;
+  }
+}

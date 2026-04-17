@@ -47,9 +47,10 @@ async def list_my_links(
             limit=limit,
             offset=offset
         )
+        total = await service.get_links_total(user_id=current_user.id)
         return {
             "links": links,
-            "total": len(links)
+            "total": total
         }
     except Exception as e:
         print(e)

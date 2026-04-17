@@ -14,6 +14,10 @@ WHERE creator_id = $1 AND is_deleted = false
 ORDER BY created_at DESC
 LIMIT $2 OFFSET $3;
 
+-- name: GetLinksCountByUserId :one
+SELECT COUNT(*) FROM links
+WHERE creator_id = $1 AND is_deleted = false;
+
 -- name: DeleteLink :one
 UPDATE links
 SET is_deleted = true

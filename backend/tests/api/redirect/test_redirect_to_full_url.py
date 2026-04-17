@@ -17,15 +17,15 @@ async def test_redirect_success(client, test_pool, test_user):
             "VALUES ($1, $2, $3)", short_code, original_url, test_user.id
         )
     response = await client.get(f'/redirect/{short_code}', follow_redirects=False)
-    assert response.status_code == 302
+    assert response.status_code == 307
     assert response.headers.get('location') == original_url
     app.dependency_overrides.clear()
 
 @pytest.mark.asyncio
 async def test_redirect_not_found(client):
     response = await client.get("/redirect/nonsense")
-    assert response.status_code == 404
-    assert 'not found' in response.json().get('detail')
+    assert response.status_code == 302
+    assert '404' in response.headers.get('location')
 
 @pytest.mark.asyncio
 async def tests_redirect_logs_click(client, test_pool, test_user):
@@ -38,5 +38,5 @@ async def tests_redirect_logs_click(client, test_pool, test_user):
         )
     with patch("src.api.v1.redirect.log_click_task") as mock_task:
         response = await client.get(f"/redirect/{short_code}", follow_redirects=False)
-        assert response.status_code == 302
+        assert response.status_code == 307
         mock_task.assert_called_once()

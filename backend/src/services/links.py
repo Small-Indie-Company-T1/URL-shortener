@@ -37,6 +37,12 @@ class LinkService:
         )
         return [LinkRead.model_validate(link) for link in links]
 
+    async def get_links_total(self, user_id: uuid.UUID) -> int:
+        total = await self.queries.GetLinksCountByUserId(
+            creator_id=user_id
+        )
+        return total.count if total else 0
+
     async def delete_link(self, short_code: str, user_id: uuid.UUID) -> bool:
         try:
             deleted_id = await self.queries.DeleteLink(short_code=short_code, creator_id=user_id)

@@ -3,6 +3,10 @@ import uuid
 
 
 @dataclasses.dataclass
+class GetlinkscountbyuseridRow:
+    count: int
+
+@dataclasses.dataclass
 class DeletelinkRow:
     id: uuid.UUID
 

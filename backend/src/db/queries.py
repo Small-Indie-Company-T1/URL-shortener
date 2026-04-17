@@ -1,3 +1,4 @@
+import ipaddress
 
 from src.db import models
 import asyncpg
@@ -20,7 +21,7 @@ class ClickQueriesQueries:
         self.connection = connection
 
     
-    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: typing.Any | None) -> str:
+    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress._BaseAddress | None) -> str:
         return await self.connection.exec(
             self.CREATECLICK, link_id, user_agent, referred_from, ip_address
         )
@@ -34,6 +35,10 @@ class LinkQueriesQueries:
         INSERT INTO links (creator_id, original_url, short_code)
         VALUES ($1, $2, $3)
         RETURNING id, creator_id, original_url, short_code, created_at, is_active, is_deleted
+    """
+    GETLINKSCOUNTBYUSERID = """
+        SELECT COUNT(*) FROM links
+        WHERE creator_id = $1 AND is_deleted = false
     """
     CHECKLINKEXISTS = """
         SELECT EXISTS(
@@ -76,6 +81,15 @@ class LinkQueriesQueries:
             is_deleted=row["is_deleted"],
             original_url=row["original_url"],
             short_code=row["short_code"],
+        )
+    async def GetLinksCountByUserId(self, creator_id: uuid.UUID) -> models.link_queries_queries.GetlinkscountbyuseridRow | None:
+        row = await self.connection.fetchrow(
+            self.GETLINKSCOUNTBYUSERID, creator_id
+        )
+        if row is None:
+            return None
+        return models.link_queries_queries.GetlinkscountbyuseridRow(
+            count=row["count"],
         )
     async def CheckLinkExists(self, short_code: str) -> models.link_queries_queries.ChecklinkexistsRow | None:
         row = await self.connection.fetchrow(

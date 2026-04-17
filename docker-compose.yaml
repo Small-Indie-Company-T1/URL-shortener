@@ -70,8 +70,8 @@ services:
       - "5173:5173" #удалить в проде
     environment:
       - VITE_API_MOCKING=disabled
-      - VITE_API_BASE_URL=http://localhost:8100
-      - VITE_FRONTEND_BASE_URL=http://localhost:5173
+      - VITE_API_BASE_URL=/api
+      - VITE_FRONTEND_BASE_URL=http://localhost
     depends_on:
       backend:
         condition: service_started

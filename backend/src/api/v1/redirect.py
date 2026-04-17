@@ -20,10 +20,7 @@ async def redirect_to_full_url(
     link = await link_querier.GetLinkByCode(short_code)
 
     if not link:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="short link was not found"
-        )
+        return RedirectResponse(url="/404", status_code=status.HTTP_302_FOUND)
 
     pool = request.app.state.pool
     user_agent = request.headers.get("user-agent")
@@ -41,5 +38,5 @@ async def redirect_to_full_url(
 
     return RedirectResponse(
         url=link.original_url,
-        status_code=status.HTTP_302_FOUND
+        status_code=status.HTTP_307_TEMPORARY_REDIRECT
     )

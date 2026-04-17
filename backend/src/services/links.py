@@ -51,7 +51,7 @@ class LinkService:
     def generate_qr_code(self, short_code: str,
                          scale: int,
                          format: str = 'png') -> tuple[io.BytesIO, str]:
-        full_url = f'{settings.BASE_URL}/redirect/{short_code}'
+        full_url = f'{settings.BASE_URL}/r/{short_code}'
         qr = segno.make(full_url)
         out = io.BytesIO()
 

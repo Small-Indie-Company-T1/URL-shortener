@@ -26,7 +26,7 @@ export async function createQrCode(url_id, format) {
 
 export async function getLinksList(offset, limit = 10) {
   try {
-    const response = await linksApi.get('/', { offset: offset, limit: limit });
+    const response = await linksApi.get(`/?offset=${offset}&limit=${limit}`);
     return response.data;
   } catch (error) {
     console.error(error.data.detail.msg);

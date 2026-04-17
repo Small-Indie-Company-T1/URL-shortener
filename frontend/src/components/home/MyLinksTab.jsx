@@ -1,6 +1,6 @@
 import useLinks from '../../hooks/useLinks.js';
-import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function MyLinksTab() {
   const { isLoading, error, getLinks, clearError } = useLinks();
@@ -8,20 +8,29 @@ export default function MyLinksTab() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const isUpdating = useRef(false);
   const limit = 10;
 
-  const updateLinks = async () => {
+  const updateLinks = useCallback(async () => {
     const offset = (currentPage - 1) * limit;
     const data = await getLinks(offset, limit);
+    console.log(data, offset, limit);
     if (data) {
       setLinksList(data.links || []);
       setTotalCount(data.total || 0);
     }
-  };
+  }, [getLinks, setLinksList, setTotalCount, currentPage]);
 
   useEffect(() => {
-    updateLinks();
-  }, [currentPage]);
+    const update = async () => {
+      if (isUpdating.current) return;
+      isUpdating.current = true;
+      await updateLinks();
+      isUpdating.current = false;
+    };
+
+    update();
+  }, [updateLinks]);
 
   const totalPages = Math.ceil(totalCount / limit);
 
@@ -35,9 +44,7 @@ export default function MyLinksTab() {
           {linksList.map((link, index) => (
             <li key={link.id}>
               <p>{(currentPage - 1) * limit + index + 1}</p>
-              <p>{link.short_code}</p>
-              <p>{index + 1}</p>
-              <p>{'http://localhost:5173/' + link.short_code}</p>
+              <p>{'http://localhost/r/' + link.short_code}</p>
               <p>{link.original_url}</p>
               <p>{link.created_at.substring(0, 10)}</p>
               <Link
@@ -52,11 +59,7 @@ export default function MyLinksTab() {
       )}
       <div className="pagination">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-          <button
-            key={pageNum}
-            className={currentPage === pageNum ? 'active' : ''}
-            onClick={() => setCurrentPage(pageNum)}
-          >
+          <button key={pageNum} onClick={() => setCurrentPage(pageNum)}>
             {pageNum}
           </button>
         ))}

@@ -16,7 +16,7 @@ export default function CreateTab() {
     if (result && result.short_code) {
       setShortLink({
         short_code: result.short_code,
-        link: (import.meta.env.VITE_FRONTEND_BASE_URL || 'localhost:5173') + '/' + result.short_code,
+        link: (import.meta.env.VITE_FRONTEND_BASE_URL || 'localhost:5173') + '/r/' + result.short_code,
         id: result.id,
       });
       const blob = await createQr(result.short_code, 'svg');

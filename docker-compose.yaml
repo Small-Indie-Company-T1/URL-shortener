@@ -77,7 +77,7 @@ services:
         condition: service_started
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - node_modules:/app/node_modules
     networks:
       - fullstack
 
@@ -101,3 +101,4 @@ networks:
 volumes:
   pg_data:
   redis_data:
+  node_modules:

@@ -39,7 +39,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "8100:8100"
+      - "8100:8100" #удалить в проде
     env_file:
       - "./env/postgres.env"
       - "./env/app.env"
@@ -51,13 +51,15 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    networks:
+      - fullstack
 
   frontend:
     build:
       context: ./frontend
       target: dev
     ports:
-      - "5173:5173"
+      - "5173:5173" #удалить в проде
     environment:
       - VITE_API_MOCKING=disabled
       - VITE_API_BASE_URL=http://localhost:8100
@@ -68,6 +70,24 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    networks:
+      - fullstack
+
+  nginx: #при использовании замените в env frontend-а ссылку на бек просто на /api, +запускайте фронт как npm run dev -- --host
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - fullstack
+
+networks:
+  fullstack:
+    driver: bridge
 
 volumes:
   pg_data:

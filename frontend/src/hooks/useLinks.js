@@ -1,5 +1,11 @@
-import { useState } from 'react';
-import { createLink, createQrCode, getLinksList } from '../utils/linksApi.js';
+import { useCallback, useState } from 'react';
+import { redirectUrl } from '../utils/redirectApi.js';
+import {
+  createLink,
+  createQrCode,
+  deleteLinkByShortCode,
+  getLinksList,
+} from '../utils/linksApi.js';
 
 export default function useLinks() {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,10 +31,10 @@ export default function useLinks() {
     }
   };
 
-  const createQr = async (url, format) => {
+  const createQr = async (short_code, format) => {
     setIsLoading(true);
     try {
-      return await createQrCode(url, format);
+      return await createQrCode(short_code, format);
     } catch (error) {
       switch (error.response?.status) {
         case 422:
@@ -42,7 +48,16 @@ export default function useLinks() {
     }
   };
 
-  const getLinks = async (offset, limit = 10) => {
+  const checkRedirect = async (short_url) => {
+    setIsLoading(true);
+    try {
+      await redirectUrl(short_url);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getLinks = useCallback(async (offset, limit = 10) => {
     setIsLoading(true);
     try {
       return await getLinksList(offset, limit);
@@ -57,7 +72,24 @@ export default function useLinks() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  const deleteLink = useCallback(async (short_code) => {
+    setIsLoading(true);
+    try {
+      await deleteLinkByShortCode(short_code);
+      return true;
+    } catch (error) {
+      switch (error.response?.status) {
+        case 422:
+          setError('Validation error occurred.');
+          break;
+        default:
+          setError('Unknown error occurred.');
+      }
+      return false;
+    }
+  }, []);
 
   return {
     isLoading,
@@ -65,6 +97,8 @@ export default function useLinks() {
     create,
     createQr,
     getLinks,
+    deleteLink,
+    checkRedirect,
     clearError: () => setError(null),
   };
 }

@@ -9,6 +9,7 @@ export const createApi = (prefix) => {
   return {
     get: (url, config) => api.get(prefix + url, config),
     post: (url, data, config) => api.post(prefix + url, data, config),
+    delete: (url, config) => api.delete(prefix + url, config),
   };
 };
 

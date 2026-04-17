@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import MainPage from './pages/MainPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import HomePage from './pages/HomePage.jsx';
+import RedirectPage from './pages/RedirectPage.jsx';
 import CreateTab from './components/home/CreateTab.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import MainPage from './pages/MainPage.jsx';
 import MyLinksTab from './components/home/MyLinksTab.jsx';
 import MyLinkTab from './components/home/MyLinkTab.jsx';
 
@@ -30,6 +31,8 @@ function App() {
           <Route path="my-links" element={<MyLinksTab />} />
           <Route path="my-links/*" element={<MyLinkTab />} />
         </Route>
+
+        <Route path="*" element={<RedirectPage />} />
       </Routes>
     </BrowserRouter>
   );

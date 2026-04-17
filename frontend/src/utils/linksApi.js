@@ -19,7 +19,7 @@ export async function createQrCode(url_id, format) {
       {
         responseType: 'blob',
       }
-    );
+    ));
     return response.data;
   } catch (error) {
     console.error('Ошибка генерации QR-кода: ', error.status);

@@ -40,3 +40,26 @@
 .auth-link {
     @apply text-[#385CA8] font-bold hover:underline transition-all;
 }
+
+.password-input-wrapper {
+    @apply relative w-full flex items-center;
+}
+
+.password-field {
+    @apply w-full pr-14;
+}
+
+.password-toggle-btn {
+    @apply absolute right-4 bg-transparent border-none cursor-pointer flex items-center justify-center;
+    color: #385CA8;
+    transition: opacity 0.2s;
+}
+
+.password-toggle-btn:hover {
+    @apply opacity-70;
+}
+
+.password-toggle-btn .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: 28px;
+}

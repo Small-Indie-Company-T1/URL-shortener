@@ -4,6 +4,8 @@ import 'toastr/build/toastr.min.css';
 import useLinks from '../../hooks/useLinks.js';
 import GeneratedLinkPanel from './GeneratedLinkPanel.jsx';
 
+import '../../styles/CreateTab.css';
+
 export default function CreateTab() {
   const { isLoading, error, create, createQr, clearError } = useLinks();
   const [link, setLink] = useState('');
@@ -38,29 +40,31 @@ export default function CreateTab() {
   }, []); // called when component unmounts
 
   return (
-    <div>
-      <h1>Создать ссылку</h1>
-      <form onSubmit={handleSubmit}>
-        <fieldset disabled={isLoading}>
-          <input
-            type="text"
-            placeholder="Введите URL"
-            value={link}
-            onChange={(e) => {
-              setLink(e.target.value);
-              clearError();
-            }}
+    <div className="flex-1 w-full min-h-[calc(100vh-63px)] flex flex-col items-center justify-center pb-20">
+      <div className="create-tab w-full max-w-[1100px] px-8">
+        <h1>Создать ссылку</h1>
+        <form onSubmit={handleSubmit}>
+          <fieldset disabled={isLoading}>
+            <input
+              type="text"
+              placeholder="Введите URL"
+              value={link}
+              onChange={(e) => {
+                setLink(e.target.value);
+                clearError();
+              }}
+            />
+            <button type="submit">Создать</button>
+          </fieldset>
+        </form>
+        {shortLink.link && (
+          <GeneratedLinkPanel
+            shortLink={shortLink.link}
+            qrUrl={qrUrl}
+            downloadQr={async () => await createQr(shortLink.short_code, 'png')}
           />
-          <button type="submit">Создать</button>
-        </fieldset>
-      </form>
-      {shortLink.link && (
-        <GeneratedLinkPanel
-          shortLink={shortLink.link}
-          qrUrl={qrUrl}
-          downloadQr={async () => await createQr(shortLink.short_code, 'png')}
-        />
-      )}
+        )}
+      </div>
     </div>
   );
 }

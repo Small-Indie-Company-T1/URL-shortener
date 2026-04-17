@@ -2,11 +2,12 @@ import { useState } from 'react';
 
 const PasswordInput = ({ password, placeholder, onChange, onBlur }) => {
   const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <div>
+    <div className="password-input-wrapper">
       <input
         required
-        className="auth-input"
+        className="auth-input password-field"
         type={showPassword ? 'text' : 'password'}
         placeholder={placeholder}
         value={password}
@@ -15,14 +16,12 @@ const PasswordInput = ({ password, placeholder, onChange, onBlur }) => {
       />
       <button
         type="button"
+        className="password-toggle-btn"
         onClick={() => setShowPassword(!showPassword)}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-        }}
       >
-        {showPassword ? '🙈' : '👁️'}
+        <span className="material-symbols-outlined">
+          {showPassword ? 'password_2' : 'password_2_off'}
+        </span>
       </button>
     </div>
   );

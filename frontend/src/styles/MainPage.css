@@ -90,7 +90,7 @@ button {
 }
 
 .tlink-footer {
-    @apply bg-[#EEF8FF] py-10 md:py-0 md:h-40 flex flex-col md:flex-row items-center justify-around px-10 gap-8 shrink-0;
+    @apply h-[130px] bg-[#D7E7F2] flex flex-row items-center justify-center gap-20 md:gap-50 px-4;
 }
 
 .step-item {

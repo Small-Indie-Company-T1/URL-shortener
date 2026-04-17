@@ -14,13 +14,32 @@ export async function createLink(original_url) {
 
 export async function createQrCode(url_id, format) {
   try {
-    console.log(format);
     const response = await linksApi.get(`/${url_id}/qr?fmt=${format}`, {
       responseType: 'blob',
     });
     return response.data;
   } catch (error) {
-    console.error('Ошибка генерации QR-кода: ', error.status);
+    console.error('Ошибка генерации QR-кода: ', error.data.detail.msg);
+    throw error;
+  }
+}
+
+export async function getLinksList(offset, limit = 10) {
+  try {
+    const response = await linksApi.get('/', { offset: offset, limit: limit });
+    return response.data;
+  } catch (error) {
+    console.error(error.data.detail.msg);
+    throw error;
+  }
+}
+
+export async function deleteLinkByShortCode(short_code) {
+  try {
+    const response = await linksApi.delete(`/${short_code}`);
+    return response.data;
+  } catch (error) {
+    console.error(error.data.detail.msg);
     throw error;
   }
 }

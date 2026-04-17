@@ -70,5 +70,5 @@ async def test_list_links_pagination(client, test_pool, test_user):
     assert data.get('links')[0].get('short_code') == 'code2'
 
     response = await client.get('/links/?limit=10&offset=10')
-    assert response.json().get('total') == 0
+    assert len(response.json().get('links')) == 0
     app.dependency_overrides.clear()

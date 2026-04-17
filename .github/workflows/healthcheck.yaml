@@ -29,6 +29,10 @@ jobs:
           ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
           REFRESH_TOKEN_EXPIRE_DAYS=${{ secrets.REFRESH_TOKEN_EXPIRE_DAYS }}
           BASE_URL=${{ secrets.BASE_URL }}
+          REDIS_HOST=${{ secrets.REDIS_HOST }}
+          REDIS_PORT=${{ secrets.REDIS_PORT }}
+          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          TEST_REDIS_DB=${{ secrets.TEST_REDIS_DB }}
           EOF
 
       - name: Build and start Database
@@ -47,6 +51,19 @@ jobs:
       - name: Alembic migration check
         run: |
           docker compose -f docker-compose.yaml run --rm -w /app backend alembic upgrade head
+
+      - name: Build Redis
+        run: |
+          docker compose -f docker-compose.yaml up -d redis
+          echo "Waiting for Redis..."
+          for i in {1..10}; do
+            echo "PING"
+            if docker compose exec -T redis redis-cli ping | grep PONG; then
+              echo "Redis is up"
+              break
+            fi
+            sleep 2
+          done
 
       - name: FastAPI Startup check
         run: |

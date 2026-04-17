@@ -6,6 +6,7 @@ const PasswordInput = ({ password, placeholder, onChange, onBlur }) => {
     <div>
       <input
         required
+        className="auth-input"
         type={showPassword ? 'text' : 'password'}
         placeholder={placeholder}
         value={password}

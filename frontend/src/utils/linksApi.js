@@ -12,15 +12,12 @@ export async function createLink(original_url) {
   }
 }
 
-export async function createQrCode(short_code, format) {
+export async function createQrCode(url_id, format) {
   try {
-    const response = await linksApi.post(
-      `/${short_code}/qr`,
-      { format: format, short_code: short_code },
-      {
-        responseType: 'blob',
-      }
-    );
+    console.log(format);
+    const response = await linksApi.get(`/${url_id}/qr?fmt=${format}`, {
+      responseType: 'blob',
+    });
     return response.data;
   } catch (error) {
     console.error('Ошибка генерации QR-кода: ', error.data.detail.msg);

@@ -1,7 +1,7 @@
 import uuid
 
 import asyncpg
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Query
 from fastapi.responses import StreamingResponse
 
 from src.db.queries import LinkQueriesQueries
@@ -83,6 +83,9 @@ async def delete_user_link(
 @router.get("/{short_code}/qr")
 async def get_link_qr(
     short_code: str,
+    fmt: str = Query("png", pattern="^(png|svg)$"),
+    download: bool = Query(False),
+    scale: int = Query(10, ge=1, le=50, description="Масштаб QR-кода"),
     db: asyncpg.Connection = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
@@ -93,5 +96,9 @@ async def get_link_qr(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Короткая ссылка не найдена'
         )
-    qr_img = service.generate_qr_code(short_code)
-    return StreamingResponse(qr_img, media_type="image/png")
+    qr_buf, mime_type = service.generate_qr_code(short_code, scale, fmt)
+    headers = {}
+    if download:
+        filename = f'qr_{short_code}.{fmt}'
+        headers["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return StreamingResponse(qr_buf, media_type=mime_type, headers=headers)

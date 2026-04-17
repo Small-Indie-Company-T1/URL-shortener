@@ -33,3 +33,7 @@ sql:
 
             "pg_catalog.bytea":
               python_type: "bytes"
+
+            "pg_catalog.inet":
+              python_type: "ipaddress._BaseAddress"
+              import: "import ipaddress"

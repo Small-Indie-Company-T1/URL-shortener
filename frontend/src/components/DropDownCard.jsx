@@ -1,8 +1,8 @@
 import React from 'react';
 
-const DropDownCard = ({ data }) => {
+const DropDownCard = ({ data, onMouseLeave }) => {
   return (
-    <div>
+    <div onMouseLeave={onMouseLeave}>
       <ul>
         {data.map((item, i) => (
           <li key={i}>{item}</li>

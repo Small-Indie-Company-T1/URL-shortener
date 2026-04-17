@@ -6,6 +6,8 @@ import HomePage from './pages/HomePage.jsx';
 import CreateTab from './components/home/CreateTab.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import MainPage from './pages/MainPage.jsx';
+import MyLinksTab from './components/home/MyLinksTab.jsx';
+import MyLinkTab from './components/home/MyLinkTab.jsx';
 
 function App() {
   return (
@@ -25,7 +27,8 @@ function App() {
         >
           <Route index element={<Navigate to="/home/create" />} />
           <Route path="create" element={<CreateTab />} />
-          <Route path="my-links" element={<div>Мои ссылки</div>} />
+          <Route path="my-links" element={<MyLinksTab />} />
+          <Route path="my-links/*" element={<MyLinkTab />} />
         </Route>
       </Routes>
     </BrowserRouter>

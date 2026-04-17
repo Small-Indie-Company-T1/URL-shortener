@@ -1,0 +1,42 @@
+import useLinks from '../../hooks/useLinks.js';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+export default function MyLinksTab() {
+  const { isLoading, error, getLinks, clearError } = useLinks();
+  const [linksList, setLinksList] = useState([]);
+
+  const updateLinks = async () => {
+    const { links } = await getLinks(0, 10);
+    setLinksList(links);
+  };
+
+  useEffect(() => {
+    updateLinks();
+  }, []);
+
+  return (
+    <div>
+      <h1>Мои ссылки</h1>
+      {isLoading ? (
+        <div>Загрузка...</div>
+      ) : (
+        <ul>
+          {linksList.map((link, index) => (
+            <li key={link.id}>
+              <p>{index + 1}</p>
+              <p>{link.short_code}</p>
+              <p>{link.created_at.substring(0, 10)}</p>
+              <Link
+                to={`/home/my-links/${link.short_code}`}
+                state={{ link: link }}
+              >
+                ...
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}

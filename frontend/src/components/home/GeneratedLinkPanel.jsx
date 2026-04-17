@@ -5,6 +5,7 @@ import { useState } from 'react';
 export default function GeneratedLinkPanel({ shortLink, qrUrl, downloadQr }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [pngBlob, setPngBlob] = useState(null);
+
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(shortLink);

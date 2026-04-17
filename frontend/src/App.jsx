@@ -4,7 +4,6 @@ import MainPage from './pages/MainPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import HomePage from './pages/HomePage.jsx';
-import RedirectPage from './pages/RedirectPage.jsx';
 import CreateTab from './components/home/CreateTab.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import MyLinksTab from './components/home/MyLinksTab.jsx';
@@ -32,7 +31,7 @@ function App() {
           <Route path="my-links/*" element={<MyLinkTab />} />
         </Route>
 
-        <Route path="*" element={<RedirectPage />} />
+        <Route path="404" element={<h1>404</h1>} />
       </Routes>
     </BrowserRouter>
   );

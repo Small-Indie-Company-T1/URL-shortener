@@ -17,7 +17,6 @@ export default function MyLinksTab() {
       setLinksList(data.links || []);
       setTotalCount(data.total || 0);
     }
-    setLinksList(links);
   };
 
   useEffect(() => {
@@ -58,7 +57,7 @@ export default function MyLinksTab() {
             className={currentPage === pageNum ? 'active' : ''}
             onClick={() => setCurrentPage(pageNum)}
           >
-           {pageNum}
+            {pageNum}
           </button>
         ))}
       </div>

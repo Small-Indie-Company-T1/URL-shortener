@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { redirectUrl } from '../utils/redirectApi.js';
 import {
   createLink,
   createQrCode,
@@ -48,15 +47,6 @@ export default function useLinks() {
     }
   };
 
-  const checkRedirect = async (short_url) => {
-    setIsLoading(true);
-    try {
-      await redirectUrl(short_url);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const getLinks = useCallback(async (offset, limit = 10) => {
     setIsLoading(true);
     try {
@@ -98,7 +88,6 @@ export default function useLinks() {
     createQr,
     getLinks,
     deleteLink,
-    checkRedirect,
     clearError: () => setError(null),
   };
 }

@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 // "база данных"
-let users = [{ email: 'kirka1408kirka@gmail.com', password: 'ad' }];
+let users = [{ email: 'kirka1408kirka@gmail.com', password: 'admin' }];
 let currentAccessToken = 'valid-token';
 let currentRefreshToken = 'refresh-123';
 
@@ -14,14 +14,14 @@ export const handlers = [
 
     if (!email || !nickname || !password) {
       return new HttpResponse(
-          JSON.stringify({
-            error: "Missing fields",
-            received: { email, nickname, password }
-          }),
-          {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' }
-          }
+        JSON.stringify({
+          error: 'Missing fields',
+          received: { email, nickname, password },
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
       );
     }
 
@@ -104,10 +104,11 @@ export const handlers = [
     }
   }),
   http.get('/links/42zxc67/qr', async ({ request }) => {
-    const { fmt } = await request.json();
+    const fmt = new URL(request.url).searchParams.get('fmt');
     const response = await fetch(`/QR_code.${fmt}`);
     const blob = await response.blob();
 
+    console.log(typeof fmt, fmt);
     return new HttpResponse(blob, {
       status: 200,
       headers: {

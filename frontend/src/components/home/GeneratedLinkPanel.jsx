@@ -44,26 +44,43 @@ export default function GeneratedLinkPanel({ shortLink, qrUrl, downloadQr }) {
   };
 
   return (
-    <div>
-      <p>Ваша ссылка:</p>
-      <textarea placeholder="Сокращённая ссылка" value={shortLink} readOnly />
-      <button onClick={handleCopyLink}>Копировать</button>
-      <p>Ваш qr:</p>
-      <img
-        style={{ width: '200px', height: '200px' }}
-        src={qrUrl || null}
-        alt="QR Code"
-      />
-      <button onMouseEnter={() => setDropdownOpen(true)}>Скачать</button>
-      {dropdownOpen && (
-        <DropDownCard
-          onMouseLeave={() => setDropdownOpen(false)}
-          data={[
-            <button onClick={() => handleDownloadQr('png')}>PNG</button>,
-            <button onClick={() => handleDownloadQr('svg')}>SVG</button>,
-          ]}
-        />
-      )}
+    <div className="create-tab__result-card">
+      <div className="create-tab__row">
+        <p className="create-tab__label">Ваша ссылка:</p>
+        <div className="create-tab__display-field">
+          {shortLink || 'short.link'}
+        </div>
+        <button onClick={handleCopyLink} className="create-tab__action-btn">
+          Копировать
+        </button>
+      </div>
+      <div className="create-tab__qr-section">
+        <p className="create-tab__label">Ваш QR-код:</p>
+        <div className="create-tab__qr-image">
+          <img
+            style={{ width: '200px', height: '200px' }}
+            src={qrUrl || null}
+            alt="QR Code"
+          />
+        </div>
+        <div className="create-tab__actions">
+          <button
+            onMouseEnter={() => setDropdownOpen(true)}
+            className="create-tab__action-btn"
+          >
+            Скачать
+          </button>
+          {dropdownOpen && (
+            <DropDownCard
+              onMouseLeave={() => setDropdownOpen(false)}
+              data={[
+                <button onClick={() => handleDownloadQr('png')}>PNG</button>,
+                <button onClick={() => handleDownloadQr('svg')}>SVG</button>,
+              ]}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

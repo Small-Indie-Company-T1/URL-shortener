@@ -2,10 +2,12 @@ import React from 'react';
 
 const DropDownCard = ({ data, onMouseLeave }) => {
   return (
-    <div onMouseLeave={onMouseLeave}>
+    <div onMouseLeave={onMouseLeave} className="create-tab__qr-dropdown">
       <ul>
         {data.map((item, i) => (
-          <li key={i}>{item}</li>
+          <li key={i} className="create-tab__qr-dropdown__element">
+            {item}
+          </li>
         ))}
       </ul>
     </div>

@@ -46,7 +46,7 @@ export default function CreateTab() {
   return (
     <div className="flex-1 w-full min-h-[calc(100vh-63px)] flex flex-col items-center justify-center pb-20">
       <div className="create-tab w-full max-w-[1100px] px-8">
-        <h1>Создать ссылку</h1>
+        <h1 className="create-tab__title">Создать ссылку</h1>
         <form onSubmit={handleSubmit} className="create-tab__form">
           <fieldset disabled={isLoading}>
             <input
@@ -59,7 +59,9 @@ export default function CreateTab() {
                 clearError();
               }}
             />
-            <button type="submit">Создать</button>
+            <button type="submit" className="create-tab__submit-btn">
+              Создать
+            </button>
           </fieldset>
         </form>
         {shortLink.link && (

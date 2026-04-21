@@ -14,7 +14,6 @@ export default function MyLinksTab() {
   const updateLinks = useCallback(async () => {
     const offset = (currentPage - 1) * limit;
     const data = await getLinks(offset, limit);
-    console.log(data, offset, limit);
     if (data) {
       setLinksList(data.links || []);
       setTotalCount(data.total || 0);

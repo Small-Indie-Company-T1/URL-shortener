@@ -42,22 +42,14 @@ async def redis_client():
     client = Redis.from_url(TEST_REDIS_URL, decode_responses=True)
     await client.flushdb()
     yield client
-    try:
-        await client.flushdb()
-        await client.aclose()
-    except RuntimeError:
-        ...
+    await client.aclose()
 
 @pytest.fixture(autouse=True)
 async def bin_redis_client():
     client = Redis.from_url(TEST_REDIS_URL, decode_responses=False)
     await client.flushdb()
     yield client
-    try:
-        await client.flushdb()
-        await client.aclose()
-    except RuntimeError:
-        ...
+    await client.aclose()
 
 @pytest.fixture
 async def client(test_pool, redis_client, bin_redis_client):

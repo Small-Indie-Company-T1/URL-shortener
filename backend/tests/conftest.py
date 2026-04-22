@@ -16,7 +16,7 @@ from src.db.queries import LinkQueriesQueries
 from src.main import app
 from src.core.config import settings
 from src.db.database import get_db
-from src.api.deps import get_redis
+from src.db.redis import get_redis, get_bin_redis
 
 TEST_DB_URL = f'postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/test_db'
 TEST_REDIS_URL = f'redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/1'
@@ -48,8 +48,19 @@ async def redis_client():
     except RuntimeError:
         ...
 
+@pytest.fixture(autouse=True)
+async def bin_redis_client():
+    client = Redis.from_url(TEST_REDIS_URL, decode_responses=False)
+    await client.flushdb()
+    yield client
+    try:
+        await client.flushdb()
+        await client.aclose()
+    except RuntimeError:
+        ...
+
 @pytest.fixture
-async def client(test_pool, redis_client):
+async def client(test_pool, redis_client, bin_redis_client):
     app.state.pool = test_pool
 
     async def _get_test_db():
@@ -57,10 +68,14 @@ async def client(test_pool, redis_client):
             yield conn
     
     async def _get_test_redis():
-        yield redis_client    
+        yield redis_client
+
+    async def _get_test_bin_redis():
+        yield bin_redis_client
 
     app.dependency_overrides[get_db] = _get_test_db
     app.dependency_overrides[get_redis] = _get_test_redis
+    app.dependency_overrides[get_bin_redis] = _get_test_bin_redis
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:

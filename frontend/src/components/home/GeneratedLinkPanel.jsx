@@ -19,6 +19,23 @@ export default function GeneratedLinkPanel({ shortLink, qrUrl, downloadQr }) {
     }
   };
 
+  const handleCopyQr = async () => {
+    try {
+      let blob = pngBlob;
+      if (!blob) {
+        blob = await downloadQr();
+        setPngBlob(blob);
+      }
+      await navigator.clipboard.write([
+        new ClipboardItem({ [blob.type]: blob }),
+      ]);
+      toastr.success('QR copied to clipboard.');
+    } catch (error) {
+      console.error(error.name, error.message);
+      toastr.error('Failed to copy');
+    }
+  };
+
   const handleDownloadQr = async (format) => {
     if (format === 'svg') {
       const link = document.createElement('a');
@@ -64,6 +81,9 @@ export default function GeneratedLinkPanel({ shortLink, qrUrl, downloadQr }) {
           />
         </div>
         <div className="create-tab__actions">
+          <button onClick={handleCopyQr} className="create-tab__action-btn">
+            Копировать
+          </button>
           <button
             onMouseEnter={() => setDropdownOpen(true)}
             className="create-tab__action-btn"

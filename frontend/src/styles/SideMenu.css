@@ -1,25 +1,25 @@
 @reference "../App.css";
 
 .sidemenu {
-    @apply w-[300px] bg-[#385CA8] min-h-screen flex flex-col text-white shrink-0;
+  @apply w-[300px] bg-[#385CA8] min-h-screen flex flex-col text-white shrink-0;
 }
 
 .sidemenu__top {
-    @apply h-[63px] bg-[#3A6CD5];
+  @apply h-[63px] bg-[#3A6CD5];
 }
 
 .sidemenu__nav {
-    @apply flex flex-col;
+  @apply flex flex-col;
 }
 
 .sidemenu__link {
-    @apply h-[60px] flex items-center gap-4 px-8 text-xl font-medium transition-colors hover:bg-[#3A6CD5] border-b border-[#2D53A5]/30;
+  @apply h-[60px] flex items-center gap-4 px-8 text-xl font-medium transition-colors hover:bg-[#3A6CD5] border-b border-[#2D53A5]/30;
 }
 
 .sidemenu__link--active {
-    @apply bg-[#3A6CD5];
+  @apply bg-[#3A6CD5];
 }
 
 .sidemenu__logout {
-    @apply mt-auto h-[60px] flex items-center gap-4 px-8 text-xl font-medium border-t border-[#2D53A5] hover:bg-[#2D53A5] transition-colors;
+  @apply mt-auto h-[60px] flex items-center gap-4 px-8 text-xl font-medium border-t border-[#2D53A5] hover:bg-[#2D53A5] transition-colors;
 }

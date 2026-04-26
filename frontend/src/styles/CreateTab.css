@@ -1,77 +1,75 @@
-@import "../App.css";
+@import '../App.css';
 
 .create-tab {
-    @apply flex flex-col p-6 md:p-10 w-full max-w-250;
+  @apply flex flex-col p-6 md:p-10 w-full max-w-250;
 }
 
 .create-tab__title {
-    @apply text-3xl md:text-4xl font-semibold mb-8 text-black;
-    font-family: 'Inter', sans-serif;
+  @apply text-3xl md:text-4xl font-semibold mb-8 text-black;
+  font-family: 'Inter', sans-serif;
 }
 
 .create-tab__form {
-    @apply flex flex-col md:flex-row gap-4 mb-10 items-stretch;
+  @apply flex flex-col md:flex-row gap-4 mb-10 items-stretch;
 }
 
 .create-tab__input {
-    @apply flex-1 h-12 px-6 bg-white border border-[#89939E] rounded-xl outline-none text-xl italic font-extralight transition-all;
-    color: #2C2C2C;
+  @apply flex-1 h-12 px-6 bg-white border border-[#89939E] rounded-xl outline-none text-xl italic font-extralight transition-all;
+  color: #2c2c2c;
 }
 
 .create-tab__input:focus {
-    @apply border-[#2D60CD] ring-1 ring-[#2D60CD];
+  @apply border-[#2D60CD] ring-1 ring-[#2D60CD];
 }
 
 .create-tab__submit-btn {
-    @apply h-12 px-10 bg-[#2D60CD] text-white rounded-xl font-semibold text-xl transition-colors hover:bg-[#1e4494] border border-[#89939E] cursor-pointer disabled:opacity-50;
+  @apply h-12 px-10 bg-[#2D60CD] text-white rounded-xl font-semibold text-xl transition-colors hover:bg-[#1e4494] border border-[#89939E] cursor-pointer disabled:opacity-50;
 }
 
-
 .create-tab__result-card {
-    @apply bg-[#D7E7F2] rounded-xl p-6 md:p-8 flex flex-col gap-8 shadow-sm;
+  @apply bg-[#D7E7F2] rounded-xl p-6 md:p-8 flex flex-col gap-8 shadow-sm;
 }
 
 .create-tab__row {
-    @apply flex flex-col md:flex-row md:items-center gap-4;
+  @apply flex flex-col md:flex-row md:items-center gap-4;
 }
 
 .create-tab__label {
-    @apply text-2xl font-extralight text-[#2C2C2C] md:w-48;
+  @apply text-2xl font-extralight text-[#2C2C2C] md:w-48;
 }
 
 .create-tab__display-field {
-    @apply flex-1 h-12 px-4 bg-white border border-[#89939E] rounded-xl flex items-center text-xl italic font-extralight text-[#2C2C2C] overflow-hidden;
+  @apply flex-1 h-12 px-4 bg-white border border-[#89939E] rounded-xl flex items-center text-xl italic font-extralight text-[#2C2C2C] overflow-hidden;
 }
 
-
 .create-tab__qr-section {
-    @apply flex flex-col md:flex-row md:items-center items-start gap-8;
+  @apply flex flex-col md:flex-row md:items-center items-start gap-8;
 }
 
 .create-tab__qr-image {
-    @apply w-44 h-44 bg-white border border-[#89939E] rounded-xl flex items-center justify-center p-2;
+  @apply w-44 h-44 bg-white border border-[#89939E] rounded-xl flex items-center justify-center p-2;
 }
 
 .create-tab__qr-image img {
-    @apply w-full h-full object-contain;
+  @apply w-full h-full object-contain;
 }
 
 .create-tab__actions {
-    @apply flex flex-col gap-3 w-full md:w-auto md:min-w-50;
-    align-items: center;
+  @apply flex flex-col gap-3 w-full md:w-auto md:min-w-50;
+  align-items: center;
 }
 
 .create-tab__action-btn {
-    @apply h-12 px-6 bg-[#385CA8] text-white rounded-xl font-semibold text-lg transition-colors hover:bg-[#2D53A5] border border-[#2D53A5] cursor-pointer;
+  @apply h-12 px-6 bg-[#385CA8] text-white rounded-xl font-semibold text-lg transition-colors hover:bg-[#2D53A5] border border-[#2D53A5] cursor-pointer;
 }
 
 .create-tab__qr-dropdown {
-    @apply bg-white border border-[#89939E] rounded-xl text-[#2C2C2C] cursor-pointer;
-    max-width: fit-content;
-    max-height: fit-content;
+  @apply bg-white border border-[#89939E] rounded-xl text-[#2C2C2C] cursor-pointer;
+  max-width: fit-content;
+  max-height: fit-content;
 }
 
 .create-tab__qr-dropdown__element {
-    @apply flex flex-col gap-3 px-10 border border-[#89939E] rounded-xl;
-    font-size: large;
+  @apply flex flex-col gap-3 px-10 border border-[#89939E] rounded-xl;
+  font-size: large;
 }

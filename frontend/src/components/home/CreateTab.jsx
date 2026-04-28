@@ -64,13 +64,11 @@ export default function CreateTab() {
             </button>
           </fieldset>
         </form>
-        {shortLink.link && (
           <GeneratedLinkPanel
             shortLink={shortLink.link}
             qrUrl={qrUrl}
             downloadQr={async () => await createQr(shortLink.short_code, 'png')}
           />
-        )}
       </div>
     </div>
   );

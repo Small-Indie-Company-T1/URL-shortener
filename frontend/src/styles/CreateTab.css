@@ -9,13 +9,11 @@
   font-family: 'Inter', sans-serif;
 }
 
-
 .create-tab__form fieldset {
   @apply flex flex-col md:flex-row gap-4 mb-10 items-stretch border-none p-0;
 }
 
 .create-tab__input {
-
   @apply flex-grow h-12 px-6 bg-white border border-[#89939E] rounded-xl outline-none text-xl italic font-extralight transition-all;
   color: #2c2c2c;
   min-width: 0;
@@ -30,7 +28,6 @@
   width: 160px;
   flex-shrink: 0;
 }
-
 
 .create-tab__result-card {
   @apply bg-[#D7E7F2] rounded-xl p-6 md:p-8 flex flex-col gap-8 shadow-sm;
@@ -47,7 +44,6 @@
 .create-tab__display-field {
   @apply flex-1 h-12 px-4 bg-white border border-[#89939E] rounded-xl flex items-center text-xl italic font-extralight text-[#2C2C2C] overflow-hidden;
 }
-
 
 .create-tab__qr-section {
   @apply flex flex-col md:flex-row items-center gap-8 w-full;

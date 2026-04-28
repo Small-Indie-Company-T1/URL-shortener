@@ -42,72 +42,78 @@ export default function GeneratedLinkPanel({ shortLink, qrUrl, downloadQr }) {
   };
 
   return (
-      <div className="create-tab__result-card">
-        <div className="create-tab__row">
-          <p className="create-tab__label">Ваша ссылка:</p>
-          <div className="create-tab__display-field">
+    <div className="create-tab__result-card">
+      <div className="create-tab__row">
+        <p className="create-tab__label">Ваша ссылка:</p>
+        <div className="create-tab__display-field">
           <span style={{ color: shortLink ? '#2C2C2C' : '#89939E' }}>
             {shortLink || 'Short.link'}
           </span>
-          </div>
-          <button
-              onClick={handleCopyLink}
-              className="create-tab__action-btn"
-              style={{ opacity: shortLink ? 1 : 0.5 }}
-          >
-            Копировать
-          </button>
         </div>
+        <button
+          onClick={handleCopyLink}
+          className="create-tab__action-btn"
+          style={{ opacity: shortLink ? 1 : 0.5 }}
+        >
+          Копировать
+        </button>
+      </div>
 
-        <div className="create-tab__qr-section">
-          <p className="create-tab__label">Ваш QR-код:</p>
+      <div className="create-tab__qr-section">
+        <p className="create-tab__label">Ваш QR-код:</p>
 
-          <div className="create-tab__qr-image-wrapper">
-            <div className="create-tab__qr-image" style={{ margin: '0 auto' }}>
-              {qrUrl ? (
-                  <img
-                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                      src={qrUrl}
-                      alt="QR Code"
-                  />
-              ) : (
-                  <div className="qr-placeholder">
-                <span className="material-symbols-outlined" style={{ fontSize: '100px', color: '#D7E7F2' }}>
+        <div className="create-tab__qr-image-wrapper">
+          <div className="create-tab__qr-image" style={{ margin: '0 auto' }}>
+            {qrUrl ? (
+              <img
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                src={qrUrl}
+                alt="QR Code"
+              />
+            ) : (
+              <div className="qr-placeholder">
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: '100px', color: '#D7E7F2' }}
+                >
                   qr_code_2
                 </span>
-                  </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
 
-            <div className="create-tab__actions">
-              <button
-                  className="create-tab__action-btn"
-                  style={{ opacity: qrUrl ? 1 : 0.5 }}
-                  onClick={() => { if(qrUrl) toastr.info('Функция копирования QR скоро будет доступна'); }}
-              >
-                Копировать
-              </button>
+          <div className="create-tab__actions">
+            <button
+              className="create-tab__action-btn"
+              style={{ opacity: qrUrl ? 1 : 0.5 }}
+              onClick={() => {
+                if (qrUrl)
+                  toastr.info('Функция копирования QR скоро будет доступна');
+              }}
+            >
+              Копировать
+            </button>
 
-              <button
-                  onMouseEnter={() => qrUrl && setDropdownOpen(true)}
-                  className="create-tab__action-btn"
-                  style={{ opacity: qrUrl ? 1 : 0.5 }}
-              >
-                Скачать
-              </button>
+            <button
+              onMouseEnter={() => qrUrl && setDropdownOpen(true)}
+              className="create-tab__action-btn"
+              style={{ opacity: qrUrl ? 1 : 0.5 }}
+            >
+              Скачать
+            </button>
 
-              {dropdownOpen && (
-                  <DropDownCard
-                      onMouseLeave={() => setDropdownOpen(false)}
-                      data={[
-                        <button onClick={() => handleDownloadQr('png')}>PNG</button>,
-                        <button onClick={() => handleDownloadQr('svg')}>SVG</button>,
-                      ]}
-                  />
-              )}
-            </div>
+            {dropdownOpen && (
+              <DropDownCard
+                onMouseLeave={() => setDropdownOpen(false)}
+                data={[
+                  <button onClick={() => handleDownloadQr('png')}>PNG</button>,
+                  <button onClick={() => handleDownloadQr('svg')}>SVG</button>,
+                ]}
+              />
+            )}
           </div>
         </div>
       </div>
+    </div>
   );
 }

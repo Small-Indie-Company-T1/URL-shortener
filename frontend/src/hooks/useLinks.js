@@ -3,6 +3,7 @@ import {
   createLink,
   createQrCode,
   deleteLinkByShortCode,
+  getLinkClicks,
   getLinksList,
 } from '../utils/linksApi.js';
 
@@ -30,7 +31,7 @@ export default function useLinks() {
     }
   };
 
-  const createQr = async (short_code, format) => {
+  const createQr = useCallback(async (short_code, format) => {
     setIsLoading(true);
     try {
       return await createQrCode(short_code, format);
@@ -45,7 +46,7 @@ export default function useLinks() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const getLinks = useCallback(async (offset, limit = 10) => {
     setIsLoading(true);
@@ -81,6 +82,23 @@ export default function useLinks() {
     }
   }, []);
 
+  const getClicks = useCallback(async (link_id) => {
+    setIsLoading(true);
+    try {
+      return await getLinkClicks(link_id);
+    } catch (error) {
+      switch (error.response?.status) {
+        case 422:
+          setError('Validation error occurred.');
+          break;
+        default:
+          setError('Unknown error occurred.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     error,
@@ -88,6 +106,7 @@ export default function useLinks() {
     createQr,
     getLinks,
     deleteLink,
+    getClicks,
     clearError: () => setError(null),
   };
 }

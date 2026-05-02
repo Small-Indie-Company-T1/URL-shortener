@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 import useLinks from '../../hooks/useLinks.js';
@@ -12,7 +12,6 @@ export default function CreateTab() {
   const { isLoading, error, create, createQr, clearError } = useLinks();
   const [link, setLink] = useState('');
   const [shortLink, setShortLink] = useState({});
-  const [qrUrl, setQrUrl] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,22 +25,17 @@ export default function CreateTab() {
           result.short_code,
         id: result.id,
       });
-
-      const blob = await createQr(result.short_code, 'svg');
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        setQrUrl(url);
-      }
     } else setShortLink({});
   };
+
+  const downloadQr = useCallback(
+    async (format) => await createQr(shortLink.short_code, format),
+    [createQr, shortLink]
+  );
 
   useEffect(() => {
     if (error) toastr.error(error);
   }, [error]);
-
-  useEffect(() => {
-    return () => URL.revokeObjectURL(qrUrl);
-  }, []);
 
   return (
     <div className="flex-1 w-full min-h-[calc(100vh-63px)] flex flex-col items-center justify-center pb-20">
@@ -64,11 +58,12 @@ export default function CreateTab() {
             </button>
           </fieldset>
         </form>
-        <GeneratedLinkPanel
-          shortLink={shortLink.link}
-          qrUrl={qrUrl}
-          downloadQr={async () => await createQr(shortLink.short_code, 'png')}
-        />
+        {shortLink.link && (
+          <GeneratedLinkPanel
+            shortLink={shortLink.link}
+            downloadQr={downloadQr}
+          />
+        )}
       </div>
     </div>
   );

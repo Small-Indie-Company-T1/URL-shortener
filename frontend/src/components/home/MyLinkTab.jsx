@@ -46,21 +46,60 @@ export default function MyLinkTab() {
   }, [updateClicks]);
 
   return (
-    <div>
-      <p>{'http://localhost:5173/' + link.short_code}</p>
-      <p>{link.original_url}</p>
-      <QrContainer downloadQr={downloadQr} />
-      <div>
-        <ul>
-          {clicks.map((item, index) => (
-            <li key={index}>{item.ip_address}</li>
-          ))}
-        </ul>
+    <div className="link-details-page">
+      <div className="link-details-wrapper">
+        <header className="link-header">
+          <a
+            href={'http://localhost:5173/' + link.short_code}
+            className="link-header__url"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {'http://localhost:5173/' + link.short_code}
+          </a>
+        </header>
+
+        <div className="qr-section-card">
+          <div className="qr-section-card__content">
+            <p className="qr-section-card__text">Ваш QR-код:</p>
+            <div className="qr-section-card__image-box">
+              <span className="material-symbols-outlined">qr_code_2</span>
+            </div>
+            <div className="qr-section-card__actions">
+              <button className="qr-btn-action primary">Скачать</button>
+              <button className="qr-btn-action outline">Копировать</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="stats-container">
+          <div className="stats-entry">
+            <span className="material-symbols-outlined stats-entry__icon">
+              visibility
+            </span>
+            <span className="stats-entry__label">Количество переходов:</span>
+            <span className="stats-entry__value">хх</span>
+          </div>
+          <div className="stats-entry">
+            <span className="material-symbols-outlined stats-entry__icon">
+              ads_click
+            </span>
+            <span className="stats-entry__label">Уникальных переходов:</span>
+            <span className="stats-entry__value">хх</span>
+          </div>
+        </div>
+
+        <footer className="link-footer-actions">
+          <button
+            className="delete-action-btn"
+            onClick={handleDelete}
+            disabled={isLoading}
+          >
+            <span className="material-symbols-outlined">delete</span>
+            {!isLoading ? 'Удалить ссылку' : 'Удаление...'}
+          </button>
+        </footer>
       </div>
-      <button onClick={handleDelete} disabled={isLoading}>
-        <span className="material-symbols-outlined">delete</span>
-        {!isLoading ? 'Удалить ссылку' : 'Удаление...'}
-      </button>
     </div>
   );
 }

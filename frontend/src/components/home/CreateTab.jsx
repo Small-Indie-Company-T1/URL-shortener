@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import toastr from 'toastr';
-import 'toastr/build/toastr.min.css';
+import { toastr } from '../../toastr-config.js';
 import useLinks from '../../hooks/useLinks.js';
 import GeneratedLinkPanel from './GeneratedLinkPanel.jsx';
 

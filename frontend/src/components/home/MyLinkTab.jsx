@@ -2,10 +2,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useLinks from '../../hooks/useLinks.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import QrContainer from './QrContainer.jsx';
+import { toastr } from '../../toastr-config.js';
 import '../../styles/my-link.css';
 
 export default function MyLinkTab() {
-  const { isLoading, createQr, deleteLink, getClicks } = useLinks();
+  const { isLoading, error, createQr, deleteLink, getClicks, clearError } =
+    useLinks();
   const [isDeleted, setIsDeleted] = useState(false);
   const [clicks, setClicks] = useState([]);
   const isUpdating = useRef(false);
@@ -14,8 +16,13 @@ export default function MyLinkTab() {
   const link = location.state?.link;
 
   const handleDelete = useCallback(async () => {
-    setIsDeleted(await deleteLink(link.short_code));
-  }, [setIsDeleted, deleteLink, link]);
+    clearError();
+    const isSuccess = await deleteLink(link.short_code);
+    if (isSuccess) {
+      setIsDeleted(true);
+      toastr.info('Ссылка удалена.');
+    }
+  }, [setIsDeleted, deleteLink, clearError, link]);
 
   const downloadQr = useCallback(
     async (format) => await createQr(link.short_code, format),
@@ -28,6 +35,10 @@ export default function MyLinkTab() {
       setClicks(data.clicks);
     }
   }, [getClicks, setClicks, link]);
+
+  useEffect(() => {
+    if (error) toastr.error(error);
+  }, [error]);
 
   const navigate = useNavigate();
   useEffect(() => {

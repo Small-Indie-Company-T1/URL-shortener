@@ -1,4 +1,4 @@
-import toastr from 'toastr';
+import { toastr } from '../../toastr-config.js';
 import DropDownCard from '../DropDownCard.jsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -19,42 +19,58 @@ export default function QrContainer({ downloadQr }) {
       await navigator.clipboard.write([
         new ClipboardItem({ [blob.type]: blob }),
       ]);
-      toastr.success('QR copied to clipboard.');
+      toastr.success('QR-код скопирован в буфер обмена.');
     } catch (error) {
       console.error(error.name, error.message);
-      toastr.error('Failed to copy');
+      if (!error.response?.status) {
+        toastr.error('Не удалось скопировать QR-код.', 'Ошибка');
+      }
     }
   };
 
   const handleDownloadQr = async (format) => {
-    if (format === 'svg') {
-      const link = document.createElement('a');
-      link.href = qrUrl;
-      link.download = 'qr.svg';
-      link.click();
-    }
-    if (format === 'png') {
-      let blob = pngBlob;
-      if (!blob) {
-        blob = await downloadQr();
-        setPngBlob(blob);
+    try {
+      if (format === 'svg') {
+        if (!qrUrl) {
+          toastr.error('QR-код ещё не готов.', 'Ошибка');
+          return;
+        }
+        const link = document.createElement('a');
+        link.href = qrUrl;
+        link.download = 'qr.svg';
+        link.click();
+        toastr.success('QR-код успешно скачан.');
+      } else if (format === 'png') {
+        let blob = pngBlob;
+        if (!blob) {
+          blob = await downloadQr();
+          setPngBlob(blob);
+        }
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'qr.png';
+        link.click();
+
+        toastr.success('QR-код успешно скачан.');
+
+        URL.revokeObjectURL(url);
       }
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'qr.png';
-      link.click();
-
-      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Ошибка скачивания QR:', error.message);
     }
   };
 
   const initQr = useCallback(async () => {
-    const blob = await downloadQr('svg');
-    if (blob) {
-      const url = URL.createObjectURL(blob);
-      setQrUrl(url);
+    try {
+      const blob = await downloadQr('svg');
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        setQrUrl(url);
+      }
+    } catch (error) {
+      console.error('Ошибка инициализации QR:', error.message);
     }
   }, [downloadQr]);
 

@@ -1,4 +1,4 @@
-import toastr from 'toastr';
+import { toastr } from '../../toastr-config.js';
 import QrContainer from './QrContainer.jsx';
 
 export default function GeneratedLinkPanel({ shortLink, downloadQr }) {
@@ -7,7 +7,7 @@ export default function GeneratedLinkPanel({ shortLink, downloadQr }) {
     try {
       await navigator.clipboard.writeText(shortLink);
       toastr.success('Ссылка скопирована в буфер обмена.');
-    } catch (error) {
+    } catch {
       toastr.error('Не удалось скопировать ссылку.', 'Ошибка');
     }
   };

@@ -38,11 +38,12 @@ export default function useLinks() {
     } catch (error) {
       switch (error.response?.status) {
         case 422:
-          setError('Validation error occurred.');
+          setError('Ошибка валидации.');
           break;
         default:
-          setError('QR error occurred.');
+          setError('Ошибка создания QR-кода.');
       }
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -73,12 +74,14 @@ export default function useLinks() {
     } catch (error) {
       switch (error.response?.status) {
         case 422:
-          setError('Validation error occurred.');
+          setError('Ошибка валидации.');
           break;
         default:
-          setError('Unknown error occurred.');
+          setError('Произошла неизвестная ошибка.');
       }
       return false;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 

@@ -77,7 +77,7 @@ export const handlers = [
         {
           status: 200,
           headers: {
-            'Set-Cookie': `refreshToken=${'refresh-123'}; httpOnly; Path=/`,
+            'Set-Cookie': `refreshToken=refresh-123; httpOnly; Path=/`,
             'Content-Type': 'application/json',
           },
         }
@@ -109,7 +109,7 @@ export const handlers = [
         {
           status: 200,
           headers: {
-            'Set-Cookie': `refreshToken=${'refresh-123'}; httpOnly; Path=/`,
+            'Set-Cookie': `refreshToken=refresh-123; httpOnly; Path=/`,
             'Content-Type': 'application/json',
           },
         }
@@ -170,8 +170,8 @@ export const handlers = [
   }),
   http.get('/links', async ({ request }) => {
     const url = new URL(request.url);
-    const limit = url.searchParams.get('limit');
-    const offset = url.searchParams.get('offset');
+    const limit = Number(url.searchParams.get('limit'));
+    const offset = Number(url.searchParams.get('offset'));
     if (
       request.headers.get('Authorization') ===
       'Bearer ' + currentAccessToken

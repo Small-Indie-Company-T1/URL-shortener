@@ -81,7 +81,7 @@ export default function QrContainer({ downloadQr }) {
       await initQr();
       isInit.current = false;
     };
-    init();
+    void init();
   }, [initQr]);
 
   useEffect(() => {

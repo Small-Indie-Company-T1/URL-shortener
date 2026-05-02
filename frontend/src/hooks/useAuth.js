@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   registerUser,
   loginUser,
@@ -29,10 +29,11 @@ export default function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsAuthenticated(!!token);
   }, [token]);
 
-  const login = async (email, password) => {
+  const login = useCallback(async (email, password) => {
     setError(null);
     setIsLoading(true);
     try {
@@ -48,29 +49,33 @@ export default function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const register = async (email, name, password) => {
-    setError(null);
-    setIsLoading(true);
-    try {
-      await registerUser(email, name, password);
-      await login(email, password); // Автоматический вход после регистрации
-    } catch (error) {
-      switch (error.response?.status) {
-        case 400:
-          setError('Пользователь с такой почтой уже существует');
-          break;
-        default:
-          setError('Неизвестная ошибка');
+  const register = useCallback(
+    async (email, name, password) => {
+      setError(null);
+      setIsLoading(true);
+      try {
+        await registerUser(email, name, password);
+        await login(email, password); // Автоматический вход после регистрации
+      } catch (error) {
+        switch (error.response?.status) {
+          case 400:
+            setError('Пользователь с такой почтой уже существует');
+            break;
+          default:
+            setError('Неизвестная ошибка');
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [login]
+  );
 
   useEffect(() => {
     let alive = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
     setTokenUpdateHandler(setToken);
 
@@ -90,9 +95,11 @@ export default function useAuth() {
         }
       }
     };
-    initAuth();
+    void initAuth();
 
-    return () => (alive = false);
+    return () => {
+      alive = false;
+    };
   }, []);
 
   return {

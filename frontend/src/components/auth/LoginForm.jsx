@@ -22,7 +22,7 @@ export default function LoginForm() {
     if (isAuthenticated) {
       navigate('/home', { replace: true });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="auth-container">

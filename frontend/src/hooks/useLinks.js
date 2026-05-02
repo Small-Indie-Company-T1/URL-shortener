@@ -11,7 +11,7 @@ export default function useLinks() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const create = async (url) => {
+  const create = useCallback(async (url) => {
     setIsLoading(true);
     try {
       return await createLink(url);
@@ -29,7 +29,7 @@ export default function useLinks() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const createQr = useCallback(async (short_code, format) => {
     setIsLoading(true);

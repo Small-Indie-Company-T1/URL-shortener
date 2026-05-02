@@ -30,7 +30,7 @@ export default function MyLinksTab() {
       await updateLinks();
       isUpdating.current = false;
     };
-    update();
+    void update();
   }, [updateLinks]);
 
   const totalPages = Math.ceil(totalCount / limit) || 1;
@@ -50,8 +50,10 @@ export default function MyLinksTab() {
             </div>
 
             <div className="links-list">
-              {isLoading && linksList.length === 0 ? (
+              {isLoading ? (
                 <div className="links-loading">Загрузка...</div>
+              ) : linksList.length === 0 ? (
+                <div className="links-loading">У вас пока нет ссылок</div>
               ) : (
                 linksList.map((link, index) => (
                   <div key={link.id} className="links-item">

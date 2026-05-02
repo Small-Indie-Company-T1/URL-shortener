@@ -1,4 +1,3 @@
-import ipaddress
 
 from src.db import models
 import asyncpg
@@ -21,7 +20,7 @@ class ClickQueriesQueries:
         self.connection = connection
 
     
-    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress._BaseAddress | None) -> str:
+    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: typing.Any | None) -> str:
         return await self.connection.exec(
             self.CREATECLICK, link_id, user_agent, referred_from, ip_address
         )
@@ -38,7 +37,16 @@ class LinkQueriesQueries:
     """
     GETLINKSCOUNTBYUSERID = """
         SELECT COUNT(*) FROM links
-        WHERE creator_id = $1 AND is_deleted = false
+        WHERE creator_id = $1
+            AND is_deleted = false
+            AND (
+                original_url ILIKE '%' || $2 || '%' 
+                OR $2 IS NULL
+            )
+            AND (
+                is_active = $3 
+                OR $3 IS NULL
+            )
     """
     CHECKLINKEXISTS = """
         SELECT EXISTS(
@@ -48,9 +56,23 @@ class LinkQueriesQueries:
     """
     GETLINKSBYUSERID = """
         SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
-        WHERE creator_id = $1 AND is_deleted = false
-        ORDER BY created_at DESC
-        LIMIT $2 OFFSET $3
+        WHERE creator_id = $1
+            AND is_deleted = false
+            AND (
+                original_url ILIKE '%' || $2 || '%' 
+                OR $2 IS NULL
+            )
+            AND (
+                is_active = $3
+                OR $3 IS NULL
+            )
+        ORDER BY
+            CASE WHEN $4::text = 'created_at' AND $5::text = 'asc' THEN created_at END ASC,
+            CASE WHEN $4::text = 'created_at' AND $5::text = 'desc' THEN created_at END DESC,
+            -- CASE WHEN $6 = 'clicks' AND $7 = 'asc' THEN clicks END ASC,
+            -- CASE WHEN $6 = 'clicks' AND $7 = 'asc' THEN clicks END DESC,
+            created_at DESC
+        LIMIT $7 OFFSET $6
     """
     GETLINKBYCODE = """
         SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
@@ -82,9 +104,9 @@ class LinkQueriesQueries:
             original_url=row["original_url"],
             short_code=row["short_code"],
         )
-    async def GetLinksCountByUserId(self, creator_id: uuid.UUID) -> models.link_queries_queries.GetlinkscountbyuseridRow | None:
+    async def GetLinksCountByUserId(self, creator_id: uuid.UUID, original_url: str | None, is_active: bool | None) -> models.link_queries_queries.GetlinkscountbyuseridRow | None:
         row = await self.connection.fetchrow(
-            self.GETLINKSCOUNTBYUSERID, creator_id
+            self.GETLINKSCOUNTBYUSERID, creator_id, original_url, is_active
         )
         if row is None:
             return None
@@ -100,9 +122,9 @@ class LinkQueriesQueries:
         return models.link_queries_queries.ChecklinkexistsRow(
             exists=row["exists"],
         )
-    async def GetLinksByUserId(self, creator_id: uuid.UUID, limit: int, offset: int) -> list[models.public.Links]:
+    async def GetLinksByUserId(self, creator_id: uuid.UUID, original_url: str | None, is_active: bool | None, order_by: str, order_dir: str, offset: int | None, limit: int | None) -> list[models.public.Links]:
         rows = await self.connection.fetch(
-            self.GETLINKSBYUSERID, creator_id, limit, offset
+            self.GETLINKSBYUSERID, creator_id, original_url, is_active, order_by, order_dir, offset, limit
         )
         return [
             models.public.Links(

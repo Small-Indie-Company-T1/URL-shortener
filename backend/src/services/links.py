@@ -29,19 +29,39 @@ class LinkService:
                 continue
         raise Exception("Не удалось сгенерировать уникальный код")
     
-    async def get_user_links(self, user_id: uuid.UUID, limit: int = 10, offset: int = 0) -> List[LinkRead]:
+    async def get_user_links(
+        self,
+        user_id: uuid.UUID4,
+        limit: int = 10,
+        offset: int = 0,
+        original_url: str | None = None,
+        is_active: bool | None = None,
+        order_by: str = 'created_at',
+        order_dir: str = 'desc'
+    ) -> List[LinkRead]:
         links = await self.queries.GetLinksByUserId(
             creator_id=user_id,
             limit=limit,
-            offset=offset
+            offset=offset,
+            original_url=original_url,
+            is_active=is_active,
+            order_by=order_by,
+            order_dir=order_dir
         )
         return [LinkRead.model_validate(link) for link in links]
 
-    async def get_links_total(self, user_id: uuid.UUID) -> int:
-        total = await self.queries.GetLinksCountByUserId(
-            creator_id=user_id
+    async def get_links_total(
+        self,
+        user_id: uuid.UUID4,
+        original_url: str | None = None,
+        is_active: bool | None = None
+    ) -> int:
+        result = await self.queries.GetLinksCountByUserId(
+            creator_id=user_id,
+            original_url=original_url,
+            is_active=is_active
         )
-        return total.count if total else 0
+        return result.count if hasattr(result, 'count') else result[0]
 
     async def delete_link(self, short_code: str, user_id: uuid.UUID) -> bool:
         try:

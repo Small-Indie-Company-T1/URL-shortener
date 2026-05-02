@@ -1,3 +1,5 @@
+from typing import Literal
+
 import asyncpg
 import redis.asyncio as redis
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, Query
@@ -34,8 +36,12 @@ async def create_link(
 
 @router.get("/", response_model=LinkList)
 async def list_my_links(
-    limit: int = 10,
-    offset: int = 0,
+    limit: int = Query(10, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    search: str | None = Query(None, min_length=3, alias='original_url'),
+    is_active: bool | None = Query(None),
+    order_by: Literal['created_at'] = 'created_at', # TODO +clicks
+    order_dir: Literal['asc', 'desc'] = 'desc',
     db: asyncpg.Connection = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
@@ -44,18 +50,26 @@ async def list_my_links(
         links = await service.get_user_links(
             user_id=current_user.id,
             limit=limit,
-            offset=offset
+            offset=offset,
+            original_url=search,
+            is_active=is_active,
+            order_by=order_by,
+            order_dir=order_dir
         )
-        total = await service.get_links_total(user_id=current_user.id)
+        total = await service.get_links_total(
+            user_id=current_user.id,
+            original_url=search,
+            is_active=is_active
+        )
+
         return {
-            "links": links,
-            "total": total
+            'links': links,
+            'total': total
         }
     except Exception as e:
-        print(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Внутренняя ошибка при получении списка"
+            detail='Внутренняя ошибка при получении списка ссылок'
         )
     
 @router.delete("/{short_code}", status_code=status.HTTP_204_NO_CONTENT)

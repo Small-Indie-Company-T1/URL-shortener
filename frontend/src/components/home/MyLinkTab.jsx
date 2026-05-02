@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useLinks from '../../hooks/useLinks.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import QrContainer from './QrContainer.jsx';
-import '../../styles/MyLink.css';
+import '../../styles/my-link.css';
 
 export default function MyLinkTab() {
   const { isLoading, createQr, deleteLink, getClicks } = useLinks();

@@ -2,7 +2,7 @@ import toastr from 'toastr';
 import DropDownCard from '../DropDownCard.jsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import '../../styles/CreateTab.css';
+import '../../styles/create-tab.css';
 
 export default function QrContainer({ downloadQr }) {
   const [pngBlob, setPngBlob] = useState(null);

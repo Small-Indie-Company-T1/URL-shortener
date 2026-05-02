@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import useAuthContext from '../../hooks/useAuthContext';
-import '../../styles/SideMenu.css';
+import '../../styles/side-menu.css';
 
 export default function SideMenu() {
   const { logoutUser } = useAuthContext();

@@ -1,7 +1,7 @@
 import useLinks from '../../hooks/useLinks.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../../styles/MyLinks.css';
+import '../../styles/my-links.css';
 
 export default function MyLinksTab() {
   const { isLoading, getLinks } = useLinks();

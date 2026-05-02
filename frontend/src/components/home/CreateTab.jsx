@@ -5,7 +5,7 @@ import 'toastr/build/toastr.min.css';
 import useLinks from '../../hooks/useLinks.js';
 import GeneratedLinkPanel from './GeneratedLinkPanel.jsx';
 
-import '../../styles/CreateTab.css';
+import '../../styles/create-tab.css';
 
 export default function CreateTab() {
   const { isLoading, error, create, createQr, clearError } = useLinks();

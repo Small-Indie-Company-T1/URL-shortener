@@ -1,10 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 import useLinks from '../../hooks/useLinks.js';
-import '../../styles/CreateTab.css';
 import GeneratedLinkPanel from './GeneratedLinkPanel.jsx';
-import DropDownCard from '../DropDownCard.jsx';
 
 import '../../styles/CreateTab.css';
 
@@ -38,33 +37,40 @@ export default function CreateTab() {
   }, [error]);
 
   return (
-    <div className="flex-1 w-full min-h-[calc(100vh-63px)] flex flex-col items-center justify-center pb-20">
-      <div className="create-tab w-full max-w-[1100px] px-8">
-        <h1 className="create-tab__title">Создать ссылку</h1>
-        <form onSubmit={handleSubmit} className="create-tab__form">
-          <fieldset disabled={isLoading}>
-            <input
-              type="text"
-              placeholder="Введите URL"
-              value={link}
-              className="create-tab__input"
-              onChange={(e) => {
-                setLink(e.target.value);
-                clearError();
-              }}
-            />
-            <button type="submit" className="create-tab__submit-btn">
-              Создать
-            </button>
-          </fieldset>
-        </form>
-        {shortLink.link && (
-          <GeneratedLinkPanel
-            shortLink={shortLink.link}
-            downloadQr={downloadQr}
+    <div className="create-tab">
+      <h1 className="create-tab__title">Создать ссылку</h1>
+      <form onSubmit={handleSubmit} className="create-tab__form">
+        <fieldset disabled={isLoading}>
+          <input
+            type="text"
+            placeholder="Введите URL"
+            value={link}
+            className="create-tab__input"
+            onChange={(e) => {
+              setLink(e.target.value);
+              clearError();
+            }}
           />
+          <button type="submit" className="create-tab__submit-btn">
+            Создать
+          </button>
+        </fieldset>
+      </form>
+      <AnimatePresence>
+        {shortLink.link && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GeneratedLinkPanel
+              shortLink={shortLink.link}
+              downloadQr={downloadQr}
+            />
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 }

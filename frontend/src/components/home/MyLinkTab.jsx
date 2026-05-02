@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useLinks from '../../hooks/useLinks.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import QrContainer from './QrContainer.jsx';
+import '../../styles/MyLink.css';
 
 export default function MyLinkTab() {
   const { isLoading, createQr, deleteLink, getClicks } = useLinks();
@@ -50,27 +51,22 @@ export default function MyLinkTab() {
       <div className="link-details-wrapper">
         <header className="link-header">
           <a
-            href={'http://localhost:5173/' + link.short_code}
+            href={
+              (import.meta.env.VITE_FRONTEND_BASE_URL || '') +
+              '/r/' +
+              link.short_code
+            }
             className="link-header__url"
             target="_blank"
             rel="noreferrer"
           >
-            {'http://localhost:5173/' + link.short_code}
+            {(import.meta.env.VITE_FRONTEND_BASE_URL || '') +
+              '/r/' +
+              link.short_code}
           </a>
         </header>
 
-        <div className="qr-section-card">
-          <div className="qr-section-card__content">
-            <p className="qr-section-card__text">Ваш QR-код:</p>
-            <div className="qr-section-card__image-box">
-              <span className="material-symbols-outlined">qr_code_2</span>
-            </div>
-            <div className="qr-section-card__actions">
-              <button className="qr-btn-action primary">Скачать</button>
-              <button className="qr-btn-action outline">Копировать</button>
-            </div>
-          </div>
-        </div>
+        <QrContainer downloadQr={downloadQr} />
 
         <div className="stats-container">
           <div className="stats-entry">
@@ -78,7 +74,7 @@ export default function MyLinkTab() {
               visibility
             </span>
             <span className="stats-entry__label">Количество переходов:</span>
-            <span className="stats-entry__value">хх</span>
+            <span className="stats-entry__value">{clicks.length}</span>
           </div>
           <div className="stats-entry">
             <span className="material-symbols-outlined stats-entry__icon">

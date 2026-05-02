@@ -5,7 +5,7 @@ let users = [{ email: 'kirka1408kirka@gmail.com', password: 'admin' }];
 let links = [
   {
     id: 1,
-    original_url: 'http://google.com',
+    original_url: 'https://google.com',
     short_code: 'vsf567',
     created_at: '2026-04-26',
     is_active: true,
@@ -13,7 +13,7 @@ let links = [
   },
   {
     id: 2,
-    original_url: 'http://google.com',
+    original_url: 'https://google.com',
     short_code: 'hfsu72',
     created_at: '2026-04-26',
     is_active: true,

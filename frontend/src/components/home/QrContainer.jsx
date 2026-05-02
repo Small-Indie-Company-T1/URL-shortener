@@ -2,11 +2,13 @@ import toastr from 'toastr';
 import DropDownCard from '../DropDownCard.jsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import '../../styles/CreateTab.css';
+
 export default function QrContainer({ downloadQr }) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [pngBlob, setPngBlob] = useState(null);
   const [qrUrl, setQrUrl] = useState('');
   const isInit = useRef(false);
+
   const handleCopyQr = async () => {
     try {
       let blob = pngBlob;
@@ -66,9 +68,9 @@ export default function QrContainer({ downloadQr }) {
     init();
   }, [initQr]);
 
-  // useEffect(() => {
-  //   return () => URL.revokeObjectURL(qrUrl);
-  // }, []);
+  useEffect(() => {
+    return () => URL.revokeObjectURL(qrUrl);
+  }, [qrUrl]);
 
   return (
     <div className="create-tab__qr-section">
@@ -84,21 +86,28 @@ export default function QrContainer({ downloadQr }) {
         <button onClick={handleCopyQr} className="create-tab__action-btn">
           Копировать
         </button>
-        <button
-          onMouseEnter={() => setDropdownOpen(true)}
-          className="create-tab__action-btn"
+        <DropDownCard
+          trigger={<button className="create-tab__action-btn">Скачать</button>}
         >
-          Скачать
-        </button>
-        {dropdownOpen && (
-          <DropDownCard
-            onMouseLeave={() => setDropdownOpen(false)}
-            data={[
-              <button onClick={() => handleDownloadQr('png')}>PNG</button>,
-              <button onClick={() => handleDownloadQr('svg')}>SVG</button>,
-            ]}
-          />
-        )}
+          <div className="create-tab__qr-dropdown">
+            <button
+              className="create-tab__qr-dropdown__element"
+              onClick={async () => {
+                await handleDownloadQr('png');
+              }}
+            >
+              PNG
+            </button>
+            <button
+              className="create-tab__qr-dropdown__element"
+              onClick={async () => {
+                await handleDownloadQr('svg');
+              }}
+            >
+              SVG
+            </button>
+          </div>
+        </DropDownCard>
       </div>
     </div>
   );

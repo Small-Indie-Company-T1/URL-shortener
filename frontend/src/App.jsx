@@ -12,32 +12,32 @@ import NotFoundPage from './pages/NotFoundPage.jsx'; // Импорт твоей 
 
 function App() {
   return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/main" />} />
-          <Route path="/main" element={<MainPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/main" />} />
+        <Route path="/main" element={<MainPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
-          <Route
-              path="/home"
-              element={
-                <ProtectedRoute>
-                  <HomePage />
-                </ProtectedRoute>
-              }
-          >
-            <Route index element={<Navigate to="/home/create" />} />
-            <Route path="create" element={<CreateTab />} />
-            <Route path="my-links" element={<MyLinksTab />} />
-            <Route path="my-links/*" element={<MyLinkTab />} />
-          </Route>
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="/home/create" />} />
+          <Route path="create" element={<CreateTab />} />
+          <Route path="my-links" element={<MyLinksTab />} />
+          <Route path="my-links/*" element={<MyLinkTab />} />
+        </Route>
 
-          <Route path="/404" element={<NotFoundPage />} />
+        <Route path="/404" element={<NotFoundPage />} />
 
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
-      </BrowserRouter>
+        <Route path="*" element={<Navigate to="/404" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

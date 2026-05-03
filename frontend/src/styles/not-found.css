@@ -1,26 +1,26 @@
 @reference "../App.css";
 
 .not-found {
-    @apply flex items-center justify-center min-h-screen bg-[#eef7ff];
+  @apply flex items-center justify-center min-h-screen bg-[#eef7ff];
 }
 
 .not-found__card {
-    @apply text-center p-8;
+  @apply text-center p-8;
 }
 
 .not-found__title {
-    @apply text-[140px] font-semibold leading-none mb-4 text-[#1a1a1a] flex justify-center;
+  @apply text-[140px] font-semibold leading-none mb-4 text-[#1a1a1a] flex justify-center;
 }
 
 .not-found__title--accent {
-    @apply text-[#4a72b2] ml-1;
+  @apply text-[#4a72b2] ml-1;
 }
 
 .not-found__message {
-    @apply text-[28px] text-[#334155] mb-10;
+  @apply text-[28px] text-[#334155] mb-10;
 }
 
 .not-found__button {
-    @apply px-12 py-2 border-[1.5px] border-[#a5d8ff] text-[#5b89c9] rounded-xl text-xl
+  @apply px-12 py-2 border-[1.5px] border-[#a5d8ff] text-[#5b89c9] rounded-xl text-xl
     transition-all hover:bg-white/50 active:scale-95 bg-white;
 }

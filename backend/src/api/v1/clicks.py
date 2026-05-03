@@ -55,7 +55,7 @@ async def get_link_stats(
 
 from typing import List
 
-@router.get("/{short_code}/clicks", response_model=List[ClickRead])
+@router.get("/{short_code}/list", response_model=List[ClickRead])
 async def get_clicks_history(
         short_code: str,
         limit: int = 10,

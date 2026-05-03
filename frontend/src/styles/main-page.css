@@ -1,0 +1,110 @@
+@import '../App.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
+
+.tlink-wrapper {
+  @apply min-h-screen flex flex-col bg-white m-0 p-0;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.tlink-header {
+  @apply bg-[#D7E7F2] h-[63px] flex items-center px-4 md:px-10 shrink-0;
+}
+
+.tlink-logo {
+  @apply text-2xl font-black text-[#0B1120];
+}
+
+.tlink-hero {
+  position: relative;
+  overflow: hidden;
+  @apply bg-[#385CA8] text-white flex-1 flex flex-col md:flex-row items-center justify-between px-4 md:px-10 py-12;
+}
+
+.hero-content {
+  @apply z-10 text-left;
+}
+
+.hero-title {
+  @apply text-3xl md:text-5xl lg:text-6xl font-black leading-tight text-white;
+}
+
+.hero-subtitle {
+  @apply mt-8 text-xl md:text-2xl font-light opacity-90 text-white;
+}
+
+.btn-group {
+  @apply mt-12 flex flex-col sm:flex-row gap-6;
+}
+
+button {
+  @apply cursor-pointer border-none outline-none;
+}
+
+.btn-primary {
+  @apply bg-[#15203D] hover:bg-[#1e2d56] transition text-white px-10 py-5 rounded-xl font-black text-xl md:text-2xl;
+}
+
+.btn-secondary {
+  @apply bg-[#D7E7F2] hover:bg-[#c4d7e5] transition text-black px-10 py-5 rounded-xl font-black text-xl md:text-2xl;
+}
+
+.hero-decor {
+  @apply relative mt-16 md:mt-0 mr-10 hidden sm:block;
+  width: 260px;
+  height: 260px;
+}
+
+.qr-box-large {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 224px;
+  height: 224px;
+  @apply bg-[#B9DFFF] opacity-80 rounded-[20px] flex items-center justify-center;
+}
+
+.qr-box-large span {
+  font-size: 160px;
+  @apply text-[#1E3A6F];
+}
+
+.qr-box-small {
+  position: absolute;
+  bottom: -15px;
+  left: -25px;
+  z-index: 5;
+  width: 192px;
+  height: 192px;
+  @apply bg-[#D7E7F2] opacity-95 rounded-[20px] flex items-center justify-center shadow-2xl;
+}
+
+.qr-box-small span {
+  font-size: 140px;
+  @apply text-[#1E3A6F];
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 48;
+  @apply block;
+}
+
+.tlink-footer {
+  @apply h-[130px] bg-[#D7E7F2] flex flex-row items-center justify-center gap-20 md:gap-50 px-4;
+}
+
+.step-item {
+  @apply flex items-center gap-5;
+}
+
+.step-number {
+  @apply bg-[#385CA8] text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl font-black italic;
+}
+
+.step-text {
+  @apply text-xl md:text-2xl font-bold italic text-black;
+}

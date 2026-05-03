@@ -3,8 +3,12 @@ name: Python tests and coverage
 on:
   push:
     branches: ["main", "develop"]
+    paths:
+      - 'backend/**'
   pull_request:
     branches: ["main", "develop"]
+    paths:
+      - 'backend/**'
 
 jobs:
   test:

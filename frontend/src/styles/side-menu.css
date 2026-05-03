@@ -1,0 +1,25 @@
+@reference "../App.css";
+
+.side-menu {
+  @apply w-[300px] bg-[#385CA8] min-h-screen flex flex-col text-white shrink-0;
+}
+
+.side-menu__top {
+  @apply h-[63px] bg-[#3A6CD5];
+}
+
+.side-menu__nav {
+  @apply flex flex-col;
+}
+
+.side-menu__link {
+  @apply h-[60px] flex items-center gap-4 px-8 text-xl font-medium transition-colors hover:bg-[#3A6CD5] border-b border-[#2D53A5]/30;
+}
+
+.side-menu__link--active {
+  @apply bg-[#3A6CD5];
+}
+
+.side-menu__logout {
+  @apply mt-auto h-[60px] flex items-center gap-4 px-8 text-xl font-medium border-t border-[#2D53A5] hover:bg-[#2D53A5] transition-colors;
+}

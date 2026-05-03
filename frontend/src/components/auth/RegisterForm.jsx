@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
 import PasswordInput from './PasswordInput';
-import '../../styles/Auth.css';
+import '../../styles/auth.css';
 
 export default function RegisterForm() {
   const [email, setEmail] = useState('');
@@ -28,6 +28,7 @@ export default function RegisterForm() {
 
   useEffect(() => {
     if (password !== confirmPassword) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPasswordError('Пароли не совпадают');
     } else if (password.length < 8) {
       setPasswordError('Пароль должен быть не менее 8 символов');
@@ -47,7 +48,7 @@ export default function RegisterForm() {
     if (isAuthenticated) {
       navigate('/home', { replace: true });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="auth-container">

@@ -1,18 +1,15 @@
-import { useEffect, useState } from 'react';
-import toastr from 'toastr';
-import 'toastr/build/toastr.min.css';
+import { useEffect, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { toastr } from '../../toastr-config.js';
 import useLinks from '../../hooks/useLinks.js';
-import '../../styles/CreateTab.css';
 import GeneratedLinkPanel from './GeneratedLinkPanel.jsx';
-import DropDownCard from '../DropDownCard.jsx';
 
-import '../../styles/CreateTab.css';
+import '../../styles/create-tab.css';
 
 export default function CreateTab() {
   const { isLoading, error, create, createQr, clearError } = useLinks();
   const [link, setLink] = useState('');
   const [shortLink, setShortLink] = useState({});
-  const [qrUrl, setQrUrl] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,50 +23,53 @@ export default function CreateTab() {
           result.short_code,
         id: result.id,
       });
-
-      const blob = await createQr(result.short_code, 'svg');
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        setQrUrl(url);
-      }
     } else setShortLink({});
   };
+
+  const downloadQr = useCallback(
+    async (format) => await createQr(shortLink.short_code, format),
+    [createQr, shortLink]
+  );
 
   useEffect(() => {
     if (error) toastr.error(error);
   }, [error]);
 
-  useEffect(() => {
-    return () => URL.revokeObjectURL(qrUrl);
-  }, []);
-
   return (
-    <div className="flex-1 w-full min-h-[calc(100vh-63px)] flex flex-col items-center justify-center pb-20">
-      <div className="create-tab w-full max-w-[1100px] px-8">
-        <h1>Создать ссылку</h1>
-        <form onSubmit={handleSubmit} className="create-tab__form">
-          <fieldset disabled={isLoading}>
-            <input
-              type="text"
-              placeholder="Введите URL"
-              value={link}
-              className="create-tab__input"
-              onChange={(e) => {
-                setLink(e.target.value);
-                clearError();
-              }}
-            />
-            <button type="submit">Создать</button>
-          </fieldset>
-        </form>
-        {shortLink.link && (
-          <GeneratedLinkPanel
-            shortLink={shortLink.link}
-            qrUrl={qrUrl}
-            downloadQr={async () => await createQr(shortLink.short_code, 'png')}
+    <div className="create-tab">
+      <h1 className="create-tab__title">Создать ссылку</h1>
+      <form onSubmit={handleSubmit} className="create-tab__form">
+        <fieldset disabled={isLoading}>
+          <input
+            type="text"
+            placeholder="Введите URL"
+            value={link}
+            className="create-tab__input"
+            onChange={(e) => {
+              setLink(e.target.value);
+              clearError();
+            }}
           />
+          <button type="submit" className="create-tab__submit-btn">
+            Создать
+          </button>
+        </fieldset>
+      </form>
+      <AnimatePresence>
+        {shortLink.link && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GeneratedLinkPanel
+              shortLink={shortLink.link}
+              downloadQr={downloadQr}
+            />
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 }

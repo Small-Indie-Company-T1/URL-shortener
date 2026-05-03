@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAuthContext from '../../hooks/useAuthContext';
 import PasswordInput from './PasswordInput.jsx';
-import '../../styles/Auth.css';
+import '../../styles/auth.css';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -22,7 +22,7 @@ export default function LoginForm() {
     if (isAuthenticated) {
       navigate('/home', { replace: true });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="auth-container">

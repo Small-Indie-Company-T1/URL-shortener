@@ -7,7 +7,7 @@ export default function HomePage() {
       <SideMenu />
 
       <div className="flex-1 flex flex-col">
-        <header className="h-[60px] bg-[#D7E7F2] flex items-center pr-24 shrink-0 border-b border-[#CAC4D0]">
+        <header className="h-15 bg-[#D7E7F2] flex items-center pr-24 shrink-0 border-b border-[#CAC4D0]">
           <div className="w-14 shrink-0"></div>
           <div className="text-2xl font-black text-[#0B1120] tracking-tight ml-20">
             T1ink

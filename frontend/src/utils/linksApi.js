@@ -43,3 +43,13 @@ export async function deleteLinkByShortCode(short_code) {
     throw error;
   }
 }
+
+export async function getLinkClicks(link_id) {
+  try {
+    const response = await linksApi.get(`/clicks/${link_id}`);
+    return response.data;
+  } catch (error) {
+    console.error(error.data.detail.msg);
+    throw error;
+  }
+}

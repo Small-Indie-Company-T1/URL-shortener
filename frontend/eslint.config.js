@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import globals from 'globals';
+import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import prettier from 'eslint-plugin-prettier';
@@ -18,6 +19,7 @@ export default defineConfig([
     ],
     plugins: {
       prettier,
+      react,
     },
     languageOptions: {
       ecmaVersion: 'latest',
@@ -29,6 +31,7 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]' }],
+      'react/jsx-uses-vars': 'warn',
       //'prettier/prettier': 'error',
     },
   },

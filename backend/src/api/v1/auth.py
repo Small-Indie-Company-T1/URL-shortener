@@ -18,7 +18,7 @@ from src.auth.security import hash_password, authenticate_user, create_tokens
 
 router = APIRouter()
 
-@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserOut, tags=["register"])
+@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserOut)
 async def register(user_data: UserCreate, db: asyncpg.Connection = Depends(get_db)) -> Users | None:
     querier = UserQueriesQueries(db)
     if await querier.GetUserByEmail(email = user_data.email):
@@ -29,7 +29,7 @@ async def register(user_data: UserCreate, db: asyncpg.Connection = Depends(get_d
     new_user = await querier.CreateUser(nickname= user_data.nickname, email = user_data.email, password = hashed.encode('utf-8'))
     return new_user
 
-@router.post("/login", response_model=Token, tags=["login"])
+@router.post("/login", response_model=Token)
 async def login(
         request: Request,
         response: Response,
@@ -77,7 +77,7 @@ async def login(
         "user": user
     }
 
-@router.post("/login-swagger", include_in_schema=False, tags=["login"])
+@router.post("/login-swagger", include_in_schema=False)
 async def login_swagger(response: Response, request: Request, 
                         form_data: OAuth2PasswordRequestForm = Depends(), 
                         db: asyncpg.Connection = Depends(get_db),
@@ -148,7 +148,7 @@ async def refresh_token(request: Request, response: Response, redis_client: redi
         "token_type": "bearer"
     }
 
-@router.post("/logout", tags=["logout"])
+@router.post("/logout")
 async def logout(request: Request, response: Response, db: asyncpg.Connection = Depends(get_db), redis_client: redis.Redis = Depends(get_redis)):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:

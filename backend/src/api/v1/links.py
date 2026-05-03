@@ -20,6 +20,8 @@ async def create_link(
     current_user = Depends(get_current_user)
 ):
     service = LinkService(LinkQueriesQueries(db))
+    if len(str(payload.original_url)) > 2048:
+        raise HTTPException(status_code=400, detail="URL is TOO LONG")
     try:
         new_link = await service.create_short_link(
             original_url=str(payload.original_url),

@@ -17,14 +17,62 @@ class ClickQueriesQueries:
         INSERT INTO clicks (link_id, user_agent, referred_from, ip_address)
         VALUES ($1, $2, $3, $4)
     """
+    GETTOTALCLICKSBYLINKID = """
+        SELECT COUNT(*) FROM clicks
+        WHERE link_id = $1
+    """
+    GETUNIQUEIPCLICKSTATS = """
+        SELECT COUNT(DISTINCT ip_address) FROM clicks
+        WHERE link_id = $1
+    """
+    GETLATESTCLICKSBYLINKID = """
+        SELECT id, link_id, user_agent, referred_from, ip_address, clicked_at
+        FROM clicks
+        WHERE link_id = $1
+        ORDER BY clicked_at DESC
+        LIMIT $2 OFFSET $3
+    """
     def __init__(self, connection: asyncpg.Connection):
         self.connection = connection
 
     
-    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress._BaseAddress | None) -> str:
+    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress._BaseAddress) -> str:
         return await self.connection.exec(
             self.CREATECLICK, link_id, user_agent, referred_from, ip_address
         )
+    async def GetTotalClicksByLinkId(self, link_id: uuid.UUID) -> models.click_queries_queries.GettotalclicksbylinkidRow | None:
+        row = await self.connection.fetchrow(
+            self.GETTOTALCLICKSBYLINKID, link_id
+        )
+        if row is None:
+            return None
+        return models.click_queries_queries.GettotalclicksbylinkidRow(
+            count=row["count"],
+        )
+    async def GetUniqueIPClickStats(self, link_id: uuid.UUID) -> models.click_queries_queries.GetuniqueipclickstatsRow | None:
+        row = await self.connection.fetchrow(
+            self.GETUNIQUEIPCLICKSTATS, link_id
+        )
+        if row is None:
+            return None
+        return models.click_queries_queries.GetuniqueipclickstatsRow(
+            count=row["count"],
+        )
+    async def GetLatestClicksByLinkId(self, link_id: uuid.UUID, limit: int, offset: int) -> list[models.public.Clicks]:
+        rows = await self.connection.fetch(
+            self.GETLATESTCLICKSBYLINKID, link_id, limit, offset
+        )
+        return [
+            models.public.Clicks(
+                clicked_at=row["clicked_at"],
+                id=row["id"],
+                ip_address=row["ip_address"],
+                link_id=row["link_id"],
+                referred_from=row["referred_from"],
+                user_agent=row["user_agent"],
+            )
+            for row in rows
+        ]
 
 
 @dataclasses.dataclass

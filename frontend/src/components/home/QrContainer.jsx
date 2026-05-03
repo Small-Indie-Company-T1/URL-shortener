@@ -89,42 +89,53 @@ export default function QrContainer({ downloadQr }) {
   }, [qrUrl]);
 
   return (
-    <div className="create-tab__qr-section">
-      <p className="create-tab__label">Ваш QR-код:</p>
-      <div className="create-tab__qr-image">
-        <img
-          style={{ width: '200px', height: '200px' }}
-          src={qrUrl || null}
-          alt="QR Code"
-        />
+      <div className="create-tab__qr-section flex flex-col items-center">
+        <p className="create-tab__label text-slate-500 mb-4 font-medium">Ваш QR-код:</p>
+        <div className="create-tab__qr-image bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+          <img
+              className="w-[200px] h-[200px] block"
+              src={qrUrl || null}
+              alt="QR Code"
+          />
+        </div>
+        <div className="create-tab__actions flex gap-3 mt-6">
+          {/* Кнопка "Копировать" - вторичная (светлая) */}
+          <button
+              onClick={handleCopyQr}
+              className="create-tab__action-btn px-6 py-2.5 rounded-xl font-semibold transition-all active:scale-95 text-sm bg-slate-100 text-slate-700 hover:bg-slate-200"
+          >
+            Копировать
+          </button>
+
+          <DropDownCard
+              trigger={
+                <button className="create-tab__action-btn px-6 py-2.5 rounded-xl font-semibold transition-all active:scale-95 text-sm bg-blue-600 text-white hover:bg-blue-700 shadow-md flex items-center gap-2">
+                  Скачать
+                  <span className="material-symbols-outlined text-[18px]">expand_more</span>
+                </button>
+              }
+          >
+            <div className="create-tab__qr-dropdown bg-white border border-slate-200 rounded-2xl shadow-xl py-2 min-w-[100px] mt-2 overflow-hidden flex flex-col">
+              <button
+                  className="create-tab__qr-dropdown__element w-full px-4 py-3 text-center text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors border-none bg-transparent cursor-pointer text-base font-bold tracking-wide"
+                  onClick={async () => {
+                    await handleDownloadQr('png');
+                  }}
+              >
+                PNG
+              </button>
+              <div className="h-[1px] bg-slate-100 mx-2"></div> {/* Тонкая линия-разделитель */}
+              <button
+                  className="create-tab__qr-dropdown__element w-full px-4 py-3 text-center text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors border-none bg-transparent cursor-pointer text-base font-bold tracking-wide"
+                  onClick={async () => {
+                    await handleDownloadQr('svg');
+                  }}
+              >
+                SVG
+              </button>
+            </div>
+          </DropDownCard>
+        </div>
       </div>
-      <div className="create-tab__actions">
-        <button onClick={handleCopyQr} className="create-tab__action-btn">
-          Копировать
-        </button>
-        <DropDownCard
-          trigger={<button className="create-tab__action-btn">Скачать</button>}
-        >
-          <div className="create-tab__qr-dropdown">
-            <button
-              className="create-tab__qr-dropdown__element"
-              onClick={async () => {
-                await handleDownloadQr('png');
-              }}
-            >
-              PNG
-            </button>
-            <button
-              className="create-tab__qr-dropdown__element"
-              onClick={async () => {
-                await handleDownloadQr('svg');
-              }}
-            >
-              SVG
-            </button>
-          </div>
-        </DropDownCard>
-      </div>
-    </div>
   );
 }

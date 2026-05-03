@@ -1,0 +1,45 @@
+@reference "../App.css";
+
+/* Контейнер уведомлений */
+#toast-container {
+    @apply mt-6; /* Немного увеличим отступ сверху */
+}
+
+#toast-container > div {
+    /* Основные настройки карточки тоста */
+    @apply rounded-2xl shadow-lg border-none opacity-100 p-4 min-w-[300px] max-w-md text-center flex justify-center items-center;
+    background-image: none !important; /* Полностью убирает галочку и любые другие иконки */
+    padding-left: 20px !important; /* Возвращаем нормальный отступ после удаления иконки */
+}
+
+/* Настройка цвета для успешного уведомления */
+#toast-container > .toast-success {
+    background-color: #B9DFFF !important; /* Твой приглушенный цвет */
+    color: #2D3748 !important; /* Темно-серый текст для лучшей читаемости на светлом фоне */
+}
+
+/* Настройка цвета для ошибок (сделаем его тоже мягким, но красноватым) */
+#toast-container > .toast-error {
+    background-color: #FED7D7 !important;
+    color: #9B2C2C !important;
+}
+
+/* Элементы внутри тоста */
+.toast-title {
+    @apply font-bold text-sm mb-0 block;
+}
+
+.toast-message {
+    @apply text-sm font-medium leading-tight;
+}
+
+/* Кнопка закрытия (крестик) */
+.toast-close-button {
+    @apply opacity-40 hover:opacity-100 !text-xl !static ml-4;
+    color: currentColor !important; /* Крестик будет того же цвета, что и текст */
+}
+
+/* Скрываем полоску прогресса, чтобы сделать дизайн максимально чистым */
+.toast-progress {
+    @apply hidden;
+}

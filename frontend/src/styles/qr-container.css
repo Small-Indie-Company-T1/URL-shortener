@@ -1,0 +1,25 @@
+@reference "../App.css";
+
+.qr-container { @apply flex flex-col items-center p-6 bg-white rounded-2xl; }
+.qr-container__label { @apply text-slate-500 mb-4 font-medium; }
+.qr-container__image { @apply w-[200px] h-[200px] border-4 border-slate-50 rounded-xl p-2; }
+
+
+.qr-container__btn {
+    @apply px-6 py-2.5 rounded-xl font-semibold transition-all active:scale-95 text-sm;
+}
+.qr-container__btn--primary { @apply bg-blue-600 text-white hover:bg-blue-700 shadow-md; }
+.qr-container__btn--secondary { @apply bg-slate-100 text-slate-700 hover:bg-slate-200; }
+
+.qr-container__actions { @apply flex gap-3 mt-6; }
+
+.qr-dropdown {
+    @apply bg-white border border-slate-100 rounded-xl shadow-xl py-2 min-w-[160px] mt-2;
+}
+
+.qr-dropdown__item {
+    @apply w-full flex items-center gap-3 px-4 py-2.5 text-left text-slate-600
+    hover:bg-blue-50 hover:text-blue-600 transition-colors border-none bg-transparent cursor-pointer text-sm;
+}
+
+.qr-dropdown__item span { @apply text-lg opacity-70; }

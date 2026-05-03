@@ -8,32 +8,36 @@ import CreateTab from './components/home/CreateTab.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import MyLinksTab from './components/home/MyLinksTab.jsx';
 import MyLinkTab from './components/home/MyLinkTab.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx'; // Импорт твоей новой страницы
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
-        <Route path="/main" element={<MainPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Navigate to="/home/create" />} />
-          <Route path="create" element={<CreateTab />} />
-          <Route path="my-links" element={<MyLinksTab />} />
-          <Route path="my-links/*" element={<MyLinkTab />} />
-        </Route>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/main" />} />
+          <Route path="/main" element={<MainPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        <Route path="404" element={<h1>404</h1>} />
-      </Routes>
-    </BrowserRouter>
+          <Route
+              path="/home"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+          >
+            <Route index element={<Navigate to="/home/create" />} />
+            <Route path="create" element={<CreateTab />} />
+            <Route path="my-links" element={<MyLinksTab />} />
+            <Route path="my-links/*" element={<MyLinkTab />} />
+          </Route>
+
+          <Route path="/404" element={<NotFoundPage />} />
+
+          <Route path="*" element={<Navigate to="/404" replace />} />
+        </Routes>
+      </BrowserRouter>
   );
 }
 

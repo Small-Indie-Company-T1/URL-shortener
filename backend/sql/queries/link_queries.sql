@@ -13,7 +13,7 @@ SELECT * FROM links
 WHERE creator_id = sqlc.arg('creator_id')
     AND is_deleted = false
     AND (
-        original_url ILIKE '%' || sqlc.narg('original_url') || '%' 
+        original_url ILIKE '%' || sqlc.narg('original_url') || '%'
         OR sqlc.narg('original_url') IS NULL
     )
     AND (
@@ -23,8 +23,8 @@ WHERE creator_id = sqlc.arg('creator_id')
 ORDER BY
     CASE WHEN sqlc.arg('order_by')::text = 'created_at' AND sqlc.arg('order_dir')::text = 'asc' THEN created_at END ASC,
     CASE WHEN sqlc.arg('order_by')::text = 'created_at' AND sqlc.arg('order_dir')::text = 'desc' THEN created_at END DESC,
-    -- CASE WHEN $6 = 'clicks' AND $7 = 'asc' THEN clicks END ASC,
-    -- CASE WHEN $6 = 'clicks' AND $7 = 'asc' THEN clicks END DESC,
+    CASE WHEN sqlc.arg('order_by')::text = 'clicks' AND sqlc.arg('order_dir')::text = 'asc' THEN clicks_count END ASC,
+    CASE WHEN sqlc.arg('order_by')::text = 'clicks' AND sqlc.arg('order_dir')::text = 'desc' THEN clicks_count END DESC,
     created_at DESC
 LIMIT sqlc.narg('limit') OFFSET sqlc.narg('offset');
 

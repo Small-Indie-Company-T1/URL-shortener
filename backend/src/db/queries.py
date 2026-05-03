@@ -14,10 +14,6 @@ import uuid
 class ClickQueriesQueries:
     connection: asyncpg.Connection
 
-    CREATECLICK = """
-        INSERT INTO clicks (link_id, user_agent, referred_from, ip_address)
-        VALUES ($1, $2, $3, $4)
-    """
     GETTOTALCLICKSBYLINKID = """
         SELECT COUNT(*) FROM clicks
         WHERE link_id = $1
@@ -33,14 +29,20 @@ class ClickQueriesQueries:
         ORDER BY clicked_at DESC
         LIMIT $2 OFFSET $3
     """
+    CREATECLICK = """
+        WITH inserted_click AS (
+            INSERT INTO clicks (link_id, user_agent, referred_from, ip_address)
+            VALUES ($1, $2, $3, $4)
+            RETURNING link_id
+        )
+        UPDATE links
+        SET clicks_count = clicks_count + 1
+        WHERE id = (SELECT link_id FROM inserted_click)
+    """
     def __init__(self, connection: asyncpg.Connection):
         self.connection = connection
 
     
-    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress._BaseAddress) -> str:
-        return await self.connection.exec(
-            self.CREATECLICK, link_id, user_agent, referred_from, ip_address
-        )
     async def GetTotalClicksByLinkId(self, link_id: uuid.UUID) -> models.click_queries_queries.GettotalclicksbylinkidRow | None:
         row = await self.connection.fetchrow(
             self.GETTOTALCLICKSBYLINKID, link_id
@@ -74,6 +76,10 @@ class ClickQueriesQueries:
             )
             for row in rows
         ]
+    async def CreateClick(self, link_id: uuid.UUID, user_agent: str | None, referred_from: str | None, ip_address: ipaddress._BaseAddress | None) -> str:
+        return await self.connection.exec(
+            self.CREATECLICK, link_id, user_agent, referred_from, ip_address
+        )
 
 
 @dataclasses.dataclass
@@ -83,7 +89,7 @@ class LinkQueriesQueries:
     CREATELINK = """
         INSERT INTO links (creator_id, original_url, short_code)
         VALUES ($1, $2, $3)
-        RETURNING id, creator_id, original_url, short_code, created_at, is_active, is_deleted
+        RETURNING id, creator_id, original_url, short_code, created_at, clicks_count, is_active, is_deleted
     """
     GETLINKSCOUNTBYUSERID = """
         SELECT COUNT(*) FROM links
@@ -105,11 +111,11 @@ class LinkQueriesQueries:
         )
     """
     GETLINKSBYUSERID = """
-        SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
+        SELECT id, creator_id, original_url, short_code, created_at, clicks_count, is_active, is_deleted FROM links
         WHERE creator_id = $1
             AND is_deleted = false
             AND (
-                original_url ILIKE '%' || $2 || '%' 
+                original_url ILIKE '%' || $2 || '%'
                 OR $2 IS NULL
             )
             AND (
@@ -119,13 +125,13 @@ class LinkQueriesQueries:
         ORDER BY
             CASE WHEN $4::text = 'created_at' AND $5::text = 'asc' THEN created_at END ASC,
             CASE WHEN $4::text = 'created_at' AND $5::text = 'desc' THEN created_at END DESC,
-            -- CASE WHEN $6 = 'clicks' AND $7 = 'asc' THEN clicks END ASC,
-            -- CASE WHEN $6 = 'clicks' AND $7 = 'asc' THEN clicks END DESC,
+            CASE WHEN $4::text = 'clicks' AND $5::text = 'asc' THEN clicks_count END ASC,
+            CASE WHEN $4::text = 'clicks' AND $5::text = 'desc' THEN clicks_count END DESC,
             created_at DESC
         LIMIT $7 OFFSET $6
     """
     GETLINKBYCODE = """
-        SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
+        SELECT id, creator_id, original_url, short_code, created_at, clicks_count, is_active, is_deleted FROM links
         WHERE short_code = $1 AND is_deleted = false
         LIMIT 1
     """
@@ -146,6 +152,7 @@ class LinkQueriesQueries:
         if row is None:
             return None
         return models.public.Links(
+            clicks_count=row["clicks_count"],
             created_at=row["created_at"],
             creator_id=row["creator_id"],
             id=row["id"],
@@ -178,6 +185,7 @@ class LinkQueriesQueries:
         )
         return [
             models.public.Links(
+                clicks_count=row["clicks_count"],
                 created_at=row["created_at"],
                 creator_id=row["creator_id"],
                 id=row["id"],
@@ -195,6 +203,7 @@ class LinkQueriesQueries:
         if row is None:
             return None
         return models.public.Links(
+            clicks_count=row["clicks_count"],
             created_at=row["created_at"],
             creator_id=row["creator_id"],
             id=row["id"],

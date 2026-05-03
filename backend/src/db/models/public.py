@@ -15,6 +15,7 @@ class Users:
 
 @dataclasses.dataclass
 class Links:
+    clicks_count: int | None
     created_at: datetime.datetime
     creator_id: uuid.UUID
     id: uuid.UUID

@@ -42,7 +42,7 @@ async def list_my_links(
     offset: int = Query(0, ge=0),
     search: str | None = Query(None, min_length=3, alias='original_url'),
     is_active: bool | None = Query(None),
-    order_by: Literal['created_at'] = 'created_at', # TODO +clicks
+    order_by: Literal['created_at', 'clicks'] = 'created_at',
     order_dir: Literal['asc', 'desc'] = 'desc',
     db: asyncpg.Connection = Depends(get_db),
     current_user = Depends(get_current_user)

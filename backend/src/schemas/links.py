@@ -24,6 +24,7 @@ class LinkRead(BaseModel):
     created_at: datetime
     is_active: bool
     is_deleted: bool
+    clicks_count: int
 
     class Config:
         from_attributes = True

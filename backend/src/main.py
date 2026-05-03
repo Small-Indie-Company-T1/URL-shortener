@@ -1,13 +1,19 @@
 from contextlib import asynccontextmanager
 
 import asyncpg
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
 
+from src.core.exceptions.service_exceptions import ServiceException
+from src.core.exceptions.app_exceptions import AppException
+from src.core.logger import setup_logging, logger
 from src.core.config import settings
 from src.api.v1.links import router as links_router
 from fastapi.middleware.cors import CORSMiddleware
 from src.api.v1 import auth, redirect, clicks
 
+
+setup_logging()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,13 +24,13 @@ async def lifespan(app: FastAPI):
     )
 
     app.state.pool = pool
-    print("db pool is connected")
+    logger.info("db pool is connected")
 
     try:
         yield
     finally:
         await pool.close()
-        print("db pool is closed")
+        logger.info("db pool is closed")
 
 app = FastAPI(title="url shortener", lifespan=lifespan)
 
@@ -49,3 +55,24 @@ app.include_router(clicks.router, prefix="/stats")
 @app.get("/")
 async def root():
     return {"message": "hi there"}
+
+@app.exception_handler(AppException)
+async def app_exception_handler(request: Request, exc: AppException):
+    if isinstance(exc, ServiceException):
+        logger.warning(f'Business logic error: {exc.message}')
+        status_code = status.HTTP_400_BAD_REQUEST
+    else:
+        logger.error(f'System error: {exc.message}', exc_info=True)
+        status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    return JSONResponse(
+        status_code=status_code,
+        content={'detail': exc.message}
+    )
+
+@app.exception_handler(Exception)
+async def universal_exception_handler(request: Request, exc: Exception):
+    logger.exception("UNHANDLED CRITICAL ERROR")
+    return JSONResponse(
+        status_code=500,
+        content={'detail': 'Внутренняя ошибка сервера. Мы уже разбираемся (нет)'}
+    )

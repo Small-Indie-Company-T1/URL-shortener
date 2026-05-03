@@ -48,31 +48,25 @@ async def list_my_links(
     current_user = Depends(get_current_user)
 ):
     service = LinkService(LinkQueriesQueries(db))
-    try:
-        links = await service.get_user_links(
-            user_id=current_user.id,
-            limit=limit,
-            offset=offset,
-            original_url=search,
-            is_active=is_active,
-            order_by=order_by,
-            order_dir=order_dir
-        )
-        total = await service.get_links_total(
-            user_id=current_user.id,
-            original_url=search,
-            is_active=is_active
-        )
+    links = await service.get_user_links(
+        user_id=current_user.id,
+        limit=limit,
+        offset=offset,
+        original_url=search,
+        is_active=is_active,
+        order_by=order_by,
+        order_dir=order_dir
+    )
+    total = await service.get_links_total(
+        user_id=current_user.id,
+        original_url=search,
+        is_active=is_active
+    )
 
-        return {
-            'links': links,
-            'total': total
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Внутренняя ошибка при получении списка ссылок'
-        )
+    return {
+        'links': links,
+        'total': total
+    }
     
 @router.delete("/{short_code}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_link(

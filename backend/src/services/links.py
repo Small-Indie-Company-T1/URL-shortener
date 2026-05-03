@@ -2,12 +2,15 @@ import io
 from typing import List
 import uuid
 
+import asyncpg
 import segno
 
+from src.core.exceptions.app_exceptions import AppException, DatabaseConnectionError
 from src.schemas.links import LinkRead
 from src.services.shortener import ShortenerGenerator
 from src.db.queries import LinkQueriesQueries
 from src.core.config import settings
+from src.core.logger import logger
 
 
 class LinkService:
@@ -25,8 +28,12 @@ class LinkService:
                     short_code=code
                 )
                 return link
-            except ValueError: # FIXME
+            except asyncpg.PostgresError as e:
+                logger.error(f'Database error for user {user_id}: {e}', exc_info=True)
+                raise DatabaseConnectionError("База данных временно недоступна")
+            except Exception:
                 continue
+        logger.exception("Unexpected error in create_short_link")
         raise Exception("Не удалось сгенерировать уникальный код")
     
     async def get_user_links(
@@ -56,12 +63,20 @@ class LinkService:
         original_url: str | None = None,
         is_active: bool | None = None
     ) -> int:
-        result = await self.queries.GetLinksCountByUserId(
-            creator_id=user_id,
-            original_url=original_url,
-            is_active=is_active
-        )
-        return result.count if hasattr(result, 'count') else result[0]
+        try:
+            result = await self.queries.GetLinksCountByUserId(
+                creator_id=user_id,
+                original_url=original_url,
+                is_active=is_active
+            )
+            return result.count if hasattr(result, 'count') else result[0]
+        except asyncpg.PostgresError as e:
+            logger.error(f'Database error for user {user_id}: {e}', exc_info=True)
+            raise DatabaseConnectionError("База данных временно недоступна")
+        except Exception as e:
+            logger.exception(f'Unexpected error in get_links_total: {e}')
+            raise AppException("Произошла ошибка при подсчете ссылок")
+
 
     async def delete_link(self, short_code: str, user_id: uuid.UUID) -> bool:
         try:

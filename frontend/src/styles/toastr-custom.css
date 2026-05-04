@@ -31,8 +31,4 @@
 .toast-close-button {
   @apply opacity-40 hover:opacity-100 !text-xl !static ml-4;
   color: currentColor !important;
-
-  .toast-progress {
-    @apply hidden;
-  }
 }

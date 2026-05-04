@@ -45,23 +45,6 @@
   @apply flex-1 h-12 px-4 bg-white border border-[#89939E] rounded-xl flex items-center text-xl italic font-extralight text-[#2C2C2C] overflow-hidden;
 }
 
-.create-tab__qr-section {
-  @apply flex flex-col md:flex-row items-center gap-8 w-full;
-  @apply md:justify-start;
-}
-
-.create-tab__qr-image-wrapper {
-  @apply flex flex-col md:flex-row items-start gap-8 flex-1;
-}
-
-.create-tab__qr-image {
-  @apply w-56 h-56 bg-white border border-[#89939E] rounded-xl flex items-center justify-center p-2 shadow-inner flex-shrink-0;
-}
-
-.create-tab__qr-image img {
-  @apply w-full h-full object-contain;
-}
-
 .qr-placeholder {
   @apply w-full h-full bg-[#F1F5F9] rounded-lg flex items-center justify-center border-2 border-dashed border-[#CBD5E1];
 }
@@ -79,15 +62,4 @@
 
 .create-tab__action-btn:disabled {
   @apply opacity-50 cursor-not-allowed bg-[#89939E] border-[#89939E];
-}
-
-.create-tab__qr-dropdown {
-  @apply bg-white border border-[#89939E] rounded-xl text-[#2C2C2C] cursor-pointer;
-  max-width: fit-content;
-  max-height: fit-content;
-}
-
-.create-tab__qr-dropdown__element {
-  @apply flex flex-col gap-3 px-10 border border-[#89939E] rounded-xl;
-  font-size: large;
 }

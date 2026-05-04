@@ -1,38 +1,49 @@
 @reference "../App.css";
 
 .qr-container {
-  @apply flex flex-col items-center p-6 bg-white rounded-2xl;
+  @apply flex flex-col bg-[#D7E7F2] items-center p-6 rounded-2xl;
+  @apply md:flex-row gap-8 w-full;
+  @apply md:justify-start;
 }
 .qr-container__label {
   @apply text-slate-500 mb-4 font-medium;
 }
 .qr-container__image {
+  @apply w-56 h-56 bg-white border border-[#89939E] rounded-xl flex items-center justify-center p-2 shadow-inner flex-shrink-0 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm
+}
+
+.qr-container__image img {
   @apply w-[200px] h-[200px] border-4 border-slate-50 rounded-xl p-2;
 }
 
 .qr-container__btn {
-  @apply px-6 py-2.5 rounded-xl font-semibold transition-all active:scale-95 text-sm;
+  @apply h-12 bg-[#385CA8] rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 border border-[#2D53A5] cursor-pointer;
+  width: 160px;
+  @apply flex items-center justify-center;
+  @apply px-6 py-2.5 rounded-xl font-semibold transition-all active:scale-95 text-sm shadow-md flex items-center gap-2;
 }
+
 .qr-container__btn--primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700 shadow-md;
+  @apply bg-blue-600 text-white hover:bg-blue-700;
 }
+
 .qr-container__btn--secondary {
   @apply bg-slate-100 text-slate-700 hover:bg-slate-200;
 }
 
 .qr-container__actions {
-  @apply flex gap-3 mt-6;
+  @apply flex gap-3 mt-6 flex-col gap-5 w-full md:w-auto items-center flex-shrink-0;
 }
 
-.qr-dropdown {
-  @apply bg-white border border-slate-100 rounded-xl shadow-xl py-2 min-w-[160px] mt-2;
+.qr-container__dropdown {
+  @apply border-[#89939E] text-[#2C2C2C] cursor-pointer;
+  max-width: fit-content;
+  max-height: fit-content;
+  @apply bg-white border border-slate-200 rounded-2xl shadow-xl py-2 min-w-[100px] mt-2 overflow-hidden flex flex-col;
 }
 
-.qr-dropdown__item {
-  @apply w-full flex items-center gap-3 px-4 py-2.5 text-left text-slate-600
-    hover:bg-blue-50 hover:text-blue-600 transition-colors border-none bg-transparent cursor-pointer text-sm;
-}
-
-.qr-dropdown__item span {
-  @apply text-lg opacity-70;
+.qr-container__dropdown-item {
+  @apply flex flex-col gap-3 border border-[#89939E] rounded-xl;
+  font-size: large;
+  @apply w-full px-4 py-1 text-center text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors border-none bg-transparent cursor-pointer text-base font-bold tracking-wide;
 }

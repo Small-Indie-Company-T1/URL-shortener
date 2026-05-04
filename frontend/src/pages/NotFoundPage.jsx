@@ -12,7 +12,10 @@ const NotFoundPage = () => {
           40<span className="not-found__title--accent">4</span>
         </h1>
         <p className="not-found__message">К сожалению, такой страницы нет(</p>
-        <button onClick={() => navigate('/main')} className="not-found__button">
+        <button
+          onClick={() => navigate('/main', { replace: true })}
+          className="not-found__button"
+        >
           На главную
         </button>
       </div>

@@ -14,7 +14,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/main" />} />
+        <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -33,9 +33,7 @@ function App() {
           <Route path="my-links/*" element={<MyLinkTab />} />
         </Route>
 
-        <Route path="/404" element={<NotFoundPage />} />
-
-        <Route path="*" element={<Navigate to="/404" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

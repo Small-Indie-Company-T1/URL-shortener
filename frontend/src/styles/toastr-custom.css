@@ -1,14 +1,14 @@
 @reference "../App.css";
 
 #toast-container {
-    @apply mt-6;
+  @apply mt-6;
 }
 
 #toast-container > div {
-    @apply rounded-2xl shadow-lg border-none opacity-100 p-5 min-w-[320px] max-w-md relative flex items-center;
-    /* Убираем фоновое изображение (иконку) */
-    background-image: none !important;
-    padding-left: 1.25rem !important;
+  @apply rounded-2xl shadow-lg border-none opacity-100 p-5 min-w-[320px] max-w-md relative flex items-center;
+  /* Убираем фоновое изображение (иконку) */
+  background-image: none !important;
+  padding-left: 1.25rem !important;
 }
 
 /* Принудительно убираем иконки для конкретных типов, если они перебивают общий стиль */
@@ -16,24 +16,24 @@
 #toast-container > .toast-error,
 #toast-container > .toast-info,
 #toast-container > .toast-warning {
-    background-image: none !important;
+  background-image: none !important;
 }
 
 #toast-container > .toast-success {
-    background-color: #b9dfff !important;
-    color: #2d3748 !important;
+  background-color: #b9dfff !important;
+  color: #2d3748 !important;
 }
 
 #toast-container > .toast-error {
-    background-color: #fed7d7 !important;
-    color: #9b2c2c !important;
+  background-color: #fed7d7 !important;
+  color: #9b2c2c !important;
 }
 
 .toast-message {
-    @apply text-sm font-medium leading-tight flex-1 text-center;
+  @apply text-sm font-medium leading-tight flex-1 text-center;
 }
 
 .toast-close-button {
-    @apply opacity-30 hover:opacity-100 transition-opacity !text-xl !absolute top-2 right-3;
-    color: currentColor !important;
+  @apply opacity-30 hover:opacity-100 transition-opacity !text-xl !absolute top-2 right-3;
+  color: currentColor !important;
 }

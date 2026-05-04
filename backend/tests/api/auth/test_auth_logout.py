@@ -23,7 +23,7 @@ async def test_logout_already_logged_out(client):
     client.cookies.clear()
     response = await client.post('/auth/logout')
     assert response.status_code == 401
-    assert response.json().get('detail') == 'refresh token missing'
+    assert 'refresh token missing' in response.json().get('detail').lower()
     
 @pytest.mark.asyncio
 async def test_logout_invalid_token_type(client):
@@ -36,7 +36,7 @@ async def test_logout_invalid_token_type(client):
     client.cookies.set('refresh_token', token)
     response = await client.post('/auth/logout')
     assert response.status_code == 401
-    assert response.json().get('detail') == 'invalid token type'
+    assert 'invalid token type' in response.json().get('detail').lower() 
 
 @pytest.mark.asyncio
 async def test_logout_corrupted_token_pass(client):

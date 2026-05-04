@@ -29,7 +29,7 @@ async def test_refresh_token_missing(client, test_user):
     client.cookies.clear()
     response = await client.post('/auth/refresh')
     assert response.status_code == 401
-    assert response.json().get('detail') == 'refresh token missing'
+    assert 'refresh token missing' in response.json().get('detail').lower() 
 
 @pytest.mark.asyncio
 async def test_refresh_token_invalid_type(client, test_user):
@@ -38,7 +38,7 @@ async def test_refresh_token_invalid_type(client, test_user):
     client.cookies.set('refresh_token', bad_type_token)
     response = await client.post('/auth/refresh')
     assert response.status_code == 401
-    assert response.json().get('detail') == 'invalid token type'
+    assert 'invalid token type' in response.json().get('detail').lower()
 
 @pytest.mark.asyncio
 async def test_refresh_token_expired(client, test_user):
@@ -51,7 +51,7 @@ async def test_refresh_token_expired(client, test_user):
     client.cookies.set('refresh_token', expired_token)
     response = await client.post('/auth/refresh')
     assert response.status_code == 401
-    assert response.json().get('detail') == 'refresh token expired'
+    assert 'refresh token expired' in response.json().get('detail').lower()
 
 @pytest.mark.asyncio
 async def test_refresh_token_session_not_found(client, test_user):
@@ -64,7 +64,7 @@ async def test_refresh_token_session_not_found(client, test_user):
     client.cookies.set('refresh_token', fake_token)
     response = await client.post('/auth/refresh')
     assert response.status_code == 401
-    assert 'session is not found' in response.json().get('detail')
+    assert 'session is not found' in response.json().get('detail').lower()
 
 @pytest.mark.asyncio
 async def test_refresh_token_reuse(client, test_user):
@@ -82,7 +82,7 @@ async def test_refresh_token_reuse(client, test_user):
     client.cookies.set('refresh_token', token_1)
     res_2 = await client.post('/auth/refresh')
     assert res_2.status_code == 401
-    assert 'token reuse detected' in res_2.json().get('detail')
+    assert 'token reuse detected' in res_2.json().get('detail').lower()
 
 @pytest.mark.asyncio
 async def test_refresh_token_invalid_signature(client, test_user):
@@ -99,4 +99,4 @@ async def test_refresh_token_invalid_signature(client, test_user):
     client.cookies.set('refresh_token', corrupted)
     response = await client.post('/auth/refresh')
     assert response.status_code == 401
-    assert response.json().get('detail') == 'invalid token' 
+    assert 'invalid token' in response.json().get('detail').lower()

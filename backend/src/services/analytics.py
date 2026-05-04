@@ -1,8 +1,10 @@
 import uuid
 
-from src.db.queries import ClickQueriesQueries
 import asyncpg
 from fastapi import Request
+
+from src.db.queries import ClickQueriesQueries
+from src.core.logger import logger
 
 
 async def log_click_task(
@@ -12,14 +14,17 @@ async def log_click_task(
     referer: str | None,
     ip_address: str | None
 ):
-    async with pool.acquire() as db:
-        querier = ClickQueriesQueries(db)
-        await querier.CreateClick(
-            link_id=link_id,
-            user_agent=user_agent,
-            referred_from=referer,
-            ip_address=ip_address
-        )
+    try:
+        async with pool.acquire() as db:
+            querier = ClickQueriesQueries(db)
+            await querier.CreateClick(
+                link_id=link_id,
+                user_agent=user_agent,
+                referred_from=referer,
+                ip_address=ip_address
+            )
+    except Exception as e:
+        logger.error(f'Background task failed: log click for link {link_id}. Error: {e}', exc_info=True)
 
 
 def get_real_ip(request: Request) -> str:

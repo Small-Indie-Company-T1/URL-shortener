@@ -58,12 +58,11 @@ async def root():
 
 @app.exception_handler(AppException)
 async def app_exception_handler(request: Request, exc: AppException):
+    status_code = getattr(exc, 'status_code', 500)
     if isinstance(exc, ServiceException):
         logger.warning(f'Business logic error: {exc.message}')
-        status_code = status.HTTP_400_BAD_REQUEST
     else:
         logger.error(f'System error: {exc.message}', exc_info=True)
-        status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     return JSONResponse(
         status_code=status_code,
         content={'detail': exc.message}
@@ -74,5 +73,5 @@ async def universal_exception_handler(request: Request, exc: Exception):
     logger.exception("UNHANDLED CRITICAL ERROR")
     return JSONResponse(
         status_code=500,
-        content={'detail': 'Внутренняя ошибка сервера. Мы уже разбираемся (нет)'}
+        content={'detail': 'Внутренняя ошибка сервера.'}
     )

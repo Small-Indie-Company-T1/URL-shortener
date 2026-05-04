@@ -100,16 +100,13 @@ export default function QrContainer({ downloadQr }) {
         </div>
 
         <div className="qr-container__actions">
-          <button
-            onClick={handleCopyQr}
-            className="qr-container__btn qr-container__btn--primary"
-          >
+          <button onClick={handleCopyQr} className="qr-container__btn">
             Копировать
           </button>
 
           <DropDownCard
             trigger={
-              <button className="qr-container__btn qr-container__btn--primary">
+              <button className="qr-container__btn">
                 Скачать
                 <span className="material-symbols-outlined">expand_more</span>
               </button>

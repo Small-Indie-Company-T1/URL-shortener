@@ -14,7 +14,7 @@
 }
 
 .qr-container__image-wrapper {
-  @apply flex-grow flex justify-center;
+  @apply grow flex justify-center;
 }
 
 .qr-container__image {
@@ -30,13 +30,9 @@
 }
 
 .qr-container__btn {
-  @apply h-11 bg-[#385CA8] text-white rounded-xl font-semibold transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer;
+  @apply h-11 bg-[#385CA8] text-white rounded-xl font-semibold transition-all active:scale-95 shadow-md flex items-center justify-center gap-2 cursor-pointer hover:brightness-110;
   width: 160px;
   font-size: 16px;
-}
-
-.qr-container__btn--primary {
-  @apply bg-[#385CA8] hover:brightness-110;
 }
 
 .qr-container__dropdown {

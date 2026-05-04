@@ -19,11 +19,11 @@ export default function QrContainer({ downloadQr }) {
       await navigator.clipboard.write([
         new ClipboardItem({ [blob.type]: blob }),
       ]);
-      toastr.success('QR-код скопирован в буфер обмена.');
+      toastr.success('QR-код скопирован в буфер обмена');
     } catch (error) {
       console.error(error.name, error.message);
       if (!error.response?.status) {
-        toastr.error('Не удалось скопировать QR-код.', 'Ошибка');
+        toastr.error('Не удалось скопировать QR-код', 'Ошибка');
       }
     }
   };
@@ -32,14 +32,14 @@ export default function QrContainer({ downloadQr }) {
     try {
       if (format === 'svg') {
         if (!qrUrl) {
-          toastr.error('QR-код ещё не готов.', 'Ошибка');
+          toastr.error('QR-код ещё не готов', 'Ошибка');
           return;
         }
         const link = document.createElement('a');
         link.href = qrUrl;
         link.download = 'qr.svg';
         link.click();
-        toastr.success('QR-код успешно скачан.');
+        toastr.success('QR-код успешно скачан');
       } else if (format === 'png') {
         let blob = pngBlob;
         if (!blob) {
@@ -53,7 +53,7 @@ export default function QrContainer({ downloadQr }) {
         link.download = 'qr.png';
         link.click();
 
-        toastr.success('QR-код успешно скачан.');
+        toastr.success('QR-код успешно скачан');
 
         URL.revokeObjectURL(url);
       }

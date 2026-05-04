@@ -18,13 +18,13 @@ export default function useLinks() {
     } catch (error) {
       switch (error.response?.status) {
         case 400:
-          setError('Empty url');
+          setError('Пустой URL');
           break;
         case 422:
-          setError('Invalid url');
+          setError('Неверная ссылка');
           break;
         default:
-          setError('Unknown error occurred.');
+          setError('Произошла неизвестная ошибка');
       }
     } finally {
       setIsLoading(false);
@@ -38,10 +38,10 @@ export default function useLinks() {
     } catch (error) {
       switch (error.response?.status) {
         case 422:
-          setError('Ошибка валидации.');
+          setError('Ошибка валидации');
           break;
         default:
-          setError('Ошибка создания QR-кода.');
+          setError('Ошибка создания QR-кода');
       }
       throw error;
     } finally {
@@ -56,10 +56,10 @@ export default function useLinks() {
     } catch (error) {
       switch (error.response?.status) {
         case 422:
-          setError('Validation error occurred.');
+          setError('Ошибка валидации');
           break;
         default:
-          setError('Links error occurred.');
+          setError('Ошибка получения списка ссылок');
       }
     } finally {
       setIsLoading(false);
@@ -74,10 +74,10 @@ export default function useLinks() {
     } catch (error) {
       switch (error.response?.status) {
         case 422:
-          setError('Ошибка валидации.');
+          setError('Ошибка валидации');
           break;
         default:
-          setError('Произошла неизвестная ошибка.');
+          setError('Произошла неизвестная ошибка');
       }
       return false;
     } finally {
@@ -85,17 +85,17 @@ export default function useLinks() {
     }
   }, []);
 
-  const getClicks = useCallback(async (link_id) => {
+  const getClicks = useCallback(async (short_code) => {
     setIsLoading(true);
     try {
-      return await getLinkClicks(link_id);
+      return await getLinkClicks(short_code);
     } catch (error) {
       switch (error.response?.status) {
         case 422:
-          setError('Validation error occurred.');
+          setError('Ошибка валидации');
           break;
         default:
-          setError('Unknown error occurred.');
+          setError('Произошла неизвестная ошибка');
       }
     } finally {
       setIsLoading(false);

@@ -61,7 +61,9 @@ export default function MyLinksTab() {
                       {(currentPage - 1) * limit + index + 1}
                     </span>
                     <span className="links-item__url">
-                      <Link to={link.original_url}>{link.original_url}</Link>
+                      <Link to={link.original_url} target="_blank">
+                        {link.original_url}
+                      </Link>
                     </span>
                     <span className="links-item__date">
                       {link.created_at

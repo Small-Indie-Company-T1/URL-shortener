@@ -9,7 +9,7 @@
   @apply text-slate-500 mb-4 font-medium;
 }
 .qr-container__image {
-  @apply w-56 h-56 bg-white border border-[#89939E] rounded-xl flex items-center justify-center p-2 shadow-inner flex-shrink-0 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm
+  @apply w-56 h-56 bg-white border border-[#89939E] rounded-xl flex items-center justify-center p-2 shadow-inner flex-shrink-0 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm;
 }
 
 .qr-container__image img {

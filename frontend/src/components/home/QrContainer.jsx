@@ -89,53 +89,58 @@ export default function QrContainer({ downloadQr }) {
   }, [qrUrl]);
 
   return (
-    <div className="qr-container">
-      <p className="qr-container__label">Ваш QR-код:</p>
-      <div className="qr-container__image">
-        <img
-          className="w-[200px] h-[200px] block"
-          src={qrUrl || null}
-          alt="QR Code"
-        />
-      </div>
-      <div className="qr-container__actions">
-        <button
-          onClick={handleCopyQr}
-          className="qr-container__btn qr-container__btn--secondary"
-        >
-          Копировать
-        </button>
+      <div className="qr-container">
+        <div className="qr-container__main-row">
+          <p className="qr-container__label">Ваш QR-код:</p>
 
-        <DropDownCard
-          trigger={
-            <button className="create-tab__action-btn create-tab__action-btn--primary">
-              Скачать
-              <span className="material-symbols-outlined text-[18px]">
-                expand_more
-              </span>
-            </button>
-          }
-        >
-          <div className="qr-container__dropdown">
-            <button
-              className="qr-container__dropdown-item"
-              onClick={async () => {
-                await handleDownloadQr('png');
-              }}
-            >
-              PNG
-            </button>
-            <button
-              className="qr-container__dropdown-item"
-              onClick={async () => {
-                await handleDownloadQr('svg');
-              }}
-            >
-              SVG
-            </button>
+          <div className="qr-container__image-wrapper">
+            <div className="qr-container__image">
+              <img
+                  src={qrUrl || null}
+                  alt="QR Code"
+              />
+            </div>
           </div>
-        </DropDownCard>
+
+          <div className="qr-container__actions">
+            <button
+                onClick={handleCopyQr}
+                className="qr-container__btn qr-container__btn--primary"
+            >
+              Копировать
+            </button>
+
+            <DropDownCard
+                trigger={
+                  <button className="qr-container__btn qr-container__btn--primary">
+                    Скачать
+                    <span className="material-symbols-outlined">
+                  expand_more
+                </span>
+                  </button>
+                }
+            >
+              <div className="qr-container__dropdown">
+                <button
+                    className="qr-container__dropdown-item"
+                    onClick={async () => {
+                      await handleDownloadQr('png');
+                    }}
+                >
+                  PNG
+                </button>
+                <button
+                    className="qr-container__dropdown-item"
+                    onClick={async () => {
+                      await handleDownloadQr('svg');
+                    }}
+                >
+                  SVG
+                </button>
+              </div>
+            </DropDownCard>
+          </div>
+        </div>
       </div>
-    </div>
   );
 }

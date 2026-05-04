@@ -1,14 +1,13 @@
-import uuid
-
 import asyncpg
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Query
-from fastapi.responses import StreamingResponse
+import redis.asyncio as redis
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, Query
 
 from src.db.queries import LinkQueriesQueries
 from src.db.database import get_db
 from src.schemas.links import LinkCreate, LinkRead, LinkList
 from src.services.links import LinkService
 from src.api.deps import get_current_user
+from src.db.redis import get_bin_redis
 
 
 router = APIRouter()
@@ -87,11 +86,18 @@ async def delete_user_link(
 async def get_link_qr(
     short_code: str,
     fmt: str = Query("png", pattern="^(png|svg)$"),
-    download: bool = Query(False),
     scale: int = Query(10, ge=1, le=50, description="Масштаб QR-кода"),
     db: asyncpg.Connection = Depends(get_db),
-    current_user = Depends(get_current_user)
+    redis_client: redis.Redis = Depends(get_bin_redis)
 ):
+    cache_key = f"qr:{short_code}:{fmt}:{scale}"
+    cached_qr = await redis_client.get(cache_key)
+
+    mime_type = "image/png" if fmt == 'png' else 'image/svg+xml'
+
+    if cached_qr:
+        return Response(content=cached_qr, media_type=mime_type)
+
     service = LinkService(LinkQueriesQueries(db))
     link_exists = await service.exists(short_code)
     if not link_exists:
@@ -99,9 +105,13 @@ async def get_link_qr(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Короткая ссылка не найдена'
         )
-    qr_buf, mime_type = service.generate_qr_code(short_code, scale, fmt)
-    headers = {}
-    if download:
-        filename = f'qr_{short_code}.{fmt}'
-        headers["Content-Disposition"] = f'attachment; filename="{filename}"'
-    return StreamingResponse(qr_buf, media_type=mime_type, headers=headers)
+    qr_buf, generated_mime = service.generate_qr_code(short_code, scale, fmt)
+    try:
+        qr_bytes = qr_buf.getvalue()
+    finally:
+        qr_buf.close()
+
+    duration_seconds = 604800 # Неделя
+    await redis_client.setex(cache_key, duration_seconds, qr_bytes)
+
+    return Response(content=qr_bytes, media_type=generated_mime, headers={"Cache-Control": f"public, max-age=604800"})

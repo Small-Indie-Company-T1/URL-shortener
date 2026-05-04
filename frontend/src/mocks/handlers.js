@@ -176,7 +176,6 @@ export const handlers = [
       request.headers.get('Authorization') ===
       'Bearer ' + currentAccessToken
     ) {
-      console.log(offset, limit, links.slice(offset, offset + limit));
       return new HttpResponse(
         JSON.stringify({
           links: links

@@ -37,3 +37,7 @@ CREATE TABLE clicks (
 );
 
 CREATE INDEX clicks_link_idx ON clicks (link_id);
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE INDEX idx_links_url_trgm ON links USING gin (original_url gin_trgm_ops);

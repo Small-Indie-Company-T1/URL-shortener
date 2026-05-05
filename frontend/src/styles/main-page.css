@@ -7,7 +7,7 @@
 }
 
 .tlink-header {
-  @apply bg-[#D7E7F2] h-[63px] flex items-center px-4 md:px-10 shrink-0;
+  @apply bg-[#D7E7F2] h-15.75 flex items-center px-4 md:px-10 shrink-0;
 }
 
 .tlink-logo {
@@ -94,7 +94,7 @@ button {
 }
 
 .tlink-footer {
-  @apply h-[130px] bg-[#D7E7F2] flex flex-row items-center justify-center gap-20 md:gap-50 px-4;
+  @apply h-32.5 bg-[#D7E7F2] flex flex-row items-center justify-center gap-20 md:gap-50 px-4;
 }
 
 .step-item {

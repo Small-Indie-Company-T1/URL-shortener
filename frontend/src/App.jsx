@@ -8,6 +8,7 @@ import CreateTab from './components/home/CreateTab.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import MyLinksTab from './components/home/MyLinksTab.jsx';
 import MyLinkTab from './components/home/MyLinkTab.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx'; // Импорт твоей новой страницы
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/main" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
         <Route
           path="/home"
           element={
@@ -31,7 +33,7 @@ function App() {
           <Route path="my-links/*" element={<MyLinkTab />} />
         </Route>
 
-        <Route path="404" element={<h1>404</h1>} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,4 +1,4 @@
-import { createApi } from './apiClient.js';
+import { createApi, api } from './apiClient.js';
 
 const linksApi = createApi('/links');
 
@@ -44,9 +44,9 @@ export async function deleteLinkByShortCode(short_code) {
   }
 }
 
-export async function getLinkClicks(link_id) {
+export async function getLinkClicks(short_code) {
   try {
-    const response = await linksApi.get(`/clicks/${link_id}`);
+    const response = await api.get(`/stats/${short_code}`);
     return response.data;
   } catch (error) {
     console.error(error.data.detail.msg);

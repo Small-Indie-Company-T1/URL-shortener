@@ -5,7 +5,7 @@ RETURNING *;
 
 -- name: GetLinkByCode :one
 SELECT * FROM links
-WHERE short_code = $1 AND is_deleted = false
+WHERE short_code = $1 AND is_deleted = false AND is_active = TRUE
 LIMIT 1;
 
 -- name: GetLinksByUserId :many

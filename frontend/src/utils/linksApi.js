@@ -24,9 +24,29 @@ export async function createQrCode(url_id, format) {
   }
 }
 
-export async function getLinksList(offset, limit = 10) {
+export async function getLinksList({
+  offset = 0,
+  limit = 10,
+  original_url,
+  is_active,
+  order_by,
+  order_dir,
+}) {
   try {
-    const response = await linksApi.get(`/?offset=${offset}&limit=${limit}`);
+    let queryParams = new URLSearchParams({ offset, limit });
+    if (original_url) {
+      queryParams.set('original_url', original_url);
+    }
+    if (is_active !== undefined) {
+      queryParams.set('is_active', is_active);
+    }
+    if (order_by && order_by in ['created_at', 'clicks']) {
+      queryParams.set('order_by', order_by);
+    }
+    if (order_dir && order_dir in ['asc', 'desc']) {
+      queryParams.set('order_dir', order_dir);
+    }
+    const response = await linksApi.get(`/?${queryParams}`);
     return response.data;
   } catch (error) {
     console.error(error.data.detail.msg);

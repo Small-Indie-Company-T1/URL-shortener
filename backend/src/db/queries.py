@@ -131,8 +131,8 @@ class LinkQueriesQueries:
         LIMIT $7 OFFSET $6
     """
     GETLINKBYCODE = """
-        SELECT id, creator_id, original_url, short_code, created_at, clicks_count, is_active, is_deleted FROM links
-        WHERE short_code = $1 AND is_deleted = false
+        SELECT id, creator_id, original_url, short_code, created_at, is_active, is_deleted FROM links
+        WHERE short_code = $1 AND is_deleted = false AND is_active = TRUE
         LIMIT 1
     """
     DELETELINK = """

@@ -9,7 +9,7 @@ export default function MyLinkTab() {
   const { isLoading, error, createQr, deleteLink, getClicks, clearError } =
     useLinks();
   const [isDeleted, setIsDeleted] = useState(false);
-  const [clicks, setClicks] = useState([]);
+  const [clicks, setClicks] = useState({});
   const isUpdating = useRef(false);
 
   const location = useLocation();
@@ -20,7 +20,7 @@ export default function MyLinkTab() {
     const isSuccess = await deleteLink(link.short_code);
     if (isSuccess) {
       setIsDeleted(true);
-      toastr.info('Ссылка удалена.');
+      toastr.success('Ссылка удалена');
     }
   }, [setIsDeleted, deleteLink, clearError, link]);
 
@@ -30,9 +30,9 @@ export default function MyLinkTab() {
   );
 
   const updateClicks = useCallback(async () => {
-    const data = await getClicks(link.id);
+    const data = await getClicks(link.short_code);
     if (data) {
-      setClicks(data.clicks);
+      setClicks(data);
     }
   }, [getClicks, setClicks, link]);
 
@@ -54,7 +54,7 @@ export default function MyLinkTab() {
       await updateClicks();
       isUpdating.current = false;
     };
-    update();
+    void update();
   }, [updateClicks]);
 
   return (
@@ -85,14 +85,16 @@ export default function MyLinkTab() {
               visibility
             </span>
             <span className="stats-entry__label">Количество переходов:</span>
-            <span className="stats-entry__value">{clicks.length}</span>
+            <span className="stats-entry__value">{clicks.clicks_count}</span>
           </div>
           <div className="stats-entry">
             <span className="material-symbols-outlined stats-entry__icon">
               ads_click
             </span>
             <span className="stats-entry__label">Уникальных переходов:</span>
-            <span className="stats-entry__value">хх</span>
+            <span className="stats-entry__value">
+              {clicks.unique_ip_clicks_count}
+            </span>
           </div>
         </div>
 

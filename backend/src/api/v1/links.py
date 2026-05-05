@@ -122,4 +122,4 @@ async def get_link_qr(
     duration_seconds = 604800 # Неделя
     await redis_client.setex(cache_key, duration_seconds, qr_bytes)
 
-    return Response(content=qr_bytes, media_type=generated_mime)
+    return Response(content=qr_bytes, media_type=generated_mime, headers={"Cache-Control": f"public, max-age=604800"})

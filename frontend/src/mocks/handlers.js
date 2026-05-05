@@ -176,7 +176,6 @@ export const handlers = [
       request.headers.get('Authorization') ===
       'Bearer ' + currentAccessToken
     ) {
-      console.log(offset, limit, links.slice(offset, offset + limit));
       return new HttpResponse(
         JSON.stringify({
           links: links
@@ -204,15 +203,15 @@ export const handlers = [
     link.is_deleted = true;
     return new HttpResponse(null, { status: 200 });
   }),
-  http.get('/links/clicks/:link_id', async ({ params }) => {
-    const { link_id } = params;
-    const link = links.find((l) => l.id.toString() === link_id);
+  http.get('/links/stats/:short_code', async ({ params }) => {
+    const { short_code } = params;
+    const link = links.find((l) => l.id.toString() === short_code);
     if (!link || link.is_deleted) {
       return new HttpResponse(null, { status: 404 });
     }
     return new HttpResponse(
       JSON.stringify({
-        clicks: clicks.filter((el) => el.link_id.toString() === link_id),
+        clicks: clicks.filter((el) => el.link_id.toString() === short_code),
       }),
       {
         status: 200,

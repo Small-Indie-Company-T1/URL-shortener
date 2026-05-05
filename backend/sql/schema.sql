@@ -18,6 +18,7 @@ CREATE TABLE links (
     original_url VARCHAR(2047) NOT NULL,
     short_code VARCHAR(15) NOT NULL UNIQUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    clicks_count INT DEFAULT 0,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
@@ -36,3 +37,7 @@ CREATE TABLE clicks (
 );
 
 CREATE INDEX clicks_link_idx ON clicks (link_id);
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE INDEX idx_links_url_trgm ON links USING gin (original_url gin_trgm_ops);

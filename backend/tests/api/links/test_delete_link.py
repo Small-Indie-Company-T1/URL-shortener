@@ -7,6 +7,7 @@ import pytest
 from tests.conftest import MockUser
 from src.main import app
 from src.api.deps import get_current_user
+from src.core.exceptions.app_exceptions import AppException
 
 
 @pytest.mark.asyncio
@@ -62,8 +63,8 @@ async def test_delete_link_no_rights(client, test_pool):
 @pytest.mark.asyncio
 async def test_delete_link_internal_error(client, test_user):
     app.dependency_overrides[get_current_user] = lambda: test_user
-    with patch("src.api.v1.links.LinkService.delete_link", side_effect=Exception("Failure")):
+    with patch("src.api.v1.links.LinkService.delete_link", side_effect=AppException("Failure")):
         response = await client.delete('/links/Abc123')
         assert response.status_code == 500
-        assert "Внутренняя ошибка" in response.json().get('detail')
+        assert "Failure" in response.json().get('detail')
     app.dependency_overrides.clear()

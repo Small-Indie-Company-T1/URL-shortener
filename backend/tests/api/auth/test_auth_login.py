@@ -28,7 +28,7 @@ async def test_login_wrong_password(client, test_user):
         json=payload
     )
     assert response.status_code == 401
-    assert response.json().get('detail') == 'invalid login credentials'
+    assert 'invalid login credentials' in response.json().get('detail').lower()
 
 @pytest.mark.asyncio
 async def test_login_swagger_success(client, test_user):

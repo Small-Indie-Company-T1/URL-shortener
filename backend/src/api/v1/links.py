@@ -2,8 +2,9 @@ from typing import Literal
 
 import asyncpg
 import redis.asyncio as redis
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, Query
+from fastapi import APIRouter, Depends, Response, status, Query
 
+from src.core.exceptions.service_exceptions import NotFoundException, ServiceException
 from src.db.queries import LinkQueriesQueries
 from src.db.database import get_db
 from src.schemas.links import LinkCreate, LinkRead, LinkList
@@ -22,19 +23,12 @@ async def create_link(
 ):
     service = LinkService(LinkQueriesQueries(db))
     if len(str(payload.original_url)) > 2048:
-        raise HTTPException(status_code=400, detail="URL is TOO LONG")
-    try:
-        new_link = await service.create_short_link(
-            original_url=str(payload.original_url),
-            user_id=current_user.id
-        )
-        return new_link
-    except Exception as e:
-        print(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Внутренняя ошибка"
-        )
+        raise ServiceException("URL is TOO LONG")
+    new_link = await service.create_short_link(
+        original_url=str(payload.original_url),
+        user_id=current_user.id
+    )
+    return new_link
 
 @router.get("/", response_model=LinkList)
 async def list_my_links(
@@ -75,19 +69,7 @@ async def delete_user_link(
     current_user = Depends(get_current_user)
 ):
     service = LinkService(LinkQueriesQueries(db))
-    try:
-        is_deleted = await service.delete_link(short_code=short_code, user_id=current_user.id)
-    except Exception as e:
-        print(f'Ошибка удаления: {e}')
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Внутренняя ошибка при удалении ссылки'
-        )
-    if not is_deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Ссылка не найдена или у вас нет прав на ее удаление'
-        )
+    await service.delete_link(short_code=short_code, user_id=current_user.id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @router.get("/{short_code}/qr")
@@ -109,10 +91,7 @@ async def get_link_qr(
     service = LinkService(LinkQueriesQueries(db))
     link_exists = await service.exists(short_code)
     if not link_exists:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Короткая ссылка не найдена'
-        )
+        raise NotFoundException('Короткая ссылка не найдена')
     qr_buf, generated_mime = service.generate_qr_code(short_code, scale, fmt)
     try:
         qr_bytes = qr_buf.getvalue()

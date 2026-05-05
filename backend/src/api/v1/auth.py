@@ -1,11 +1,12 @@
 import uuid
 from datetime import datetime, timezone
 import jwt
-from fastapi import APIRouter, HTTPException, Depends, status, Request, Response
+from fastapi import APIRouter, Depends, status, Request, Response
 import asyncpg
 from fastapi.security import OAuth2PasswordRequestForm
 import redis
 
+from src.core.exceptions.service_exceptions import ServiceException, UnauthorizedException
 from src.db.redis import get_redis
 from src.services.session_manager import RedisSessionManager
 from src.auth.security import decode_refresh_token
@@ -22,7 +23,7 @@ router = APIRouter()
 async def register(user_data: UserCreate, db: asyncpg.Connection = Depends(get_db)) -> Users | None:
     querier = UserQueriesQueries(db)
     if await querier.GetUserByEmail(email = user_data.email):
-        raise HTTPException(status_code=400, detail="user already exists")
+        raise ServiceException("user already exists")
 
     hashed = hash_password(user_data.password)
 
@@ -41,7 +42,7 @@ async def login(
     user = await authenticate_user(user_querier, form_data.email, form_data.password)
 
     if not user:
-        raise HTTPException(status_code=401, detail="invalid login credentials")
+        raise UnauthorizedException("Invalid login credentials")
 
     access_t, refresh_t, refresh_jti, expire_at = create_tokens(user.id)
 
@@ -92,32 +93,29 @@ async def login_swagger(response: Response, request: Request,
 async def refresh_token(request: Request, response: Response, redis_client: redis.Redis = Depends(get_redis)):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="refresh token missing"
-        )
+        raise UnauthorizedException("Refresh token missing")
     try:
         payload = decode_refresh_token(refresh_token)
 
         if payload.get("type") != "refresh":
-            raise HTTPException(status_code=401, detail="invalid token type")
+            raise UnauthorizedException("Invalid token type")
 
         token_jti = payload.get("jti")
         user_id = payload.get("sub")
 
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="refresh token expired")
+        raise UnauthorizedException("Refresh token expired")
     except jwt.PyJWTError:
-        raise HTTPException(status_code=401, detail="invalid token")
+        raise UnauthorizedException("Invalid token type")
 
     session_manager = RedisSessionManager(redis_client)
     session = await session_manager.get_session(token_jti)
 
     if not session:
-        raise HTTPException(status_code=401, detail="session is not found or expired")
+        raise UnauthorizedException("Session is not found or expired")
     elif session["refresh_token"] != refresh_token:
         await session_manager.revoke_all_user_sessions(user_id=user_id)
-        raise HTTPException(status_code=401, detail="token reuse detected. all sessions revoked.")
+        raise UnauthorizedException("Token reuse detected. Revoked all sessions")
 
     new_access_t, new_refresh_t, _, new_expire_at = create_tokens(user_id, jti=token_jti)
 
@@ -152,15 +150,12 @@ async def refresh_token(request: Request, response: Response, redis_client: redi
 async def logout(request: Request, response: Response, db: asyncpg.Connection = Depends(get_db), redis_client: redis.Redis = Depends(get_redis)):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="refresh token missing"
-        )
+        raise UnauthorizedException("Refresh token missing")
     try:
         payload = decode_refresh_token(refresh_token)
 
         if payload.get("type") != "refresh":
-            raise HTTPException(status_code=401, detail="invalid token type")
+            raise UnauthorizedException("Invalid token type")
 
         token_jti = payload.get("jti")
         user_id = payload.get("sub")

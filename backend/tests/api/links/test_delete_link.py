@@ -68,3 +68,16 @@ async def test_delete_link_internal_error(client, test_user):
         assert response.status_code == 500
         assert "Failure" in response.json().get('detail')
     app.dependency_overrides.clear()
+
+@pytest.mark.asyncio
+async def test_delete_link_qr_cache(client, test_user, bin_redis_client):
+    app.dependency_overrides[get_current_user] = lambda: test_user
+    create_response = await client.post('/links/create', json={'original_url': 'https://google.com'})
+    data = create_response.json()
+    short_code = data.get('short_code')
+    cache_key = f'qr:{short_code}:png:10'
+    await bin_redis_client.setex(cache_key, 1000, bytes(123123))
+    await client.delete(f'/links/{short_code}')
+    cached_qr = await bin_redis_client.get(cache_key)
+    assert not cached_qr
+    app.dependency_overrides.clear()

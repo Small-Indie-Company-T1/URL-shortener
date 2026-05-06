@@ -28,7 +28,17 @@ REFERERS = [
     None
 ]
 
-async def seed_data(num_users: int = 3, links_per_user: int = 5, clicks_per_link: int = 100):
+async def seed_data(num_users: int = 3, links_per_user: int = 5, clicks_per_link: int = 100) -> None:
+    """
+    Скрипт для наполнения БД пользователями, ссылками и кликами
+
+    :param num_users: Кол-во пользователей
+    :type num_users: int
+    :param links_per_user: Кол-во ссылок для каждого пользователя
+    :type links_per_user: int
+    :param clicks_per_link: Кол-во кликов по каждой ссылке (рандомно от 1 до `clicks_per_link`)
+    :type clicks_per_link: int
+    """
     pool = await asyncpg.create_pool(
         dsn=settings.DATABASE_URL_SYNC,
         min_size=5,

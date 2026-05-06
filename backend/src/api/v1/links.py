@@ -61,15 +61,26 @@ async def list_my_links(
         'links': links,
         'total': total
     }
-    
+
+async def delete_redis_qr(short_code: str, redis_client: redis.Redis):
+    pointer = 0
+    while True:
+        pointer, keys = await redis_client.scan(pointer, match=f"qr:{short_code}:*")
+        if keys:
+            await redis_client.delete(*keys)
+        if pointer == 0:
+            break
+
 @router.delete("/{short_code}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_link(
     short_code: str,
     db: asyncpg.Connection = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user = Depends(get_current_user),
+    redis_client: redis.Redis = Depends(get_bin_redis)
 ):
     service = LinkService(LinkQueriesQueries(db))
     await service.delete_link(short_code=short_code, user_id=current_user.id)
+    await delete_redis_qr(short_code=short_code, redis_client=redis_client)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @router.get("/{short_code}/qr")

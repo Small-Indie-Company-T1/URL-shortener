@@ -1,6 +1,9 @@
 import redis.asyncio as redis
 import uuid
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
+
+from src.core.logger import logger
+from src.core.exceptions.app_exceptions import AppException
 
 
 class RedisSessionManager:
@@ -34,8 +37,12 @@ class RedisSessionManager:
             await pipe.execute()
 
     async def get_session(self, jti: uuid.UUID) -> Optional[Dict[str, str]]:
-        session_data = await self.redis.hgetall(f"session:{str(jti)}")
-        return session_data if session_data else None
+        try:
+            session_data = await self.redis.hgetall(f"session:{str(jti)}")
+            return session_data if session_data else None
+        except redis.RedisError as e:
+            logger.error(f'Redis error getting session {jti}: {e}')
+            raise AppException('Ошибка системы сессий')
 
     async def revoke_session(self, jti: uuid.UUID, user_id: uuid.UUID | str):
         jti_str = str(jti)

@@ -1,6 +1,10 @@
+from unittest.mock import AsyncMock, patch
 import uuid
+import redis.asyncio as redis
 
 import pytest
+
+from src.core.exceptions.app_exceptions import AppException
 
 
 @pytest.mark.asyncio
@@ -68,3 +72,15 @@ async def test_revoke_by_ua(manager, redis_client):
     await manager.revoke_sessions_by_ua(user_id, None)
     assert await manager.get_session(jti_keep) is not None
     assert await manager.get_session(jti_kill) is None
+
+@pytest.mark.asyncio
+async def test_get_session_redis_error(manager, redis_client):
+    jti = uuid.uuid4()
+    with patch.object(redis_client, 'hgetall', new_callable=AsyncMock) as mock_hgetall:
+        mock_hgetall.side_effect = redis.RedisError("Connection refused")
+        with patch("src.services.session_manager.logger") as mock_logger:
+            with pytest.raises(AppException) as exc_info:
+                await manager.get_session(jti)
+            assert exc_info.value.message == 'Ошибка системы сессий'
+            mock_logger.error.assert_called_once()
+            assert f'Redis error getting session {jti}' in mock_logger.error.call_args[0][0]

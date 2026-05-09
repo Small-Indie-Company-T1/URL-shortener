@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks, status
+from fastapi import APIRouter, Depends, Request, BackgroundTasks, status
 from fastapi.responses import RedirectResponse
 import asyncpg
 

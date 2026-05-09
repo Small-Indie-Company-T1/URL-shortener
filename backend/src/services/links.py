@@ -5,6 +5,7 @@ import uuid
 import asyncpg
 import segno
 
+from src.core.exceptions.service_exceptions import NotFoundException, ServiceException
 from src.core.exceptions.app_exceptions import AppException, DatabaseConnectionError
 from src.schemas.links import LinkRead
 from src.services.shortener import ShortenerGenerator
@@ -28,13 +29,13 @@ class LinkService:
                     short_code=code
                 )
                 return link
+            except asyncpg.UniqueViolationError:
+                continue
             except asyncpg.PostgresError as e:
                 logger.error(f'Database error for user {user_id}: {e}', exc_info=True)
                 raise DatabaseConnectionError("База данных временно недоступна")
-            except Exception:
-                continue
-        logger.exception("Unexpected error in create_short_link")
-        raise Exception("Не удалось сгенерировать уникальный код")
+        logger.exception(f"Failed to generate unique code after {self._max_retries} retries")
+        raise ServiceException("Не удалось сгенерировать уникальный код")
     
     async def get_user_links(
         self,
@@ -72,18 +73,17 @@ class LinkService:
             return result.count if hasattr(result, 'count') else result[0]
         except asyncpg.PostgresError as e:
             logger.error(f'Database error for user {user_id}: {e}', exc_info=True)
-            raise DatabaseConnectionError("База данных временно недоступна")
-        except Exception as e:
-            logger.exception(f'Unexpected error in get_links_total: {e}')
-            raise AppException("Произошла ошибка при подсчете ссылок")
-
+            raise DatabaseConnectionError("Не удалось получить статистику")
 
     async def delete_link(self, short_code: str, user_id: uuid.UUID) -> bool:
         try:
             deleted_id = await self.queries.DeleteLink(short_code=short_code, creator_id=user_id)
-            return deleted_id is not None
-        except Exception as e:
-            return False
+            if not deleted_id:
+                raise NotFoundException("Ссылка не найдена или доступ запрещен")
+            return True
+        except asyncpg.PostgresError as e:
+            logger.error(f'Error deleting link {short_code}: {e}', exc_info=True)
+            raise DatabaseConnectionError("Ошибка БД при удалении")
 
     async def exists(self, short_code: str) -> bool:
         result = await self.queries.CheckLinkExists(short_code)

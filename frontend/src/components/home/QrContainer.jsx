@@ -43,7 +43,7 @@ export default function QrContainer({ downloadQr }) {
       } else if (format === 'png') {
         let blob = pngBlob;
         if (!blob) {
-          blob = await downloadQr();
+          blob = await downloadQr('png');
           setPngBlob(blob);
         }
         const url = URL.createObjectURL(blob);

@@ -33,6 +33,7 @@ const DropDownCard = ({ trigger, children }) => {
             position: 'absolute',
             left: '50%',
             transform: 'translateX(-50%)',
+            zIndex: 9999,
             marginTop: '4px',
           }}
           onClick={handleClick}

@@ -37,13 +37,13 @@ export async function getLinksList({
     if (original_url) {
       queryParams.set('original_url', original_url);
     }
-    if (is_active !== undefined) {
+    if (is_active !== null && is_active !== undefined) {
       queryParams.set('is_active', is_active);
     }
-    if (order_by && order_by in ['created_at', 'clicks']) {
+    if (['created_at', 'clicks'].includes(order_by)) {
       queryParams.set('order_by', order_by);
     }
-    if (order_dir && order_dir in ['asc', 'desc']) {
+    if (['asc', 'desc'].includes(order_dir)) {
       queryParams.set('order_dir', order_dir);
     }
     const response = await linksApi.get(`/?${queryParams}`);

@@ -110,6 +110,6 @@ export default function useLinks() {
     getLinks,
     deleteLink,
     getClicks,
-    clearError: () => setError(null),
+    clearError: useCallback(() => setError(null), [setError]),
   };
 }

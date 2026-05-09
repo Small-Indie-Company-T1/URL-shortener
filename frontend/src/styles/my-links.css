@@ -1,3 +1,5 @@
+@import '../App.css';
+
 .links-page-wrapper {
   flex: 1;
   height: calc(100vh - 63px);
@@ -24,10 +26,6 @@
   color: #2c2c2c;
 }
 
-.links-filters {
-
-}
-
 .links-table-wrapper {
   flex: 1;
   min-height: 0;
@@ -40,6 +38,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .links-table__header {
@@ -54,7 +53,49 @@
 }
 
 .links-list {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+}
+
+.links__filters {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.links__form {
+  width: 100%;
+}
+
+.links__form fieldset {
+  @apply flex flex-row md:flex-row gap-4 mb-10 w-full border-none p-0;
+}
+
+.links__search__btns {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  bottom: 50%;
+  right: 0;
+  transform: translate(-10px, 50%);
+  cursor: pointer;
+}
+
+.links__search__split {
+  @apply mx-1.5;
+  width: 1px;
+  height: 24px;
+  background: #89939E;
+}
+
+.links__search {
+  @apply grow h-12 px-6 bg-white border border-[#89939E] rounded-xl outline-none text-xl italic font-extralight transition-all;
+  width: 100%;
+  color: #2c2c2c;
 }
 
 .links-item {

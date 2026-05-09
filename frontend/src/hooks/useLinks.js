@@ -49,10 +49,10 @@ export default function useLinks() {
     }
   }, []);
 
-  const getLinks = useCallback(async (offset, limit = 10) => {
+  const getLinks = useCallback(async (params) => {
     setIsLoading(true);
     try {
-      return await getLinksList(offset, limit);
+      return await getLinksList(params);
     } catch (error) {
       switch (error.response?.status) {
         case 422:
@@ -110,6 +110,6 @@ export default function useLinks() {
     getLinks,
     deleteLink,
     getClicks,
-    clearError: () => setError(null),
+    clearError: useCallback(() => setError(null), [setError]),
   };
 }

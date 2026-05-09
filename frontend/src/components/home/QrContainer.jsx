@@ -114,7 +114,7 @@ export default function QrContainer({ downloadQr }) {
           >
             <div className="qr-container__dropdown">
               <button
-                className="qr-container__dropdown-item"
+                className="qr-container__dropdown-item close-dropdown"
                 onClick={async () => {
                   await handleDownloadQr('png');
                 }}
@@ -122,7 +122,7 @@ export default function QrContainer({ downloadQr }) {
                 PNG
               </button>
               <button
-                className="qr-container__dropdown-item"
+                className="qr-container__dropdown-item close-dropdown"
                 onClick={async () => {
                   await handleDownloadQr('svg');
                 }}

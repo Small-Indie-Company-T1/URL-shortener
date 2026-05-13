@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useLinks from '../../hooks/useLinks.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import QrContainer from './QrContainer.jsx';
@@ -8,33 +8,33 @@ import '../../styles/my-link.css';
 export default function MyLinkTab() {
   const { isLoading, error, createQr, deleteLink, getClicks, clearError } =
     useLinks();
+
   const [isDeleted, setIsDeleted] = useState(false);
   const [clicks, setClicks] = useState({});
   const isUpdating = useRef(false);
 
-  const location = useLocation();
-  const link = location.state?.link;
+  const { shortCode } = useParams();
 
   const handleDelete = useCallback(async () => {
     clearError();
-    const isSuccess = await deleteLink(link.short_code);
+    const isSuccess = await deleteLink(shortCode);
     if (isSuccess) {
       setIsDeleted(true);
       toastr.success('Ссылка удалена');
     }
-  }, [setIsDeleted, deleteLink, clearError, link]);
+  }, [deleteLink, clearError, shortCode]);
 
   const downloadQr = useCallback(
-    async (format) => await createQr(link.short_code, format),
-    [createQr, link]
+    async (format) => await createQr(shortCode, format),
+    [createQr, shortCode]
   );
 
   const updateClicks = useCallback(async () => {
-    const data = await getClicks(link.short_code);
+    const data = await getClicks(shortCode);
     if (data) {
       setClicks(data);
     }
-  }, [getClicks, setClicks, link]);
+  }, [getClicks, shortCode]);
 
   useEffect(() => {
     if (error) toastr.error(error);
@@ -63,17 +63,13 @@ export default function MyLinkTab() {
         <header className="link-header">
           <a
             href={
-              (import.meta.env.VITE_FRONTEND_BASE_URL || '') +
-              '/r/' +
-              link.short_code
+              (import.meta.env.VITE_FRONTEND_BASE_URL || '') + '/r/' + shortCode
             }
             className="link-header__url"
             target="_blank"
             rel="noreferrer"
           >
-            {(import.meta.env.VITE_FRONTEND_BASE_URL || '') +
-              '/r/' +
-              link.short_code}
+            {(import.meta.env.VITE_FRONTEND_BASE_URL || '') + '/r/' + shortCode}
           </a>
         </header>
 
@@ -99,6 +95,9 @@ export default function MyLinkTab() {
         </div>
 
         <footer className="link-footer-actions">
+          <Link to="/home/my-links" className="material-symbols-outlined">
+            arrow_back
+          </Link>
           <button
             className="delete-action-btn"
             onClick={handleDelete}

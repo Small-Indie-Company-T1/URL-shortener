@@ -25,13 +25,9 @@ async function bootstrapAuth() {
 
 export default function useAuth() {
   const [token, setToken] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState(null);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsAuthenticated(!!token);
-  }, [token]);
 
   const login = useCallback(async (email, password) => {
     setError(null);
@@ -75,23 +71,15 @@ export default function useAuth() {
 
   useEffect(() => {
     let alive = true;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoading(true);
     setTokenUpdateHandler(setToken);
 
     const initAuth = async () => {
       try {
         await bootstrapAuth();
-        if (alive) {
-          setIsAuthenticated(true);
-        }
-      } catch {
-        if (alive) {
-          setIsAuthenticated(false);
-        }
       } finally {
         if (alive) {
           setIsLoading(false);
+          setIsInitialized(true);
         }
       }
     };
@@ -104,8 +92,9 @@ export default function useAuth() {
 
   return {
     token,
-    isAuthenticated,
+    isAuthenticated: !!token,
     isLoading,
+    isInitialized,
     error,
     login,
     register,

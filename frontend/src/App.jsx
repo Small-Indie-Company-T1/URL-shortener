@@ -14,7 +14,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -27,10 +27,10 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="/home/create" />} />
+          <Route index element={<Navigate to="/home/create" replace />} />
           <Route path="create" element={<CreateTab />} />
           <Route path="my-links" element={<MyLinksTab />} />
-          <Route path="my-links/*" element={<MyLinkTab />} />
+          <Route path="my-links/:shortCode" element={<MyLinkTab />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

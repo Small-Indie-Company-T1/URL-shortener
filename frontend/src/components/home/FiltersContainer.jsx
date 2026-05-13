@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DropdownCard from '../DropDownCard.jsx';
+import { toastr } from '../../toastr-config.js';
 
 import '../../styles/my-links.css';
+import InputLine from '../InputLine.jsx';
 
 export default function FiltersContainer({ applyFilters }) {
+  const [error, setError] = useState(null);
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [search, setSearch] = useState(searchParams.get('search') || '');
@@ -20,7 +24,11 @@ export default function FiltersContainer({ applyFilters }) {
     async (e) => {
       e.preventDefault();
       const params = {};
-      if (searchRef.current && searchRef.current.trim() !== '') {
+      if (searchRef.current && searchRef.current.trim()) {
+        if (searchRef.current.trim().length < 3) {
+          setError('Слишком короткий запрос. Введите не менее 3 символов.');
+          return;
+        }
         params.search = searchRef.current;
       }
       Object.entries(filtersRef.current).forEach(([key, value]) => {
@@ -69,19 +77,23 @@ export default function FiltersContainer({ applyFilters }) {
     filtersRef.current = filters;
   }, [search, filters]);
 
+  useEffect(() => {
+    if (error) {
+      toastr.error(error);
+    }
+  }, [error]);
   return (
     <div className="links__filters">
       <form className="links__form" onSubmit={handleSubmit}>
         <fieldset>
           <div style={{ position: 'relative', width: '100%' }}>
-            <input
-              id="search"
-              type="text"
+            <InputLine
+              error={error}
               value={search}
-              placeholder={'Искать ссылку...'}
-              className="links__search"
+              placeholder="Искать ссылку..."
               onChange={(e) => {
                 setSearch(e.target.value);
+                setError(null);
               }}
             />
             <div className="links__search__btns">
@@ -89,7 +101,10 @@ export default function FiltersContainer({ applyFilters }) {
                 <>
                   <span
                     className="material-symbols-outlined"
-                    onClick={() => setSearch('')}
+                    onClick={() => {
+                      setSearch('');
+                      setError(null);
+                    }}
                   >
                     close
                   </span>

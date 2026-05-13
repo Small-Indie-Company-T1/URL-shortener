@@ -235,7 +235,7 @@
 .search-icon-left {
   position: absolute;
   left: 16px;
-  color: #89939E;
+  color: #89939e;
   pointer-events: none;
 }
 
@@ -243,14 +243,14 @@
   width: 100%;
   padding: 12px 45px 12px 48px;
   border-radius: 12px;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #e2e8f0;
   background: white;
   font-size: 14px;
   transition: all 0.2s;
 }
 
 .search-input-field:focus {
-  border-color: #385CA8;
+  border-color: #385ca8;
   outline: none;
   box-shadow: 0 0 0 3px rgba(56, 92, 168, 0.05);
 }
@@ -260,7 +260,7 @@
   right: 12px;
   background: none;
   border: none;
-  color: #89939E;
+  color: #89939e;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -278,9 +278,9 @@
   gap: 8px;
   padding: 10px 16px;
   background: white;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #e2e8f0;
   border-radius: 100px;
-  color: #2C2C2C;
+  color: #2c2c2c;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -288,13 +288,13 @@
 }
 
 .filter-pill-btn:hover {
-  border-color: #385CA8;
-  background: #F8FAFC;
+  border-color: #385ca8;
+  background: #f8fafc;
 }
 
 .filter-pill-btn .material-symbols-outlined {
   font-size: 18px;
-  color: #385CA8;
+  color: #385ca8;
 }
 
 .dropdown-options-box {
@@ -302,7 +302,7 @@
   border-radius: 12px;
   padding: 8px;
   min-width: 180px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -315,30 +315,32 @@
   background: none;
   text-align: left;
   font-size: 14px;
-  color: #2C2C2C;
+  color: #2c2c2c;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .dropdown-option-item:hover {
-  background: #F1F5F9;
+  background: #f1f5f9;
 }
 
 .dropdown-option-item.is-active {
-  background: #EEF2FF;
-  color: #385CA8;
+  background: #eef2ff;
+  color: #385ca8;
   font-weight: 600;
 }
 
 .apply-filters-main-btn {
-  background: #385CA8;
+  background: #385ca8;
   color: white;
   border: none;
   padding: 12px 24px;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.1s, opacity 0.2s;
+  transition:
+    transform 0.1s,
+    opacity 0.2s;
 }
 
 .apply-filters-main-btn:active {

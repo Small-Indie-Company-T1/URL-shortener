@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DropdownCard from '../DropDownCard.jsx';
 import { toastr } from '../../toastr-config.js';
+import RedShakeAnimation from '../RedShakeAnimation.jsx';
 
-import '../../styles/my-links.css';
-import InputLine from '../InputLine.jsx';
+import '../../styles/filters-container.css';
 
 export default function FiltersContainer({ applyFilters }) {
   const [error, setError] = useState(null);
@@ -23,6 +23,7 @@ export default function FiltersContainer({ applyFilters }) {
   const handleSubmit = useCallback(
     async (e) => {
       if (e) e.preventDefault();
+      setError(null);
       const params = {};
       if (searchRef.current && searchRef.current.trim()) {
         if (searchRef.current.trim().length < 3) {
@@ -85,17 +86,22 @@ export default function FiltersContainer({ applyFilters }) {
   return (
     <div className="filters-container-new">
       <form className="filters-form-layout" onSubmit={handleSubmit}>
-        <div className="search-bar-wrapper">
+        <div className="search-bar-wrapper" onFocus={() => setError(null)}>
           <span className="material-symbols-outlined search-icon-left">
             search
           </span>
-          <input
-            type="text"
-            value={search}
-            placeholder="Искать ссылку..."
-            className="search-input-field"
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <RedShakeAnimation error={error}>
+            <input
+              type="text"
+              value={search}
+              placeholder="Искать ссылку..."
+              className="search-input-field"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setError(null);
+              }}
+            />
+          </RedShakeAnimation>
           {search && (
             <button
               type="button"
@@ -114,7 +120,7 @@ export default function FiltersContainer({ applyFilters }) {
                 <span className="material-symbols-outlined">filter_alt</span>
                 <span>
                   {filters.is_active === null
-                    ? 'Все'
+                    ? 'Все ссылки'
                     : filters.is_active
                       ? 'Активные'
                       : 'Неактивные'}
@@ -122,7 +128,7 @@ export default function FiltersContainer({ applyFilters }) {
               </button>
             }
           >
-            <div className="dropdown-options-box">
+            <div className="dropdown-options-box close-dropdown">
               <TripleStateCheckbox
                 filter={filters.is_active}
                 setFilter={(value) =>

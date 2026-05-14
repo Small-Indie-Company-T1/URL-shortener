@@ -1,41 +1,39 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DropdownCard from '../DropDownCard.jsx';
+import { toastr } from '../../toastr-config.js';
 
 import '../../styles/my-links.css';
+import InputLine from '../InputLine.jsx';
 
 export default function FiltersContainer({ applyFilters }) {
+  const [error, setError] = useState(null);
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const searchRef = useRef(searchParams.get('search') || '');
   const [filters, setFilters] = useState({
-    is_active:
-      searchParams.get('is_active') === 'true'
-        ? true
-        : searchParams.get('is_active') === 'false'
-          ? false
-          : null,
+    is_active: searchParams.get('is_active') || null,
     order_by: searchParams.get('order_by') || null,
     order_dir: searchParams.get('order_dir') || null,
   });
-  const filtersRef = useRef(filters);
-
-  useEffect(() => {
-    searchRef.current = search;
-    filtersRef.current = filters;
-  }, [search, filters]);
+  const filtersRef = useRef({});
 
   const handleSubmit = useCallback(
     async (e) => {
       if (e) e.preventDefault();
       const params = {};
-      if (searchRef.current && searchRef.current.trim() !== '') {
+      if (searchRef.current && searchRef.current.trim()) {
+        if (searchRef.current.trim().length < 3) {
+          setError('Слишком короткий запрос. Введите не менее 3 символов.');
+          return;
+        }
         params.search = searchRef.current;
       }
       Object.entries(filtersRef.current).forEach(([key, value]) => {
         if (value !== null && value !== undefined && value !== '') {
-          params[key] = String(value);
+          params[key] = value;
         }
       });
       setSearchParams(params);
@@ -45,8 +43,9 @@ export default function FiltersContainer({ applyFilters }) {
   );
 
   const getOrderName = () => {
-    if (filters.order_by === 'created_at' && filters.order_dir === 'asc')
+    if (filters.order_by === 'created_at' && filters.order_dir === 'asc') {
       return 'Раньше создано';
+    }
     if (filters.order_by === 'clicks') {
       if (filters.order_dir === 'asc') return 'Меньше кликов';
       if (filters.order_dir === 'desc') return 'Больше кликов';
@@ -55,18 +54,34 @@ export default function FiltersContainer({ applyFilters }) {
   };
 
   const sortOptions = [
-    { label: 'Позже создано', value: { order_by: null, order_dir: null } },
+    {
+      label: 'Позже создано',
+      value: { order_by: null, order_dir: null },
+    },
     {
       label: 'Раньше создано',
       value: { order_by: 'created_at', order_dir: 'asc' },
     },
-    { label: 'Меньше кликов', value: { order_by: 'clicks', order_dir: 'asc' } },
+    {
+      label: 'Меньше кликов',
+      value: { order_by: 'clicks', order_dir: 'asc' },
+    },
     {
       label: 'Больше кликов',
       value: { order_by: 'clicks', order_dir: 'desc' },
     },
   ];
 
+  useEffect(() => {
+    searchRef.current = search;
+    filtersRef.current = filters;
+  }, [search, filters]);
+
+  useEffect(() => {
+    if (error) {
+      toastr.error(error);
+    }
+  }, [error]);
   return (
     <div className="filters-container-new">
       <form className="filters-form-layout" onSubmit={handleSubmit}>

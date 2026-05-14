@@ -126,7 +126,7 @@ export const handlers = [
         return new HttpResponse(null, { status: 400 });
       }
 
-      if (original_url.length > 100) {
+      if (original_url.length > 100 || !/^https?:\/\/\S+$/.test(original_url)) {
         return new HttpResponse(null, { status: 422 });
       }
 

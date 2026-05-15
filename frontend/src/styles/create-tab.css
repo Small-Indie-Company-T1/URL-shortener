@@ -13,12 +13,6 @@
   @apply flex flex-col md:flex-row gap-4 mb-10 items-stretch border-none p-0;
 }
 
-.create-tab__input {
-  @apply grow h-12 px-6 bg-white border border-[#89939E] rounded-xl outline-none text-xl italic font-extralight transition-all;
-  color: #2c2c2c;
-  min-width: 0;
-}
-
 .create-tab__input:focus {
   @apply border-[#2D60CD] ring-1 ring-[#2D60CD];
 }

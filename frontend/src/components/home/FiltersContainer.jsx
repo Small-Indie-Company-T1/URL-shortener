@@ -1,41 +1,39 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DropdownCard from '../DropDownCard.jsx';
+import { toastr } from '../../toastr-config.js';
 
 import '../../styles/my-links.css';
+import InputLine from '../InputLine.jsx';
 
 export default function FiltersContainer({ applyFilters }) {
+  const [error, setError] = useState(null);
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [search, setSearch] = useState(searchParams.get('search') || '');
-  const searchRef = useRef(searchParams.get('search') || '');
+  const searchRef = useRef('');
   const [filters, setFilters] = useState({
-    is_active:
-      searchParams.get('is_active') === 'true'
-        ? true
-        : searchParams.get('is_active') === 'false'
-          ? false
-          : null,
+    is_active: searchParams.get('is_active') || null,
     order_by: searchParams.get('order_by') || null,
     order_dir: searchParams.get('order_dir') || null,
   });
-  const filtersRef = useRef(filters);
-
-  useEffect(() => {
-    searchRef.current = search;
-    filtersRef.current = filters;
-  }, [search, filters]);
+  const filtersRef = useRef({});
 
   const handleSubmit = useCallback(
     async (e) => {
-      if (e) e.preventDefault();
+      e.preventDefault();
       const params = {};
-      if (searchRef.current && searchRef.current.trim() !== '') {
+      if (searchRef.current && searchRef.current.trim()) {
+        if (searchRef.current.trim().length < 3) {
+          setError('Слишком короткий запрос. Введите не менее 3 символов.');
+          return;
+        }
         params.search = searchRef.current;
       }
       Object.entries(filtersRef.current).forEach(([key, value]) => {
         if (value !== null && value !== undefined && value !== '') {
-          params[key] = String(value);
+          params[key] = value;
         }
       });
       setSearchParams(params);
@@ -45,8 +43,9 @@ export default function FiltersContainer({ applyFilters }) {
   );
 
   const getOrderName = () => {
-    if (filters.order_by === 'created_at' && filters.order_dir === 'asc')
+    if (filters.order_by === 'created_at' && filters.order_dir === 'asc') {
       return 'Раньше создано';
+    }
     if (filters.order_by === 'clicks') {
       if (filters.order_dir === 'asc') return 'Меньше кликов';
       if (filters.order_dir === 'desc') return 'Больше кликов';
@@ -55,125 +54,166 @@ export default function FiltersContainer({ applyFilters }) {
   };
 
   const sortOptions = [
-    { label: 'Позже создано', value: { order_by: null, order_dir: null } },
+    {
+      label: 'Позже создано',
+      value: { order_by: null, order_dir: null },
+    },
     {
       label: 'Раньше создано',
       value: { order_by: 'created_at', order_dir: 'asc' },
     },
-    { label: 'Меньше кликов', value: { order_by: 'clicks', order_dir: 'asc' } },
+    {
+      label: 'Меньше кликов',
+      value: { order_by: 'clicks', order_dir: 'asc' },
+    },
     {
       label: 'Больше кликов',
       value: { order_by: 'clicks', order_dir: 'desc' },
     },
   ];
 
-  return (
-    <div className="filters-container-new">
-      <form className="filters-form-layout" onSubmit={handleSubmit}>
-        <div className="search-bar-wrapper">
-          <span className="material-symbols-outlined search-icon-left">
-            search
-          </span>
-          <input
-            type="text"
-            value={search}
-            placeholder="Искать ссылку..."
-            className="search-input-field"
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          {search && (
-            <button
-              type="button"
-              className="search-clear-btn"
-              onClick={() => setSearch('')}
-            >
-              <span className="material-symbols-outlined">close</span>
-            </button>
-          )}
-        </div>
+  useEffect(() => {
+    searchRef.current = search;
+    filtersRef.current = filters;
+  }, [search, filters]);
 
-        <div className="filters-actions-group">
+  useEffect(() => {
+    if (error) {
+      toastr.error(error);
+    }
+  }, [error]);
+  return (
+    <div className="links__filters">
+      <form className="links__form" onSubmit={handleSubmit}>
+        <fieldset>
+          <div style={{ position: 'relative', width: '100%' }}>
+            <InputLine
+              error={error}
+              value={search}
+              placeholder="Искать ссылку..."
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setError(null);
+              }}
+            />
+            <div className="links__search__btns">
+              {search && (
+                <>
+                  <span
+                    className="material-symbols-outlined"
+                    onClick={() => {
+                      setSearch('');
+                      setError(null);
+                    }}
+                  >
+                    close
+                  </span>
+                  <div className="links__search__split"></div>
+                </>
+              )}
+              <button type="submit" className="material-symbols-outlined">
+                search
+              </button>
+            </div>
+          </div>
           <DropdownCard
             trigger={
-              <button type="button" className="filter-pill-btn">
-                <span className="material-symbols-outlined">filter_alt</span>
-                <span>
-                  {filters.is_active === null
-                    ? 'Все'
-                    : filters.is_active
-                      ? 'Активные'
-                      : 'Неактивные'}
-                </span>
+              <button type="button" className="material-symbols-outlined">
+                filter_alt
               </button>
             }
           >
-            <div className="dropdown-options-box">
+            <div className="bg-white p-4 rounded shadow-md flex flex-col gap-2">
               <TripleStateCheckbox
                 filter={filters.is_active}
                 setFilter={(value) =>
                   setFilters((prev) => ({ ...prev, is_active: value }))
                 }
               />
-            </div>
-          </DropdownCard>
-
-          <DropdownCard
-            trigger={
-              <button type="button" className="filter-pill-btn">
-                <span className="material-symbols-outlined">sort</span>
-                <span>{getOrderName()}</span>
+              <DropdownCard
+                trigger={
+                  <button type="button" className="qr-container__dropdown-item">
+                    <span className="material-symbols-outlined">sort</span>
+                    {getOrderName()}
+                  </button>
+                }
+              >
+                <div className="qr-container__dropdown">
+                  {sortOptions
+                    .filter((option) => {
+                      const isCurrentSelected =
+                        option.value.order_by === filters.order_by &&
+                        option.value.order_dir === filters.order_dir;
+                      return !isCurrentSelected;
+                    })
+                    .map((option) => (
+                      <button
+                        key={option.label}
+                        className="qr-container__dropdown-item close-dropdown"
+                        onClick={async () => {
+                          setFilters((prev) => ({
+                            ...prev,
+                            order_by: option.value.order_by,
+                            order_dir: option.value.order_dir,
+                          }));
+                        }}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                </div>
+              </DropdownCard>
+              <button
+                type="button"
+                className="close-dropdown"
+                onClick={handleSubmit}
+              >
+                Применить
               </button>
-            }
-          >
-            <div className="dropdown-options-box">
-              {sortOptions.map((option) => (
-                <button
-                  key={option.label}
-                  type="button"
-                  className={`dropdown-option-item close-dropdown ${
-                    option.value.order_by === filters.order_by &&
-                    option.value.order_dir === filters.order_dir
-                      ? 'is-active'
-                      : ''
-                  }`}
-                  onClick={() =>
-                    setFilters((prev) => ({ ...prev, ...option.value }))
-                  }
-                >
-                  {option.label}
-                </button>
-              ))}
             </div>
           </DropdownCard>
-
-          <button type="submit" className="apply-filters-main-btn">
-            Применить
-          </button>
-        </div>
+        </fieldset>
       </form>
     </div>
   );
 }
 
 function TripleStateCheckbox({ filter, setFilter }) {
-  const options = [
-    { label: 'Все ссылки', value: null },
-    { label: 'Активные', value: true },
-    { label: 'Неактивные', value: false },
-  ];
+  const handleFilterChange = () => {
+    if (filter === null) {
+      setFilter(true);
+    } else if (filter === true) {
+      setFilter(false);
+    } else {
+      setFilter(null);
+    }
+  };
+
+  const getCheckboxState = () => {
+    if (filter === null) return { checked: false, indeterminate: true };
+    if (filter === true) return { checked: true, indeterminate: false };
+    return { checked: false, indeterminate: false };
+  };
+
+  const { checked, indeterminate } = getCheckboxState();
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.indeterminate = indeterminate;
+    }
+  }, [indeterminate]);
 
   return (
-    <div className="triple-state-list">
-      {options.map((opt) => (
-        <button
-          key={String(opt.value)}
-          type="button"
-          className={`dropdown-option-item ${filter === opt.value ? 'is-active' : ''}`}
-          onClick={() => setFilter(opt.value)}
-        >
-          {opt.label}
-        </button>
-      ))}
+    <div className="qr-container__dropdown-item" onClick={handleFilterChange}>
+      <input
+        type="checkbox"
+        name="активные"
+        ref={inputRef}
+        checked={checked}
+        readOnly
+      />
+      <label>активные</label>
     </div>
   );
 }

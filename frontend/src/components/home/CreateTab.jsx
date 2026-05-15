@@ -5,6 +5,7 @@ import useLinks from '../../hooks/useLinks.js';
 import GeneratedLinkPanel from './GeneratedLinkPanel.jsx';
 
 import '../../styles/create-tab.css';
+import InputLine from '../InputLine.jsx';
 
 export default function CreateTab() {
   const { isLoading, error, create, createQr, clearError } = useLinks();
@@ -13,6 +14,7 @@ export default function CreateTab() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    clearError();
     const result = await create(link);
     if (result && result.short_code) {
       setShortLink({
@@ -40,11 +42,10 @@ export default function CreateTab() {
       <h1 className="create-tab__title">Создать ссылку</h1>
       <form onSubmit={handleSubmit} className="create-tab__form">
         <fieldset disabled={isLoading}>
-          <input
-            type="text"
+          <InputLine
+            error={error}
             placeholder="Введите URL"
             value={link}
-            className="create-tab__input"
             onChange={(e) => {
               setLink(e.target.value);
               clearError();

@@ -30,7 +30,9 @@ body {
   gap: 25px;
 }
 @media (min-width: 768px) {
-  html, body, #root {
+  html,
+  body,
+  #root {
     margin: 0;
     padding: 0;
     width: 100vw;

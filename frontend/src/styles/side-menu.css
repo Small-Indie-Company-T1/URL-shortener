@@ -35,25 +35,6 @@
   @apply bg-[#3A6CD5];
 }
 
-.side-menu__logout {
-  @apply mt-auto
-  h-[60px]
-  flex items-center
-  gap-4
-  px-8
-  text-xl
-  font-medium
-  border-t border-[#2D53A5]
-  hover:bg-[#2D53A5]
-  transition-colors
-  bg-transparent
-  border-none
-  cursor-pointer
-  text-white
-  w-full
-  text-left;
-}
-
 @media (max-width: 767px) {
   .side-menu {
     position: fixed;
@@ -99,7 +80,9 @@
     text-xs
     font-normal
     border-none
-    flex-1;
+    flex-1
+    bg-transparent
+    text-[#B9DFFF];
   }
 
   .side-menu__link .material-symbols-outlined {
@@ -107,25 +90,6 @@
   }
 
   .side-menu__link--active {
-    @apply bg-transparent text-[#B9DFFF];
-  }
-
-  .side-menu__logout {
-    @apply mt-0
-    h-full
-    w-auto
-    flex-col
-    justify-center
-    items-center
-    gap-1
-    px-4
-    text-xs
-    font-normal
-    border-none
-    bg-transparent;
-  }
-
-  .side-menu__logout .material-symbols-outlined {
-    font-size: 24px !important;
+    @apply text-white;
   }
 }

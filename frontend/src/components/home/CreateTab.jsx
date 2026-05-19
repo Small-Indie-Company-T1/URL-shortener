@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toastr } from '../../toastr-config.js';
 import useLinks from '../../hooks/useLinks.js';
 import GeneratedLinkPanel from './GeneratedLinkPanel.jsx';
+import RedShakeAnimation from '../RedShakeAnimation.jsx';
 
 import '../../styles/create-tab.css';
-import InputLine from '../InputLine.jsx';
 
 export default function CreateTab() {
   const { isLoading, error, create, createQr, clearError } = useLinks();
@@ -42,15 +42,19 @@ export default function CreateTab() {
       <h1 className="create-tab__title">Создать ссылку</h1>
       <form onSubmit={handleSubmit} className="create-tab__form">
         <fieldset disabled={isLoading}>
-          <InputLine
-            error={error}
-            placeholder="Введите URL"
-            value={link}
-            onChange={(e) => {
-              setLink(e.target.value);
-              clearError();
-            }}
-          />
+          <RedShakeAnimation error={error}>
+            <input
+              type="text"
+              placeholder="Введите URL"
+              value={link}
+              onChange={(e) => {
+                setLink(e.target.value);
+                clearError();
+              }}
+              onFocus={() => clearError()}
+              className="create-tab__input"
+            />
+          </RedShakeAnimation>
           <button type="submit" className="create-tab__submit-btn">
             Создать
           </button>

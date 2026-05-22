@@ -64,7 +64,6 @@
   }
 }
 
-
 @media (max-width: 768px) {
   .qr-container {
     padding: 20px;
@@ -84,7 +83,6 @@
     min-height: 48px;
   }
 }
-
 
 @media (max-width: 480px) {
   .qr-container {

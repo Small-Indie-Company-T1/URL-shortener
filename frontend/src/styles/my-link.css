@@ -173,13 +173,11 @@
   cursor: wait;
 }
 
-
 @media (max-width: 1024px) {
   .link-details-wrapper {
     padding: 0 24px;
   }
 }
-
 
 @media (max-width: 768px) {
   .link-details-page {
@@ -234,7 +232,6 @@
     min-height: 52px;
   }
 }
-
 
 @media (max-width: 480px) {
   .link-details-wrapper {

@@ -1,6 +1,5 @@
 @reference "../App.css";
 
-
 .side-menu {
   @apply w-[280px] bg-[#385CA8] min-h-screen flex flex-col text-white shrink-0;
 }
@@ -29,7 +28,6 @@
   background: #2d53a5;
 }
 
-
 @media (max-width: 1024px) {
   .side-menu {
     width: 220px;
@@ -41,7 +39,6 @@
     font-size: 16px;
   }
 }
-
 
 @media (max-width: 768px) {
   .side-menu {
@@ -102,7 +99,6 @@
     display: none;
   }
 }
-
 
 @media (max-width: 480px) {
   .side-menu__link {

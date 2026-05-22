@@ -138,3 +138,60 @@
 .apply-filters-main-btn:hover {
   opacity: 0.9;
 }
+
+@media (max-width: 900px) {
+  .filters-form-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-bar-wrapper {
+    max-width: 100%;
+  }
+
+  .filters-actions-group {
+    flex-wrap: wrap;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .filters-container-new {
+    margin-bottom: 20px;
+  }
+
+  .filters-form-layout {
+    gap: 16px;
+  }
+
+  .filters-actions-group {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .filter-pill-btn {
+    flex: 1;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  .apply-filters-main-btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .search-input-field {
+    min-height: 48px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filters-actions-group {
+    flex-direction: column;
+  }
+
+  .filter-pill-btn {
+    width: 100%;
+  }
+}

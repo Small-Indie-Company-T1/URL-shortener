@@ -172,3 +172,76 @@
   opacity: 0.6;
   cursor: wait;
 }
+
+
+@media (max-width: 1024px) {
+  .link-details-wrapper {
+    padding: 0 24px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .link-details-page {
+    height: auto;
+    min-height: 100%;
+    padding-top: 32px;
+  }
+
+  .link-details-wrapper {
+    padding: 0 16px 120px;
+  }
+
+  .link-header {
+    margin-bottom: 24px;
+  }
+
+  .link-header__url {
+    font-size: 20px;
+
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .stats-container {
+    gap: 16px;
+    padding-left: 0;
+    margin-bottom: 40px;
+  }
+
+  .stats-entry {
+    align-items: flex-start;
+  }
+
+  .stats-entry__label {
+    min-width: auto;
+    font-size: 15px;
+  }
+
+  .stats-entry__value {
+    font-size: 18px;
+  }
+
+  .link-footer-actions {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .delete-action-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 52px;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .link-details-wrapper {
+    padding-inline: 12px;
+  }
+
+  .link-header__url {
+    font-size: 18px;
+  }
+}

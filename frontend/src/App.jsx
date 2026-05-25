@@ -33,7 +33,7 @@ function App() {
           <Route path="my-links" element={<MyLinksTab />} />
           <Route path="my-links/:shortCode" element={<MyLinkTab />} />
         </Route>
-        
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

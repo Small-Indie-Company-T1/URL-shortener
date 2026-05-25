@@ -1,13 +1,26 @@
 .link-details-page {
   flex: 1;
   background-color: #f8fafc;
-  height: calc(100vh - 63px);
+  height: calc(100dvh - 63px);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-top: 80px;
   box-sizing: border-box;
   overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .link-details-page {
+    height: 100vh;
+    overflow: hidden;
+    padding-top: 40px;
+  }
+
+  .link-details-wrapper {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
 }
 
 .link-details-wrapper {
@@ -171,4 +184,65 @@
 .delete-action-btn:disabled {
   opacity: 0.6;
   cursor: wait;
+}
+.back-link-btn {
+  position: fixed;
+  left: 16px;
+  bottom: 90px;
+
+  width: 52px;
+  height: 52px;
+
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #385ca8;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(56, 92, 168, 0.08);
+
+  z-index: 50;
+
+  transition:
+    transform 0.15s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.back-link-btn:hover {
+  background: white;
+  transform: translateY(-2px);
+}
+
+.back-link-btn:active {
+  transform: scale(0.95);
+}
+
+.back-link-btn .material-symbols-outlined {
+  font-size: 28px;
+}
+
+@media (min-width: 768px) {
+  .back-link-btn {
+    position: static;
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 14px;
+
+    background: white;
+    backdrop-filter: none;
+
+    box-shadow: 0 4px 16px rgba(56, 92, 168, 0.08);
+  }
 }

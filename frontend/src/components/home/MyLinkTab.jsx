@@ -59,6 +59,9 @@ export default function MyLinkTab() {
 
   return (
     <div className="link-details-page">
+      <Link to="/home/my-links" className="back-link-btn">
+        <span className="material-symbols-outlined">arrow_back</span>
+      </Link>
       <div className="link-details-wrapper">
         <header className="link-header">
           <a
@@ -95,9 +98,6 @@ export default function MyLinkTab() {
         </div>
 
         <footer className="link-footer-actions">
-          <Link to="/home/my-links" className="material-symbols-outlined">
-            arrow_back
-          </Link>
           <button
             className="delete-action-btn"
             onClick={handleDelete}

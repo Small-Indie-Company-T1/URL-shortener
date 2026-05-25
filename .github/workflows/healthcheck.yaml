@@ -1,0 +1,83 @@
+name: Health check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create env files
+        run: |
+          mkdir -p env
+          cat << 'EOF' > env/postgres.env
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB=${{ secrets.TEST_DB }}
+          EOF
+          echo "DATABASE_URL=${{ secrets.TEST_DB_URL }}" | sed 's/localhost/db/g' >> env/postgres.env
+          cat << 'EOF' > env/app.env
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          ALGORITHM=${{ secrets.ALGORITHM }}
+          ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+          REFRESH_TOKEN_EXPIRE_DAYS=${{ secrets.REFRESH_TOKEN_EXPIRE_DAYS }}
+          BASE_URL=${{ secrets.BASE_URL }}
+          REDIS_HOST=${{ secrets.REDIS_HOST }}
+          REDIS_PORT=${{ secrets.REDIS_PORT }}
+          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          TEST_REDIS_DB=${{ secrets.TEST_REDIS_DB }}
+          EOF
+
+      - name: Build and start Database
+        run: |
+          docker compose -f docker-compose.yaml up -d db
+          echo "Waiting for db to be ready..."
+          for i in {1..15}; do
+            if docker compose -f docker-compose.yaml exec db pg_isready -U ${{secrets.POSTGRES_USER}}; then
+              echo "db is up!"
+              break
+            fi
+            echo "Waiting for db... ($i/15)"
+            sleep 2
+          done
+
+      - name: Alembic migration check
+        run: |
+          docker compose -f docker-compose.yaml run --rm -w /app backend alembic upgrade head
+
+      - name: Build Redis
+        run: |
+          docker compose -f docker-compose.yaml up -d redis
+          echo "Waiting for Redis..."
+          for i in {1..10}; do
+            echo "PING"
+            if docker compose exec -T redis redis-cli ping | grep PONG; then
+              echo "Redis is up"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: FastAPI Startup check
+        run: |
+          docker compose -f docker-compose.yaml up -d backend
+          echo "Waiting for FastAPI to start..."
+          for i in {1..15}; do
+            if curl -f http://localhost:8100/healthcheck; then
+              echo "FastAPI is healthy!"
+              exit 0
+            fi
+            echo "Waiting for FastAPI... ($i/3)"
+            sleep 2
+          done
+
+          echo "FastAPI failed to start"
+          docker compose -f docker-compose.yaml logs backend
+          exit 1

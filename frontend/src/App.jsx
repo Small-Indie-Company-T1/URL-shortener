@@ -18,6 +18,7 @@ function App() {
         <Route path="/main" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/not-found" element={<NotFoundPage />} />
 
         <Route
           path="/home"
@@ -32,7 +33,7 @@ function App() {
           <Route path="my-links" element={<MyLinksTab />} />
           <Route path="my-links/:shortCode" element={<MyLinkTab />} />
         </Route>
-
+        
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

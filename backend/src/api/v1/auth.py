@@ -15,6 +15,7 @@ from src.db.queries import UserQueriesQueries
 from src.db.database import get_db
 from src.auth.schemas import UserCreate, UserOut, Token, UserLogin, RefreshResponse
 from src.auth.security import hash_password, authenticate_user, create_tokens
+from src.core.config import settings
 
 
 router = APIRouter()
@@ -67,9 +68,10 @@ async def login(
         key="refresh_token",
         value=refresh_t,
         httponly=True,
-        secure=False, #need to change in production
-        samesite="lax",
-        max_age= expires_sec,
+        secure=settings.COOKIE_SECURE,
+        samesite=settings.COOKIE_SAMESITE,
+        domain=settings.COOKIE_DOMAIN,
+        max_age=expires_sec,
     )
 
     return {
@@ -136,8 +138,9 @@ async def refresh_token(request: Request, response: Response, redis_client: redi
         key="refresh_token",
         value=new_refresh_t,
         httponly=True,
-        secure=False,  # need to change in production
-        samesite="lax",
+        secure=settings.COOKIE_SECURE,
+        samesite=settings.COOKIE_SAMESITE,
+        domain=settings.COOKIE_DOMAIN,
         max_age=30 * 24 * 3600,
     )
 
@@ -166,5 +169,5 @@ async def logout(request: Request, response: Response, db: asyncpg.Connection = 
     except (jwt.PyJWTError, ValueError):
         pass
 
-    response.delete_cookie(key="refresh_token")
+    response.delete_cookie(key="refresh_token", domain=settings.COOKIE_DOMAIN)
     return {"detail": "logged out"}

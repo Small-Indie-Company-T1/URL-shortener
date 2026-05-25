@@ -1,9 +1,12 @@
 from typing import List
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, HttpUrl, field_validator
 import os
 from datetime import datetime
 import uuid
+
+from src.core.config import settings
 
 class LinkCreate(BaseModel):
     original_url: HttpUrl
@@ -11,9 +14,10 @@ class LinkCreate(BaseModel):
     @field_validator('original_url')
     @classmethod
     def prevent_self_shortening(cls, v: HttpUrl):
-        own_domain = os.getenv("BASE_URL") if os.getenv("BASE_URL") else "localhost:8080"
-        if own_domain in str(v):
-            raise ValueError("you can't shorten link to this particular website")
+        target_host = urlparse(str(v)).netloc.lower()
+        own_host = urlparse(settings.BASE_URL).netloc.lower()
+        if target_host == own_host:
+            raise ValueError("you can't shorten link to this particular webside")
         return v
 
 class LinkRead(BaseModel):

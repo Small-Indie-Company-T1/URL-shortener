@@ -5,6 +5,7 @@ import asyncpg
 from src.db.database import get_db
 from src.db.queries import LinkQueriesQueries
 from src.services.analytics import log_click_task, get_real_ip
+from src.core.config import settings
 
 router = APIRouter()
 
@@ -20,7 +21,7 @@ async def redirect_to_full_url(
     link = await link_querier.GetLinkByCode(short_code)
 
     if not link:
-        return RedirectResponse(url="/404", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse(url=f"{settings.BASE_URL}/not-found", status_code=status.HTTP_302_FOUND)
 
     pool = request.app.state.pool
     user_agent = request.headers.get("user-agent")

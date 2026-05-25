@@ -19,8 +19,8 @@ setup_logging()
 async def lifespan(app: FastAPI):
     pool = await asyncpg.create_pool(
         dsn=settings.DATABASE_URL_SYNC,
-        min_size=5,
-        max_size=20
+        min_size=settings.DB_POOL_MIN_SIZE,
+        max_size=settings.DB_POOL_MAX_SIZE
     )
 
     app.state.pool = pool
@@ -32,25 +32,30 @@ async def lifespan(app: FastAPI):
         await pool.close()
         logger.info("db pool is closed")
 
-app = FastAPI(title="url shortener", lifespan=lifespan)
+app = FastAPI(
+    title='url shortener',
+    lifespan=lifespan,
+    docs_url='/docs' if settings.ENABLE_DOCS else None,
+    redoc_url='/redoc' if settings.ENABLE_DOCS else None,
+    openapi_url='/openapi.json' if settings.ENABLE_DOCS else None
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost"],
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(links_router, prefix="/links", tags=["links"])
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(redirect.router, prefix="/redirect")
+app.include_router(clicks.router, prefix="/stats")
 
 @app.get("/healthcheck", tags=["Health"])
 async def health_check():
     return {"status": "ok"}
-
-app.include_router(auth.router, prefix="/auth", tags=["auth"])
-app.include_router(redirect.router, prefix="/redirect")
-app.include_router(clicks.router, prefix="/stats")
 
 @app.get("/")
 async def root():

@@ -64,6 +64,9 @@ export default function MyLinkTab() {
       </Link>
       <div className="link-details-wrapper">
         <header className="link-header">
+          <Link to="/home/my-links" className="link-header_back">
+            <span className="material-symbols-outlined">arrow_back</span>
+          </Link>
           <a
             href={
               (import.meta.env.VITE_FRONTEND_BASE_URL || '') + '/r/' + shortCode

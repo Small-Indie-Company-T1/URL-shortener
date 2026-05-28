@@ -58,3 +58,55 @@
   hover:bg-blue-50 hover:text-blue-600
   transition-colors bg-transparent cursor-pointer font-bold;
 }
+
+@media (max-width: 900px) {
+  .qr-container__main-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .qr-container__label {
+    min-width: auto;
+  }
+
+  .qr-container__actions {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .qr-container__btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .qr-container {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .qr-container__image {
+    width: 180px;
+    height: 180px;
+  }
+
+  .qr-container__actions {
+    gap: 12px;
+  }
+
+  .qr-container__btn {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-container {
+    padding: 16px;
+  }
+
+  .qr-container__image {
+    width: 160px;
+    height: 160px;
+  }
+}

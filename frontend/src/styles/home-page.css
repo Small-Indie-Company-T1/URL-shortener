@@ -1,0 +1,46 @@
+@reference "../App.css";
+
+.home-layout {
+  @apply flex min-h-screen w-full bg-[#EEF8FF];
+}
+
+.home-layout__content {
+  @apply flex-1 flex flex-col min-w-0;
+}
+
+.home-header {
+  @apply h-[63px] bg-[#D7E7F2] flex items-center px-6 shrink-0 border-b border-[#CAC4D0];
+}
+
+.home-header__logo {
+  @apply text-2xl font-black text-[#0B1120] tracking-tight;
+}
+
+.home-main {
+  @apply flex-1 flex justify-center items-start pt-10 min-w-0 overflow-x-hidden;
+}
+
+@media (max-width: 1024px) {
+  .home-main {
+    padding-top: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-layout {
+    flex-direction: column;
+  }
+
+  .home-header {
+    height: 56px;
+    padding-inline: 16px;
+  }
+
+  .home-header__logo {
+    font-size: 22px;
+  }
+
+  .home-main {
+    padding-top: 20px;
+  }
+}

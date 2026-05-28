@@ -2,38 +2,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
 
 .tlink-wrapper {
+  height: 100dvh;
   @apply min-h-screen flex flex-col bg-white m-0 p-0;
   font-family: 'Inter', sans-serif !important;
 }
 
 .tlink-header {
-  @apply bg-[#D7E7F2] h-15.75 flex items-center px-4 md:px-10 shrink-0;
+  @apply bg-[#D7E7F2] h-15 flex items-center px-6 md:px-10 shrink-0 border-b border-[#CAC4D0]/30;
 }
 
 .tlink-logo {
-  @apply text-2xl font-black text-[#0B1120];
+  @apply text-2xl font-black text-[#0B1120] tracking-tight;
 }
 
 .tlink-hero {
   position: relative;
   overflow: hidden;
-  @apply bg-[#385CA8] text-white flex-1 flex flex-col md:flex-row items-center justify-between px-4 md:px-10 py-12;
+  @apply bg-[#385CA8] text-white flex-1 flex flex-row items-center justify-between px-6 md:px-16 py-12 lg:py-0 gap-12;
 }
 
 .hero-content {
-  @apply z-10 text-left;
+  @apply z-10 text-left max-w-2xl w-full;
 }
 
 .hero-title {
-  @apply text-3xl md:text-5xl lg:text-6xl font-black leading-tight text-white;
+  @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white tracking-tight;
 }
 
 .hero-subtitle {
-  @apply mt-8 text-xl md:text-2xl font-light opacity-90 text-white;
+  @apply mt-6 text-lg md:text-2xl font-light opacity-90 text-white;
 }
 
 .btn-group {
-  @apply mt-12 flex flex-col sm:flex-row gap-6;
+  @apply mt-10 flex flex-col sm:flex-row gap-4 sm:gap-6 w-full sm:w-auto;
 }
 
 button {
@@ -41,15 +42,15 @@ button {
 }
 
 .btn-primary {
-  @apply bg-[#15203D] hover:bg-[#1e2d56] transition text-white px-10 py-5 rounded-xl font-black text-xl md:text-2xl;
+  @apply bg-[#15203D] hover:bg-[#1e2d56] transition-colors text-white px-8 py-4 sm:px-10 sm:py-5 rounded-xl font-black text-lg sm:text-xl md:text-2xl text-center w-full sm:w-auto;
 }
 
 .btn-secondary {
-  @apply bg-[#D7E7F2] hover:bg-[#c4d7e5] transition text-black px-10 py-5 rounded-xl font-black text-xl md:text-2xl;
+  @apply bg-[#D7E7F2] hover:bg-[#c4d7e5] transition-colors text-black px-8 py-4 sm:px-10 sm:py-5 rounded-xl font-black text-lg sm:text-xl md:text-2xl text-center w-full sm:w-auto;
 }
 
 .hero-decor {
-  @apply relative mt-16 md:mt-0 mr-10 hidden sm:block;
+  @apply relative hidden lg:block mr-10 shrink-0;
   width: 260px;
   height: 260px;
 }
@@ -61,7 +62,7 @@ button {
   z-index: 1;
   width: 224px;
   height: 224px;
-  @apply bg-[#B9DFFF] opacity-80 rounded-[20px] flex items-center justify-center;
+  @apply bg-[#B9DFFF] opacity-80 rounded-[20px] flex items-center justify-center shadow-lg;
 }
 
 .qr-box-large span {
@@ -86,208 +87,25 @@ button {
 
 .material-symbols-outlined {
   font-variation-settings:
-    'FILL' 1,
-    'wght' 700,
-    'GRAD' 0,
-    'opsz' 48;
+          'FILL' 1,
+          'wght' 700,
+          'GRAD' 0,
+          'opsz' 48;
   @apply block;
 }
 
 .tlink-footer {
-  @apply h-32.5 bg-[#D7E7F2] flex flex-row items-center justify-center gap-20 md:gap-50 px-4;
+  @apply bg-[#D7E7F2] flex flex-col md:flex-row items-start md:items-center justify-center gap-6 md:gap-16 lg:gap-32 px-6 py-8 md:py-0 md:h-32.5 shrink-0 w-full box-border;
 }
 
 .step-item {
-  @apply flex items-center gap-5;
+  @apply flex items-center gap-4 w-full md:w-auto;
 }
 
 .step-number {
-  @apply bg-[#385CA8] text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl font-black italic;
+  @apply bg-[#385CA8] text-white w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-xl md:text-2xl font-black shrink-0;
 }
 
 .step-text {
-  @apply text-xl md:text-2xl font-bold italic text-black;
-}
-
-@media (max-width: 1024px) {
-  .tlink-hero {
-    padding: 60px 40px;
-  }
-
-  .hero-title {
-    font-size: 48px;
-  }
-
-  .hero-subtitle {
-    font-size: 22px;
-  }
-
-  .tlink-footer {
-    gap: 40px;
-  }
-
-  .step-text {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .tlink-header {
-    height: 60px;
-    padding-inline: 20px;
-  }
-
-  .tlink-logo {
-    font-size: 24px;
-  }
-
-  .tlink-hero {
-    flex-direction: column;
-    align-items: flex-start;
-
-    padding: 48px 20px 60px;
-
-    gap: 40px;
-  }
-
-  .hero-content {
-    width: 100%;
-  }
-
-  .hero-title {
-    font-size: 40px;
-    line-height: 1.1;
-  }
-
-  .hero-subtitle {
-    margin-top: 24px;
-    font-size: 18px;
-    line-height: 1.5;
-  }
-
-  .btn-group {
-    margin-top: 32px;
-    width: 100%;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    min-height: 58px;
-
-    font-size: 18px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .hero-decor {
-    align-self: center;
-
-    width: 220px;
-    height: 220px;
-
-    margin: 0;
-  }
-
-  .qr-box-large {
-    width: 190px;
-    height: 190px;
-  }
-
-  .qr-box-large span {
-    font-size: 130px;
-  }
-
-  .qr-box-small {
-    width: 150px;
-    height: 150px;
-
-    left: -10px;
-    bottom: -10px;
-  }
-
-  .qr-box-small span {
-    font-size: 100px;
-  }
-
-  .tlink-footer {
-    height: auto;
-
-    flex-wrap: wrap;
-
-    justify-content: center;
-
-    gap: 24px;
-
-    padding: 24px 20px;
-  }
-
-  .step-item {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .step-number {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-  }
-
-  .step-text {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  .tlink-hero {
-    padding-inline: 16px;
-  }
-
-  .hero-title {
-    font-size: 32px;
-  }
-
-  .hero-subtitle {
-    font-size: 16px;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    font-size: 16px;
-    min-height: 54px;
-    padding-inline: 20px;
-  }
-
-  .hero-decor {
-    width: 180px;
-    height: 180px;
-  }
-
-  .qr-box-large {
-    width: 150px;
-    height: 150px;
-  }
-
-  .qr-box-large span {
-    font-size: 100px;
-  }
-
-  .qr-box-small {
-    width: 120px;
-    height: 120px;
-  }
-
-  .qr-box-small span {
-    font-size: 72px;
-  }
-
-  .step-item {
-    gap: 14px;
-  }
-
-  .step-text {
-    font-size: 16px;
-  }
+  @apply text-lg md:text-xl lg:text-2xl font-bold italic text-black tracking-tight;
 }

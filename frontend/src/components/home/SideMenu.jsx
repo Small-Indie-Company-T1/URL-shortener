@@ -25,11 +25,11 @@ export default function SideMenu() {
           <span className="material-symbols-outlined">link</span>
           Мои ссылки
         </Link>
+        <button onClick={logoutUser} className="side-menu__link">
+          <span className="material-symbols-outlined">logout</span>
+          Выйти
+        </button>
       </nav>
-      <button onClick={logoutUser} className="side-menu__logout">
-        <span className="material-symbols-outlined">logout</span>
-        Выйти
-      </button>
     </aside>
   );
 }

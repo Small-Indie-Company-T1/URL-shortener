@@ -1,3 +1,5 @@
+@reference "../App.css";
+
 .link-details-page {
   flex: 1;
   background-color: #f8fafc;
@@ -20,13 +22,19 @@
 
 .link-header {
   margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.link-header_back {
+  @apply pe-3;
 }
 
 .link-header__url {
   font-size: 26px;
   font-weight: 700;
   color: #1e293b;
-  text-decoration: none;
+  text-decoration-line: underline;
   transition: color 0.2s;
 }
 
@@ -236,9 +244,5 @@
 @media (max-width: 480px) {
   .link-details-wrapper {
     padding-inline: 12px;
-  }
-
-  .link-header__url {
-    font-size: 18px;
   }
 }

@@ -71,7 +71,7 @@
     padding: 0 12px;
 
     border-bottom: none;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
 
     font-size: 14px;
     gap: 8px;
@@ -80,33 +80,19 @@
   .side-menu__link .material-symbols-outlined {
     font-size: 20px;
   }
-
-  .side-menu__logout {
-    margin-top: 0;
-
-    width: 64px;
-    height: 56px;
-
-    justify-content: center;
-
-    padding: 0;
-
-    border-top: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .side-menu__logout span:last-child {
-    display: none;
-  }
 }
 
 @media (max-width: 480px) {
+  .side-menu > .side-menu__link {
+    display: none;
+  }
+
   .side-menu__link {
     font-size: 12px;
     gap: 4px;
   }
 
   .side-menu__link .material-symbols-outlined {
-    font-size: 18px;
+    font-size: 24px;
   }
 }

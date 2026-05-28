@@ -61,6 +61,9 @@ export default function MyLinkTab() {
     <div className="link-details-page">
       <div className="link-details-wrapper">
         <header className="link-header">
+          <Link to="/home/my-links" className="link-header_back">
+            <span className="material-symbols-outlined">arrow_back</span>
+          </Link>
           <a
             href={
               (import.meta.env.VITE_FRONTEND_BASE_URL || '') + '/r/' + shortCode
@@ -95,9 +98,6 @@ export default function MyLinkTab() {
         </div>
 
         <footer className="link-footer-actions">
-          <Link to="/home/my-links" className="material-symbols-outlined">
-            arrow_back
-          </Link>
           <button
             className="delete-action-btn"
             onClick={handleDelete}

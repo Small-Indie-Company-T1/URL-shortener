@@ -59,6 +59,9 @@ export default function MyLinkTab() {
 
   return (
     <div className="link-details-page">
+      <Link to="/home/my-links" className="back-link-btn">
+        <span className="material-symbols-outlined">arrow_back</span>
+      </Link>
       <div className="link-details-wrapper">
         <header className="link-header">
           <Link to="/home/my-links" className="link-header_back">

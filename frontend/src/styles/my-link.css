@@ -3,13 +3,26 @@
 .link-details-page {
   flex: 1;
   background-color: #f8fafc;
-  height: calc(100vh - 63px);
+  height: calc(100dvh - 63px);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-top: 80px;
   box-sizing: border-box;
   overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .link-details-page {
+    height: 100vh;
+    overflow: hidden;
+    padding-top: 40px;
+  }
+
+  .link-details-wrapper {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
 }
 
 .link-details-wrapper {

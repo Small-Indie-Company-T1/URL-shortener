@@ -1,3 +1,5 @@
+@reference "../App.css";
+
 .link-details-page {
   flex: 1;
   background-color: #f8fafc;
@@ -33,13 +35,19 @@
 
 .link-header {
   margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.link-header_back {
+  @apply pe-3;
 }
 
 .link-header__url {
   font-size: 26px;
   font-weight: 700;
   color: #1e293b;
-  text-decoration: none;
+  text-decoration-line: underline;
   transition: color 0.2s;
 }
 
@@ -185,64 +193,69 @@
   opacity: 0.6;
   cursor: wait;
 }
-.back-link-btn {
-  position: fixed;
-  left: 16px;
-  bottom: 90px;
 
-  width: 52px;
-  height: 52px;
-
-  border-radius: 16px;
-
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-
-  border: 1px solid rgba(255, 255, 255, 0.5);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: #385ca8;
-
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(56, 92, 168, 0.08);
-
-  z-index: 50;
-
-  transition:
-    transform 0.15s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
+@media (max-width: 1024px) {
+  .link-details-wrapper {
+    padding: 0 24px;
+  }
 }
 
-.back-link-btn:hover {
-  background: white;
-  transform: translateY(-2px);
+@media (max-width: 768px) {
+  .link-details-page {
+    height: auto;
+    min-height: 100%;
+    padding-top: 32px;
+  }
+
+  .link-details-wrapper {
+    padding: 0 16px 120px;
+  }
+
+  .link-header {
+    margin-bottom: 24px;
+  }
+
+  .link-header__url {
+    font-size: 20px;
+
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .stats-container {
+    gap: 16px;
+    padding-left: 0;
+    margin-bottom: 40px;
+  }
+
+  .stats-entry {
+    align-items: flex-start;
+  }
+
+  .stats-entry__label {
+    min-width: auto;
+    font-size: 15px;
+  }
+
+  .stats-entry__value {
+    font-size: 18px;
+  }
+
+  .link-footer-actions {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .delete-action-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 52px;
+  }
 }
 
-.back-link-btn:active {
-  transform: scale(0.95);
-}
-
-.back-link-btn .material-symbols-outlined {
-  font-size: 28px;
-}
-
-@media (min-width: 768px) {
-  .back-link-btn {
-    position: static;
-
-    width: 48px;
-    height: 48px;
-
-    border-radius: 14px;
-
-    background: white;
-    backdrop-filter: none;
-
-    box-shadow: 0 4px 16px rgba(56, 92, 168, 0.08);
+@media (max-width: 480px) {
+  .link-details-wrapper {
+    padding-inline: 12px;
   }
 }

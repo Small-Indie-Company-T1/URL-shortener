@@ -73,3 +73,15 @@ export async function getLinkClicks(short_code) {
     throw error;
   }
 }
+
+export async function getLinkStats(short_code, limit = 1_000_000, offset = 0) {
+  try {
+    const response = await api.get(
+      `/stats/${short_code}/list?offset=${offset}&limit=${limit}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error.data.detail.msg);
+    throw error;
+  }
+}

@@ -5,6 +5,7 @@ import {
   deleteLinkByShortCode,
   getLinkClicks,
   getLinksList,
+  getLinkStats,
 } from '../utils/linksApi.js';
 
 export default function useLinks() {
@@ -102,6 +103,23 @@ export default function useLinks() {
     }
   }, []);
 
+  const getStats = useCallback(async (short_code) => {
+    setIsLoading(true);
+    try {
+      return await getLinkStats(short_code);
+    } catch (error) {
+      switch (error.response?.status) {
+        case 422:
+          setError('Ошибка валидации');
+          break;
+        default:
+          setError('Произошла неизвестная ошибка');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     error,
@@ -110,6 +128,7 @@ export default function useLinks() {
     getLinks,
     deleteLink,
     getClicks,
+    getStats,
     clearError: useCallback(() => setError(null), []),
   };
 }

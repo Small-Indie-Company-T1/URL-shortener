@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import SideMenu from '../components/home/SideMenu.jsx';
 import '../styles/home-page.css';
+
 export default function HomePage() {
   return (
     <div className="home-layout">

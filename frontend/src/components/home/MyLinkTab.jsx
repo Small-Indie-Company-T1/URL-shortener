@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import QrContainer from './QrContainer.jsx';
 import { toastr } from '../../toastr-config.js';
 import '../../styles/my-link.css';
+import LinkStats from './LinkStats.jsx';
 
 export default function MyLinkTab() {
   const { isLoading, error, createQr, deleteLink, getClicks, clearError } =
@@ -59,26 +60,22 @@ export default function MyLinkTab() {
 
   return (
     <div className="link-details-page">
-      <Link to="/home/my-links" className="back-link-btn">
-        <span className="material-symbols-outlined">arrow_back</span>
-      </Link>
+      <header className="link-header">
+        <button className="link-header__back" onClick={() => navigate(-1)}>
+          <span className="material-symbols-outlined">arrow_back</span>
+        </button>
+        <a
+          href={
+            (import.meta.env.VITE_FRONTEND_BASE_URL || '') + '/r/' + shortCode
+          }
+          className="link-header__url"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {(import.meta.env.VITE_FRONTEND_BASE_URL || '') + '/r/' + shortCode}
+        </a>
+      </header>
       <div className="link-details-wrapper">
-        <header className="link-header">
-          <Link to="/home/my-links" className="link-header_back">
-            <span className="material-symbols-outlined">arrow_back</span>
-          </Link>
-          <a
-            href={
-              (import.meta.env.VITE_FRONTEND_BASE_URL || '') + '/r/' + shortCode
-            }
-            className="link-header__url"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {(import.meta.env.VITE_FRONTEND_BASE_URL || '') + '/r/' + shortCode}
-          </a>
-        </header>
-
         <QrContainer downloadQr={downloadQr} />
 
         <div className="stats-container">
@@ -99,6 +96,8 @@ export default function MyLinkTab() {
             </span>
           </div>
         </div>
+
+        <LinkStats short_code={shortCode} />
 
         <footer className="link-footer-actions">
           <button
